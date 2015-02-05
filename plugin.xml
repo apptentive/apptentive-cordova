@@ -50,7 +50,7 @@
     
     <!-- ios -->
     <platform name="ios">
-        <config-file target="config.xml" parent="/">
+        <config-file target="config.xml" parent="/widget">
             <feature name="ApptentivePlugin">
                 <param name="ios-package" value="com.apptentive.cordova.bridge" />
             </feature>

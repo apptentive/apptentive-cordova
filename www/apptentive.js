@@ -7,6 +7,7 @@
 var Apptentive = {
 
     init: function(api_key) {
+        console.log('preparing to init apptentive');
         cordova.exec(
             function(err) {
         		alert('Cordova Exec Success.' + api_key);
