@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
-        id="com.jernung.cordova.apptentive"
-        version="0.0.6">
+        id="com.cordova.apptentive"
+        version="0.0.7">
     
     <name>Apptentive</name>
 	<description>Apptentive Plugin For Cordova</description>
@@ -47,5 +47,17 @@
         <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova/bridge" />
         <source-file src="src/android/libs/apptentive-android-sdk.jar" target-dir="libs" />
     </platform>
+    
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/">
+            <feature name="ApptentivePlugin">
+                <param name="ios-package" value="com.apptentive.cordova.bridge" />
+            </feature>
+        </config-file>
         
+        <header-file src="src/ios/ApptentivePlugin.h" target-dir="ApptentivePlugin"/>
+        <source-file src="src/ios/ApptentivePlugin.m" target-dir="ApptentivePlugin"/>
+    </platform>
+    
 </plugin>
