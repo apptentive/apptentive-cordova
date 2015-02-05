@@ -1,0 +1,2 @@
+# Apptentive plugin for Cordova
+
