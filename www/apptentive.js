@@ -17,7 +17,7 @@ var Apptentive = {
     		},
             "ApptentiveBridge",
             "execute",
-            [api_key]
+            ["init",api_key]
         );
     },
 
@@ -35,7 +35,16 @@ var Apptentive = {
         };
 
         // pass in all parameters to the cordova.exec to pass through to native code
-        cordova.exec(callback, errCallback, "ApptentiveBridge", "execute", [event]);
+
+        cordova.exec(callback, errCallback, "ApptentiveBridge", "execute", ["event",event]);
+    },
+
+    engage: function(success_callback, error_callback, event_id) {
+        cordova.exec(success_callback, error_callback, "ApptentiveBridge", "engage", [event_id]);
+    },
+
+    presentMessageCenterFromViewController: function(success_callback, error_callback) {
+
     }
 }
 

@@ -34,9 +34,7 @@
         </config-file>
         
         <config-file target="AndroidManifest.xml" parent="application">
-            <meta-data android:name="apptentive_api_key" android:value="@@apptentiveApiKey"/>
-            <activity android:name="com.apptentive.android.sdk.ViewActivity"
-                  android:theme="@style/Apptentive.Theme.Transparent"/>
+            <meta-data android:name="apptentive_api_key" android:value="4888325745f1b92b4f812d187262404668bcf3905b38fb002d9f690c2a564175"/>
             <receiver android:name="com.apptentive.android.sdk.comm.NetworkStateReceiver">
                 <intent-filter>
                     <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
