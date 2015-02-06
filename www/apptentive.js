@@ -8,6 +8,7 @@ var Apptentive = {
 
     init: function(api_key) {
         cordova.exec(
+        	alert("init called java script");
             function(err) {
         		alert('Cordova Exec Success.' + api_key);
     		},
@@ -21,6 +22,7 @@ var Apptentive = {
     },
 
     event: function(event) {
+    	alert("event called java script");
         console.log("Apptentive.event", event)   // This will log to javascript console 
 
         // Define success callback
