@@ -4,12 +4,15 @@
 
 // var someLocalVars = [ 'varOne', 'varTwo'];
 
-var Apptentive = {
+alert("Apptentive created");
 
+var Apptentive = {
+	
     init: function(api_key) {
         console.log('preparing to init apptentive');
+        alert("init called java script");
         cordova.exec(
-        	alert("init called java script");
+        	
             function(err) {
         		alert('Cordova Exec Success.' + api_key);
     		},
@@ -50,5 +53,5 @@ var Apptentive = {
     }
 }
 
-
+//window.Apptentive = Apptentive;
 module.exports = Apptentive;
