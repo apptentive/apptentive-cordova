@@ -1,6 +1,6 @@
-#import "ApptentivePlugin.h"
+#import "ApptentiveBridge.h"
 
-@implementation ApptentivePlugin
+@implementation ApptentiveBridge
 
 - (void)execute:(CDVInvokedUrlCommand*)command {
     NSString* callbackId = [command callbackId];
