@@ -9,6 +9,9 @@
     if ([functionCall isEqualToString:@"init"]) {
         [self initWithAPIKey:arguments callBackString:callbackId];
     }
+    else if ([functionCall isEqualToString:@"event"]) {
+        [self logEvent:arguments callBackString:callbackId];
+    }
 //    else if ([functionCall isEqualToString:@"getunreadmessagecount"]) {
 //        [self getUnreadMessageCount:arguments callBackString:callbackId];
 //    }
@@ -25,16 +28,18 @@
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
-//- (void)logEvent:(NSArray*)arguments callBackString:(NSString*)callbackId {
-//    NSString* eventName = [arguments objectAtIndex:1];
+- (void)logEvent:(NSArray*)arguments callBackString:(NSString*)callbackId {
+    NSString* eventName = [arguments objectAtIndex:1];
 //    [[ATConnect sharedConnection] engage:eventName fromViewController:viewController];
-//    
-//    CDVPluginResult* result = [CDVPluginResult
-//                               resultWithStatus:CDVCommandStatus_OK
-//                               messageAsString:msg];
-//    
-//    [self success:result callbackId:callbackId];
-//}
+    
+    NSString* msg = @"Logging event: ";
+    msg = [msg stringByAppendingString:eventName];
+    CDVPluginResult* result = [CDVPluginResult
+                               resultWithStatus:CDVCommandStatus_OK
+                               messageAsString:msg];
+    
+    [self success:result callbackId:callbackId];
+}
 //
 //- (void) getUnreadMessageCount:(NSArray*)arguments callBackString:(NSString*)callbackId {
 //    NSUInteger unreadMessageCount = [[ATConnect sharedConnection] unreadMessageCount];

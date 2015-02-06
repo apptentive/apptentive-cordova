@@ -49,13 +49,13 @@
     <!-- ios -->
     <platform name="ios">
         <config-file target="config.xml" parent="/widget">
-            <feature name="ApptentivePlugin">
-                <param name="ios-package" value="com.apptentive.cordova.bridge" />
+            <feature name="Apptentive">
+                <param name="ios-package" value="Apptentive" />
             </feature>
         </config-file>
         
-        <header-file src="src/ios/ApptentivePlugin.h" target-dir="ApptentivePlugin"/>
-        <source-file src="src/ios/ApptentivePlugin.m" target-dir="ApptentivePlugin"/>
+        <header-file src="src/ios/ApptentiveBridge.h" target-dir="Apptentive"/>
+        <source-file src="src/ios/ApptentiveBridge.m" target-dir="Apptentive"/>
     </platform>
     
 </plugin>
