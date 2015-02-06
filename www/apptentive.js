@@ -7,6 +7,7 @@
 var Apptentive = {
 
     init: function(api_key) {
+        console.log('preparing to init apptentive');
         cordova.exec(
         	alert("init called java script");
             function(err) {
