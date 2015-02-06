@@ -148,6 +148,10 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setPendingPushNotification", [intent]);
     },
 
+    setProperty: function(success_callback, error_callback, property_id, value) {
+        cordova.exec(success_callback, error_callback, "ApptentiveBridge", "setProperty", [property_id, value]);
+    }
+
     setRatingProvider: function(successCallback, errorCallback, ratingProvider) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setRatingProvider", [ratingProvider]);
     },
