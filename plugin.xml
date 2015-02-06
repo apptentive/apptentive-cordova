@@ -4,7 +4,7 @@
         id="com.cordova.apptentive"
         version="0.0.7">
     
-    <name>Apptentive</name>
+    <name>ApptentiveBridge</name>
 	<description>Apptentive Plugin For Cordova</description>
     <keywords>apptentive</keywords>
     
@@ -49,8 +49,8 @@
     <!-- ios -->
     <platform name="ios">
         <config-file target="config.xml" parent="/widget">
-            <feature name="Apptentive">
-                <param name="ios-package" value="Apptentive" />
+            <feature name="ApptentiveBridge">
+                <param name="ios-package" value="ApptentiveBridge" />
             </feature>
         </config-file>
         

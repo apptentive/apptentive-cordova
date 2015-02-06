@@ -4,33 +4,33 @@
 
 - (void)execute:(CDVInvokedUrlCommand*)command {
     NSString* callbackId = [command callbackId];
-    NSArray *arguments = [command arguments];
-    NSString* functionCall = [arguments objectAtIndex:0];
+    NSString* functionCall = [command argumentAtIndex:0];
     if ([functionCall isEqualToString:@"init"]) {
-        [self initWithAPIKey:arguments callBackString:callbackId];
+        [self initWithAPIKey:[command arguments] callBackString:callbackId];
     }
     else if ([functionCall isEqualToString:@"event"]) {
-        [self logEvent:arguments callBackString:callbackId];
+        [self logEvent:[command arguments] callBackString:callbackId];
     }
-//    else if ([functionCall isEqualToString:@"getunreadmessagecount"]) {
-//        [self getUnreadMessageCount:arguments callBackString:callbackId];
-//    }
+    //    else if ([functionCall isEqualToString:@"getunreadmessagecount"]) {
+    //        [self getUnreadMessageCount:arguments callBackString:callbackId];
+    //    }
 }
 
 - (void)initWithAPIKey:(NSArray*)arguments callBackString:(NSString*)callbackId {
+    NSLog(@"Calling initWithAPIKey");
     NSString* apiKey = [arguments objectAtIndex:1];
     [ATConnect sharedConnection].apiKey = apiKey;
-
+    
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK
                                messageAsString:apiKey];
-
+    
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)logEvent:(NSArray*)arguments callBackString:(NSString*)callbackId {
     NSString* eventName = [arguments objectAtIndex:1];
-//    [[ATConnect sharedConnection] engage:eventName fromViewController:viewController];
+    [[ATConnect sharedConnection] engage:eventName fromViewController:self.viewController];
     
     NSString* msg = @"Logging event: ";
     msg = [msg stringByAppendingString:eventName];
@@ -38,7 +38,7 @@
                                resultWithStatus:CDVCommandStatus_OK
                                messageAsString:msg];
     
-    [self success:result callbackId:callbackId];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 //
 //- (void) getUnreadMessageCount:(NSArray*)arguments callBackString:(NSString*)callbackId {
