@@ -1,49 +1,24 @@
-cordova.define("com.cordova.apptentive.Apptentive", function(require, exports, module) { // The following line is just an example to illistrate that you could define variables
-// here and then use them inside the scope of the 'Apptentive' object later on if that
-// feels appropriate for the situation
-
-// var someLocalVars = [ 'varOne', 'varTwo'];
-
-alert("Apptentive created");
-
 var Apptentive = {
 	
-    init: function(api_key) {
-        console.log('preparing to init apptentive');
-        alert("init called java script");
-        cordova.exec(
-        	
-            function(err) {
-        		alert('Cordova Exec Success.' + api_key);
-    		},
-            function(err) {
-        		alert('App Exec Failed.');
-    		},
-            "ApptentiveBridge",
-            "execute",
-            ["init",api_key]
-        );
+	init: function(successCallback, errorCallback, apiKey) {
+		console.log("Apptentive.js init called");
+
+        console.log("Platform is:", cordova.platformId);
+
+        switch( cordova.platformId ) {
+            case "android":
+                cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "init", [apiKey]);
+            case "ios":
+            default:
+                console.warn("Warning: Apptentive cannot run on platform", cordova.platformId);
+        }
     },
 
-    event: function(event) {
-    	alert("event called java script");
-        console.log("Apptentive.event", event)   // This will log to javascript console 
-
-        // Define success callback
-        var callback = function() {
-            alert('Cordova Exec Success.' + event); // This will pop up a browser alert (FYI: this will also pause javascript execution; not usually an issue)
-        };
-
-        // Define error callback
-        var errCallback = function(err) {
-            alert('App Exec Failed:', err);
-        };
-
-        // pass in all parameters to the cordova.exec to pass through to native code
-
-        cordova.exec(callback, errCallback, "ApptentiveBridge", "execute", ["event",event]);
+	event: function(successCallback, errorCallback, event) {
+		console.log("Apptentive.js event called");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "event", [event]);
     },
-
+  
     addAmazonSnsPushIntegration: function(successCallback, errorCallback, registrationId) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addAmazonSnsPushIntegration", registrationId]);
     },
@@ -72,7 +47,8 @@ var Apptentive = {
         if( customData && typeof customData === 'object' ) {
             cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["engage", eventId, customData]);
         } else {
-            alert(eventId);
+            console.log("arguments:", arguments);
+            alert("Check console");
             cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["engage", eventId]);
         }
     },
@@ -162,11 +138,12 @@ var Apptentive = {
     },
 
     showMessageCenter: function(successCallback, errorCallback, customData) {
-        alert("show message center");
+        console.log("Apptentive.showMessageCenter");
+
         if( customData ) {
-            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["showMessageCenter", customData]);
+            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "showMessageCenter", [customData]);
         } else {
-            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["showMessageCenter"]);
+            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "showMessageCenter", []);
         }
     },
 
@@ -175,7 +152,4 @@ var Apptentive = {
     }
 }
 
-//window.Apptentive = Apptentive;
 module.exports = Apptentive;
-
-});
