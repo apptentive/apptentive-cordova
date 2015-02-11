@@ -7,24 +7,16 @@
     <name>ApptentiveBridge</name>
 	<description>Apptentive Plugin For Cordova</description>
     <keywords>apptentive</keywords>
-
     <engines>
-        <!-- Requires > 3.3.* because of the custom Framework tag for iOS [CB-5238] -->
-        <engine name="cordova" version=">=3.3.0" />
+        <engine name="cordova" version=">=4.0.0" />
     </engines>
     
 
- 
-<!-- 
-	<dependency id="com.apptentive.android.sdk.ViewActivity" version="1.6.+" />
- -->
-    
     <js-module src="www/apptentive.js" name="Apptentive">
         <clobbers target="navigator.Apptentive" />
     </js-module>
-
-
     
+
     <!-- android -->
     <platform name="android">
         
@@ -61,12 +53,6 @@
 
     </platform>
     
-
-
-
-
-
-
 
     <!-- ios -->
     <platform name="ios">
