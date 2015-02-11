@@ -1,21 +1,36 @@
+var exec = function() {
+
+    var success = arguments[0],
+        fail = arguments[1],
+        service = arguement[2],
+        command = arguments[3],
+        args = arguments.slice(4);
+
+        console.log("platformId >"+platformId+"<");
+
+        switch( cordova.platformId ) {
+            case "android":
+                cordova.exec(successCallback, errorCallback, service, command, args);
+                break;
+            case "ios":
+                break;
+            default:
+                console.warn("Warning: Apptentive cannot run on platform", cordova.platformId);
+                break;
+        }
+}
+
 var Apptentive = {
 	
 	init: function(successCallback, errorCallback, apiKey) {
 		console.log("Apptentive.js init called");
 
-        console.log("Platform is:", cordova.platformId);
-
-        switch( cordova.platformId ) {
-            case "android":
-                cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "init", [apiKey]);
-            case "ios":
-            default:
-                console.warn("Warning: Apptentive cannot run on platform", cordova.platformId);
-        }
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "init", [apiKey]);
     },
 
 	event: function(successCallback, errorCallback, event) {
 		console.log("Apptentive.js event called");
+
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "event", [event]);
     },
   
@@ -44,12 +59,13 @@ var Apptentive = {
     },
 
     engage: function(successCallback, errorCallback, eventId, customData) {
+        console.log("Apptentive.engage");
+
         if( customData && typeof customData === 'object' ) {
-            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["engage", eventId, customData]);
+            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "engage", [eventId, customData]);
         } else {
-            console.log("arguments:", arguments);
-            alert("Check console");
-            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["engage", eventId]);
+            console.info("arguments:", arguments);
+            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "engage", [eventId]);
         }
     },
 

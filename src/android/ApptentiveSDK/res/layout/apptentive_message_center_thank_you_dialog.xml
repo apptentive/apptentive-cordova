@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+~ Copyright (c) 2013, Apptentive, Inc. All Rights Reserved.
+~ Please refer to the LICENSE file for the terms and conditions
+~ under which redistribution and use of this file is permitted.
+-->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="fill_parent"
+             android:layout_height="fill_parent"
+             android:paddingLeft="@dimen/apptentive_dialog_side_padding"
+             android:paddingRight="@dimen/apptentive_dialog_side_padding">
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:padding="16dp"
+                  android:background="@drawable/apptentive_dialog_background">
+        <TextView android:id="@+id/title"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginBottom="16dp"
+                  style="@style/ApptentiveInteractionDialogTitle"
+                  android:text="@string/apptentive_thanks"/>
+        <TextView android:id="@+id/body"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginBottom="24dp"
+                  style="@style/ApptentiveInteractionDialogBody"
+                  android:text="@string/apptentive_thank_you_dialog_body"/>
+        <LinearLayout android:layout_width="fill_parent"
+                      android:layout_height="fill_parent"
+                      android:orientation="horizontal">
+            <Button android:id="@+id/close"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_marginRight="4dp"
+                    style="@style/ApptentiveInteractionNegativeButton"
+                    android:text="@string/apptentive_thank_you_dialog_close"/>
+            <Button android:id="@+id/view_messages"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="4dp"
+                    style="@style/ApptentiveInteractionPositiveButton"
+                    android:text="@string/apptentive_thank_you_dialog_view_messages"/>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
