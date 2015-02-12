@@ -36,26 +36,30 @@ public class ApptentiveBridge extends CordovaPlugin {
     // }
 
     public boolean execute(final String action, JSONArray args, CallbackContext callbackContext) throws JSONException  {
-        String msg = "execute "+action;
+        String msg = "execute: "+action;
         Log.v(TAG, msg);
 
         try {
-            if (action.equals("init")) {
-                Log.v(TAG,"ApptentiveBridge init called");
-                this.init(callbackContext);
+
+            if( action.equals('init') ) {
+                Apptentive.onStart(cordova.getActivity());
+                callbackContext.success("Apptentive initted");
+                return true;
+            } else if( action.equals('engage') ) {
+               this.engage(event, callbackContext);
+                return true;
+            } else if( action.equals('showMessageCenter') ) {
+                Apptentive.showMessageCenter(cordova.getActivity());
+                callbackContext.success("Apptentive showMessageCeneter success");
+                return true;
+            } else if( action.equals('getUnreadMessageCount') ) {
+                callbackContext.success( Apptentive.getUnreadMessageCount(cordova.getActivity()) );
+                return true;
+            } else if( action.equals('getUnreadMessageCount') ) {
+                callbackContext.success( Apptentive.getUnreadMessageCount(cordova.getActivity()) );
                 return true;
             }
-            if (action.equals("engage")) {
-                String event = args.getString(0);
-                Log.v(TAG,"ApptentiveBridge event: " + event);
-                this.engage(event, callbackContext);
-                return true;
-            }
-            if (action.equals("showMessageCenter")){
-                //if(args.length() > 1)
-                this.showMessageCenter(callbackContext);
-                return true;
-            }
+
         } catch (Exception e) {
             Log.v(TAG, "SOME ERROR");
         };
@@ -65,35 +69,21 @@ public class ApptentiveBridge extends CordovaPlugin {
         return false;
     }
 
-    private void init(CallbackContext callbackContext) {
-        Log.v(TAG,"init");
-
-    	Apptentive.onStart(cordova.getActivity());
-
-        callbackContext.success("Apptentive initted");
-    }
-
     private void engage(final String event, final CallbackContext callbackContext) {
         Log.v(TAG,"engage");
         Log.v(TAG, event);
 
         if (event != null && event.length() > 0) {
-        	cordova.getThreadPool().execute(new Runnable() {
+            cordova.getThreadPool().execute(new Runnable() {
                     public void run() {
                         Apptentive.engage(cordova.getActivity(),event);
-            			callbackContext.success("engage event " + event);
+                        callbackContext.success("engage event " + event);
                     }
                 });
-        	
+            
         } else {
             callbackContext.error("Invalid engage event. nil or zero length");
         }
     }
 
-    private void showMessageCenter(CallbackContext callbackContext) {
-        Log.v(TAG, "showMessageCenter");
-
-        Apptentive.showMessageCenter(cordova.getActivity());
-        callbackContext.success("Apptentive showMessageCeneter success");
-    }
 }
