@@ -150,18 +150,14 @@ public class ApptentiveBridge extends CordovaPlugin {
         } else if( action.equals(ACTION_PUT_RATING_PROVIDER_ARG) ) {
             String key = args.getString(0);
             String value = args.getString(1);
-            if( key != null && value != null ) {
-                Apptentive.putRatingProviderArg(key, value);
-                callbackContext.success();
-            } else {
-                callbackContext.error("Missing key or value");
-            }
+            Apptentive.putRatingProviderArg(key, value);
+            callbackContext.success();
             return true;
 
         } else if( action.equals(ACTION_REMOVE_CUSTOM_DEVICE_DATA) ) {
             String key = args.getString(0);
             Apptentive.removeCustomDeviceData(cordova.getActivity(), key);
-            // callbackContext.success( "removeCustomDeviceData >"+key+"<" );
+            callbackContext.success();
             return true;
 
         } else if( action.equals(ACTION_REMOVE_CUSTOM_PERSON_DATA) ) {
@@ -223,7 +219,7 @@ public class ApptentiveBridge extends CordovaPlugin {
             
         } else if( action.equals(ACTION_SET_PARSE_PUSH_CALLBACK) ) {
             // FIXME is this possible?
-            // Apptentive.setParsePushCallback(cordova.getActivity());
+            Apptentive.setParsePushCallback(cordova.getActivity().class);
             callbackContext.success( "FIXME" );
             return true;
             
