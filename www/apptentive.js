@@ -28,11 +28,11 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "init", [apiKey]);
     },
 
-	event: function(successCallback, errorCallback, event) {
-		console.log("Apptentive.js event called");
+	// event: function(successCallback, errorCallback, event) {
+	// 	console.log("Apptentive.js event called");
 
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "event", [event]);
-    },
+ //        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "event", [event]);
+ //    },
   
     addAmazonSnsPushIntegration: function(successCallback, errorCallback, registrationId) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addAmazonSnsPushIntegration", [registrationId]);
@@ -64,29 +64,28 @@ var Apptentive = {
         if( customData && typeof customData === 'object' ) {
             cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "engage", [eventId, customData]);
         } else {
-            console.info("arguments:", arguments);
             cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "engage", [eventId]);
         }
     },
 
     getUnreadMessageCount: function(successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "getUnreadMessageCount");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "getUnreadMessageCount", []);
     },
 
     handleOpenedPushNotification: function(successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "handleOpenedPushNotification");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "handleOpenedPushNotification", []);
     },
 
     isApptentivePushNotification: function(successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "isApptentivePushNotification");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "isApptentivePushNotification", []);
     },
 
     onStart: function(successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "onStart");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "onStart", []);
     },
 
     onStop: function(successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "onStop");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "onStop", []);
     },
 
     putRatingProviderArg: function(successCallback, errorCallback, key, value) {
@@ -101,12 +100,12 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "removeCustomPersonData", [key]);
     },
 
-    sendAttachmentFile: function(successCallback, errorCallback, uri, mimeType) {
-        if(mimeType) {
-            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "sendAttachmentFile", [uri, mimeType]);
-        } else {
-            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "sendAttachmentFile", [uri]);
-        }
+    sendAttachmentFileUri: function(successCallback, errorCallback, uri) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "sendAttachmentFile", [uri]);
+    },
+
+    sendAttachmentFile: function(successCallback, errorCallback, content, mimeType) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "sendAttachmentFile", [content, mimeType]);
     },
 
     sendAttachmentText: function(successCallback, errorCallback, text) {
@@ -134,7 +133,7 @@ var Apptentive = {
     },
 
     setParsePushCallback: function(successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setParsePushCallback");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setParsePushCallback", []);
     },
 
     setPendingPushNotification: function(successCallback, errorCallback, intent) {
@@ -163,8 +162,8 @@ var Apptentive = {
         }
     },
 
-    willShowInteraction: function(successCallback, errorCallback, event) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setRatingProvider", [event]);
+    willShowInteraction: function(successCallback, errorCallback, eventId) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "willShowInteraction", [eventId]);
     }
 }
 
