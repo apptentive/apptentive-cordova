@@ -91,7 +91,8 @@ public class ApptentiveBridge extends CordovaPlugin {
             return true;
 
         } else if( action.equals(ACTION_ADD_AMAZON_SNS_PUSH_INTEGRATION) ) {
-            this.addAmazonSnsPushIntegration(args, callbackContext);
+            String regId = args.getString(0);
+            Apptentive.addAmazonSnsPushIntegration(cordova.getActivity(), regId);
             return true;
 
         } else if( action.equals(ACTION_ADD_CUSTOM_DEVICE_DATA) ) {
@@ -219,7 +220,7 @@ public class ApptentiveBridge extends CordovaPlugin {
             
         } else if( action.equals(ACTION_SET_PARSE_PUSH_CALLBACK) ) {
             // FIXME is this possible?
-            Apptentive.setParsePushCallback(cordova.getActivity().class);
+            // Apptentive.setParsePushCallback(cordova.getActivity().class);
             callbackContext.success( "FIXME" );
             return true;
             
@@ -239,7 +240,7 @@ public class ApptentiveBridge extends CordovaPlugin {
                 public void onSurveyFinished( boolean finished ) {
                     int completed = finished ? 1 : 0;
                     PluginResult result = new PluginResult(PluginResult.Status.OK, completed);
-                    // result.setKeepCallback(true) allows the callback to be used more than one time
+                    // NOTE: result.setKeepCallback(true) allows the callback to be used more than one time
                     result.setKeepCallback(true);
                     callbackContext.sendPluginResult( result );
                 }
@@ -251,52 +252,4 @@ public class ApptentiveBridge extends CordovaPlugin {
         callbackContext.error("Unhandled action in ApptentiveBridge: "+action);
         return false;
     }
-
-    private void addAmazonSnsPushIntegration(final JSONArray args, final CallbackContext callbackContext) {
-        Log.v(TAG, "addAmazonSnsPushIntegration");
-        
-        if( this.checkPlayServices() ) {
-
-            cordova.getThreadPool().execute(
-                new Runnable() {
-                    public void run() {
-                        String regId = null;
-
-                        String senderId = "950804752062";   //TODO change to get this inserted in stings.xml or some other config file
-
-                        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(cordova.getActivity());
-
-                        if( gcm == null ) {
-                            Log.v(TAG, "gcm is null");
-                        }
-
-                        try {
-                            regId = gcm.register(senderId);
-
-                            Apptentive.addAmazonSnsPushIntegration(cordova.getActivity(), regId);
-                        } catch (IOException ex) {
-                            callbackContext.success(  "Error :" + ex.getMessage() );
-                        }
-                        callbackContext.success( regId );
-                    }
-                }
-            );
-        } else {
-            callbackContext.error( "Google Play Service NOT available" );
-        }
-    }
-
-    private boolean checkPlayServices() {
-        Log.v(TAG, "checkPlayServices");
-
-        int result = GooglePlayServicesUtil.isGooglePlayServicesAvailable(cordova.getActivity());
-        if( result == ConnectionResult.SUCCESS ) {
-            Log.v(TAG, "Goole Play service is available");
-            return true;
-        } else {
-            Log.v(TAG, "Goole Play service is NOT available");
-            return false;
-        }
-    }
-
 }

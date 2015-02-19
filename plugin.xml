@@ -16,13 +16,13 @@
         <clobbers target="navigator.Apptentive" />
     </js-module>
 
+    <dependency id="com.phonegap.plugins.PushPlugin" url="https://github.com/phonegap-build/PushPlugin" />
 
     <!-- android -->
     <platform name="android">
         
         <preference name="API_KEY" />
         
-        <!-- <dependency id="com.google.playservices" url="cordova plugin add https://github.com/MobileChromeApps/google-play-services.git" /> -->
         <dependency id="com.google.playservices@21.0.0" url="https://github.com/MobileChromeApps/google-play-services" />
 
         <config-file target="res/xml/config.xml" parent="/*">
@@ -31,35 +31,45 @@
             </feature>
         </config-file>
         
-        <config-file target="AndroidManifest.xml" parent="/*">
-            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-            <uses-permission android:name="android.permission.INTERNET"/>
-            <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
 
-            <!-- GET_ACCOUNTS IS OPTIONAL -->
-            <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.INTERNET"/>
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
             
-            <permission android:name="com.cordova.apptentive.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-            <uses-permission android:name="com.cordova.apptentive.permission.C2D_MESSAGE" />
+            <!-- GET_ACCOUNTS IS OPTIONAL -->
+            <!-- <uses-permission android:name="android.permission.GET_ACCOUNTS"/> -->
 
             <!-- Make sure to support high resolution screens so Apptentive's UI looks great. -->
              <supports-screens android:largeScreens="true" android:normalScreens="true" android:smallScreens="true" android:anyDensity="true"/>
         </config-file>
         
+
+
         <config-file target="AndroidManifest.xml" parent="application">
-            <meta-data android:name="apptentive_api_key" android:value="$API_KEY"/>
+            <!-- TODO REMOVE AFTER DEVELOPMENT IS COMPLETE -->
             <meta-data android:name="apptentive_log_level" android:value="VERBOSE"/>
             <meta-data android:name="apptentive_debug" android:value="true"/>
-
+            
+            <activity android:name="com.apptentive.android.sdk.ViewActivity" android:theme="@style/Apptentive.Theme.Transparent"/>
+            <meta-data android:name="apptentive_api_key" android:value="$API_KEY"/>
+            
+            <!-- 
             <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
             <activity android:name="com.apptentive.android.sdk.ViewActivity" android:theme="@style/Apptentive.Theme.Transparent"/>
-            <receiver android:name="com.apptentive.android.sdk.comm.NetworkStateReceiver">
+            <receiver android:name="com.apptentive.android.sdk.comm.NetworkStateReceiver" >
                 <intent-filter>
                     <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
                 </intent-filter>
             </receiver>
+             -->
+
+
         </config-file>
 
+
+
+        <!-- Points to all apptentive integration files -->
         <framework src="src/android/ApptentiveSDK" custom="true" />
         <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova/bridge" />
         <source-file src="src/android/JsonHelper.java" target-dir="src/com/apptentive/cordova/bridge" />
