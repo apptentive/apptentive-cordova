@@ -3,6 +3,8 @@ package com.apptentive.cordova.bridge;
 import android.util.Log;
 import android.provider.Settings;
 import android.widget.Toast;
+import android.content.Intent;
+import android.os.Bundle;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.apptentive.android.sdk.module.messagecenter.UnreadMessagesListener;
@@ -14,6 +16,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Iterator;
 
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.CallbackContext;
@@ -54,6 +57,7 @@ public class ApptentiveBridge extends CordovaPlugin {
     private static final String ACTION_SET_PARSE_PUSH_CALLBACK = "setParsePushCallback";
     private static final String ACTION_SET_UNREAD_MESSAGE_LISTENER = "setUnreadMessagesListener";
     private static final String ACTION_SET_ON_SURVEY_FINISHED_LISTENER = "setOnSurveyFinishedListener";
+    private static final String ACTION_SET_PENDING_PUSH_NOTIFICATION = "setPendingPushNotification";
 
     /**
     * Constructor.
@@ -77,7 +81,7 @@ public class ApptentiveBridge extends CordovaPlugin {
 
         if( action.equals(ACTION_INIT) ) {
             Apptentive.onStart(cordova.getActivity());
-            callbackContext.success("Apptentive initted");
+            callbackContext.success();
             return true;
 
         } else if( action.equals(ACTION_SHOW_MESSAGE_CENTER) ) {
@@ -135,17 +139,36 @@ public class ApptentiveBridge extends CordovaPlugin {
             return true;
 
         } else if( action.equals(ACTION_GET_UNREAD_MESSAGE_COUNT) ) {
+
             callbackContext.success( Apptentive.getUnreadMessageCount(cordova.getActivity()) );
             return true;
             
+        } else if( action.equals(ACTION_SET_PENDING_PUSH_NOTIFICATION) ) {
+            JSONObject notificationPayload = args.getJSONObject(0);
+            Intent intent = cordova.getActivity().getIntent();
+
+            // Add the original notification payload back to the current intent for the Apptentive SDK to access
+            String key = null;
+            for(Iterator it = notificationPayload.keys(); it.hasNext();) {
+                key = (String) it.next();
+                intent.putExtra(key, notificationPayload.getString(key));
+                Log.i(TAG, "     "+key+": "+notificationPayload.getString(key));
+            }
+
+            Apptentive.setPendingPushNotification(cordova.getActivity(), intent );
+            callbackContext.success();
+            return true;
+            
         } else if( action.equals(ACTION_HANDLE_OPENED_PUSH_NOTIFICATION) ) {
+            Log.v(TAG, ACTION_HANDLE_OPENED_PUSH_NOTIFICATION);
+
             Apptentive.handleOpenedPushNotification(cordova.getActivity());
             callbackContext.success();
             return true;
             
         } else if( action.equals(ACTION_IS_APPTENTIVE_PUSH_NOTIFICATION) ) {
             // TODO
-            callbackContext.success( "TODO" );
+            callbackContext.success();
             return true;
             
         } else if( action.equals(ACTION_PUT_RATING_PROVIDER_ARG) ) {

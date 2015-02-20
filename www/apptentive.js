@@ -1,25 +1,3 @@
-var exec = function() {
-
-    var success = arguments[0],
-        fail = arguments[1],
-        service = arguement[2],
-        command = arguments[3],
-        args = arguments.slice(4);
-
-        console.log("platformId >"+platformId+"<");
-
-        switch( cordova.platformId ) {
-            case "android":
-                cordova.exec(successCallback, errorCallback, service, command, args);
-                break;
-            case "ios":
-                break;
-            default:
-                console.warn("Warning: Apptentive cannot run on platform", cordova.platformId);
-                break;
-        }
-}
-
 var Apptentive = {
 	
 	init: function(successCallback, errorCallback, apiKey) {
@@ -28,12 +6,6 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "init", [apiKey]);
     },
 
-	// event: function(successCallback, errorCallback, event) {
-	// 	console.log("Apptentive.js event called");
-
- //        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "event", [event]);
- //    },
-  
     addAmazonSnsPushIntegration: function(successCallback, errorCallback, registrationId) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addAmazonSnsPushIntegration", [registrationId]);
     },
@@ -53,7 +25,6 @@ var Apptentive = {
     addParsePushIntegration: function(successCallback, errorCallback, deviceToken) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addParsePushItegration", [deviceToken]);
     },
-
     addUrbanAirshipPushIntegration: function(successCallback, errorCallback, appId) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addUrbanAirshipPushIntegration", [appId]);
     },
@@ -73,11 +44,24 @@ var Apptentive = {
     },
 
     handleOpenedPushNotification: function(successCallback, errorCallback) {
+        console.log("Apptentive.handleOpenedPushNotification");
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "handleOpenedPushNotification", []);
     },
 
-    isApptentivePushNotification: function(successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "isApptentivePushNotification", []);
+    isApptentivePushNotification: function(successCallback, errorCallback, notificationPayload) {
+        console.log("All arguments:", arguments);
+        console.log("Apptentive.isApptentivePushNotification", notificationPayload);
+        if (notificationPayload) {
+            if (notificationPayload.action && notificationPayload.action === "com.apptentive.PUSH") {
+                // This came from Parse.
+                return true;
+            }
+            if (notificationPayload.apptentive) {
+                // This came from another push provider.
+                return true;
+            }
+        }
+        return false;
     },
 
     onStart: function(successCallback, errorCallback) {
@@ -136,10 +120,9 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setParsePushCallback", []);
     },
 
-    setPendingPushNotification: function(successCallback, errorCallback, intent) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setPendingPushNotification", [intent]);
+    setPendingPushNotification: function(successCallback, errorCallback, intentPayload) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setPendingPushNotification", [intentPayload]);
     },
-
     setProperty: function(success_callback, error_callback, property_id, value) {
         cordova.exec(success_callback, error_callback, "ApptentiveBridge", "setProperty", [property_id, value]);
     },
