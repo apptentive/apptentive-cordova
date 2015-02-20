@@ -12,16 +12,16 @@
     </engines>
     
 
-    <js-module src="www/apptentive.js" name="Apptentive">
-        <clobbers target="navigator.Apptentive" />
-    </js-module>
-
     <dependency id="com.phonegap.plugins.PushPlugin" url="https://github.com/phonegap-build/PushPlugin" />
 
     <!-- android -->
     <platform name="android">
         <!-- Require API key -->
-        <!-- <preference name="ANDROID_API_KEY" /> -->
+        <preference name="ANDROID_API_KEY" />
+
+        <js-module src="www/ApptentiveAndroid.js" name="Apptentive">
+            <clobbers target="Apptentive" />
+        </js-module>
         
         <dependency id="com.google.playservices@21.0.0" url="https://github.com/MobileChromeApps/google-play-services" />
 
@@ -62,7 +62,11 @@
     <!-- ios -->
     <platform name="ios">
         <!-- Require API key -->
-        <preference name="IOS_API_KEY" /> 
+        <!-- <preference name="IOS_API_KEY" />  -->
+
+        <js-module src="www/ApptentIos.js" name="Apptentive">
+            <clobbers target="Apptentive" />
+        </js-module>
 
         <config-file target="config.xml" parent="/widget">
             <feature name="ApptentiveBridge">
