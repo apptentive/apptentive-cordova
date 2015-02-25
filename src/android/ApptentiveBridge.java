@@ -121,8 +121,11 @@ public class ApptentiveBridge extends CordovaPlugin {
             return true;
             
         } else if( action.equals(ACTION_ADD_PARSE_PUSH_INTEGRATION) ) {
+            Log.v(TAG, "trying to add parse push integration");
             String deviceToken = args.getString(0);
+            Log.v(TAG, "Parse push device token: "+deviceToken);
             Apptentive.addParsePushIntegration(cordova.getActivity(), deviceToken);
+            Log.v(TAG, "done adding parse push integration");
             callbackContext.success();
             return true;
             
@@ -139,7 +142,6 @@ public class ApptentiveBridge extends CordovaPlugin {
             return true;
 
         } else if( action.equals(ACTION_GET_UNREAD_MESSAGE_COUNT) ) {
-
             callbackContext.success( Apptentive.getUnreadMessageCount(cordova.getActivity()) );
             return true;
             
@@ -147,10 +149,12 @@ public class ApptentiveBridge extends CordovaPlugin {
             JSONObject notificationPayload = args.getJSONObject(0);
             Intent intent = cordova.getActivity().getIntent();
 
-            // Add the original notification payload back to the current intent for the Apptentive SDK to access
+            // The payload(bundle) from the original intent that created the notification is stripped
+            // off by the Cordova Plugin system. To compensate for this we need to add the original
+            // notification payload back to the current intent for the Apptentive SDK to access correctly
             String key = null;
             for(Iterator it = notificationPayload.keys(); it.hasNext();) {
-                key = (String) it.next();
+                key = (String)it.next();
                 intent.putExtra(key, notificationPayload.getString(key));
                 Log.i(TAG, "     "+key+": "+notificationPayload.getString(key));
             }
@@ -167,9 +171,7 @@ public class ApptentiveBridge extends CordovaPlugin {
             return true;
             
         } else if( action.equals(ACTION_IS_APPTENTIVE_PUSH_NOTIFICATION) ) {
-            // TODO
-            callbackContext.success();
-            return true;
+            // This is handled only in the plugin javascript due to not having access to the intent
             
         } else if( action.equals(ACTION_PUT_RATING_PROVIDER_ARG) ) {
             String key = args.getString(0);
@@ -242,9 +244,8 @@ public class ApptentiveBridge extends CordovaPlugin {
             return true;
             
         } else if( action.equals(ACTION_SET_PARSE_PUSH_CALLBACK) ) {
-            // FIXME is this possible?
-            // Apptentive.setParsePushCallback(cordova.getActivity().class);
-            callbackContext.success( "FIXME" );
+            Apptentive.setParsePushCallback(cordova.getActivity().getClass());
+            callbackContext.success();
             return true;
             
         } else if( action.equals(ACTION_SET_UNREAD_MESSAGE_LISTENER) ) {
@@ -271,6 +272,8 @@ public class ApptentiveBridge extends CordovaPlugin {
             Apptentive.setOnSurveyFinishedListener( listener );
             return true;
         }
+
+        Log.w(TAG, "Unhandled action in ApptentiveBridge:"+action);
 
         callbackContext.error("Unhandled action in ApptentiveBridge: "+action);
         return false;

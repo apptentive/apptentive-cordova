@@ -13,7 +13,7 @@
     
     //initialization
     if ([functionCall isEqualToString:@"init"]) {
-        [self initWithAPIKey:[command arguments] callBackString:callbackId];
+        [self initAPIKey:callbackId];
         return;
     }
     if (!apptentiveInitted) {
@@ -35,13 +35,19 @@
         [self addIntegration:[command arguments] callBackString:callbackId];
     }
     else if ([functionCall isEqualToString:@"addIntegrationWithDeviceToken"]) {
-        [self addIntegrationWithDeviceToken:[command arguments] callBackString:callbackId];
+        [self addIntegration:[command arguments] callBackString:callbackId];
+    }
+    else if ([functionCall isEqualToString:@"addParsePushIntegration"]) {
+        [self addParseIntegrationWithDeviceToken:[command arguments] callBackString:callbackId];
     }
     else if ([functionCall isEqualToString:@"addUrbanAirshipPushIntegration"]) {
         [self addUrbanAirshipIntegrationWithDeviceToken:[command arguments] callBackString:callbackId];
     }
     else if ([functionCall isEqualToString:@"engage"]) {
         [self engage:[command arguments] callBackString:callbackId];
+    }
+    else if ([functionCall isEqualToString:@"forwardPushNotificationToApptentive"]) {
+        [self forwardPushNotificationToApptentive:[command arguments] callBackString:callbackId];
     }
     else if ([functionCall isEqualToString:@"openAppStore"]) {
         [self openAppStore];
@@ -137,20 +143,17 @@
 }
 
 #pragma mark Initialization and Events
-- (void)initWithAPIKey:(NSArray*)arguments callBackString:(NSString*)callbackId {
-    if (arguments.count < 3) {
-        [self sendFailureMessage:@"Insufficient arguments - no apiKey and app ID" callbackId:callbackId];
+- (void)initAPIKey:(NSString*)callbackId {
+    //access info.plist for API key
+    NSDictionary *infoPlist = [[NSBundle mainBundle] infoDictionary];
+    NSString *apiKey = [infoPlist objectForKey:@"Apptentive_API_KEY"];
+    if (!apiKey) {
+        [self sendFailureMessage:@"Insufficient arguments - no apiKey" callbackId:callbackId];
         return;
     }
-    NSString* apiKey = [arguments objectAtIndex:1];
     if (![apiKey isEqualToString:@""]) {
         [ATConnect sharedConnection].apiKey = apiKey;
         apptentiveInitted = YES;
-    }
-    //appID not required for successul init, it only is used for linking to app store
-    NSString* appID = [arguments objectAtIndex:2];
-    if (![appID isEqual:[NSNull null]]) {
-        [ATConnect sharedConnection].appID = appID;
     }
 }
 
@@ -226,10 +229,10 @@
     else if ([property_id isEqualToString:@"customPlaceholderText"]) {
         [ATConnect sharedConnection].customPlaceholderText = value;
     }
-    else if ([property_id isEqualToString:@"useMessageCenter"]) {
-        //warning - useMessageCenter is deprecated
-        [ATConnect sharedConnection].useMessageCenter = [self parseBoolValue:value];
-    }
+//    else if ([property_id isEqualToString:@"useMessageCenter"]) {
+//        //warning - useMessageCenter is deprecated
+//        [ATConnect sharedConnection].useMessageCenter = [self parseBoolValue:value];
+//    }
     else if ([property_id isEqualToString:@"initiallyUseMessageCenter"]) {
         [ATConnect sharedConnection].initiallyUseMessageCenter = [self parseBoolValue:value];
     }
@@ -254,43 +257,44 @@
 
 #pragma mark Methods
 
-- (void) addAmazonSNSIntegrationWithDeviceToken:(NSArray*)arguments callBackString:(NSString*)callbackId {
-    NSData* data = [[arguments objectAtIndex:1] dataUsingEncoding:NSUTF8StringEncoding];
+- (void) addAmazonSNSIntegrationWithDeviceToken:(NSArray*)arguments callBackString:(NSString*)callbackId  {
+    NSString* deviceToken = [arguments objectAtIndex:1];
+    NSData* data = [deviceToken dataUsingEncoding:NSUTF8StringEncoding];
     [[ATConnect sharedConnection] addAmazonSNSIntegrationWithDeviceToken:data];
 }
 
 - (void) addCustomDeviceData:(NSArray*)arguments callBackString:(NSString*)callbackId {
-    id value = [arguments objectAtIndex:1];
-    NSString* key = [arguments objectAtIndex:2];
+    NSString* key = [arguments objectAtIndex:1];
+    id value = [arguments objectAtIndex:2];
     if ([value isKindOfClass:[NSString class]]) {
         NSString* stringData = value;
         [[ATConnect sharedConnection] addCustomDeviceData:stringData withKey:key];
     }
-    else if ([value isKindOfClass:[NSNumber class]]) {
-        NSDate* dateData = value;
-        [[ATConnect sharedConnection] addCustomDeviceData:dateData withKey:key];
-    }
-    else if ([value isKindOfClass:[NSNumber class]]) {
-        NSNumber* numberData = value;
-        [[ATConnect sharedConnection] addCustomDeviceData:numberData withKey:key];
-    }
+//    else if ([value isKindOfClass:[NSNumber class]]) {
+//        NSDate* dateData = value;
+//        [[ATConnect sharedConnection] addCustomDeviceData:dateData withKey:key];
+//    }
+//    else if ([value isKindOfClass:[NSNumber class]]) {
+//        NSNumber* numberData = value;
+//        [[ATConnect sharedConnection] addCustomDeviceData:numberData withKey:key];
+//    }
 }
 
 - (void) addCustomPersonData:(NSArray*)arguments callBackString:(NSString*)callbackId {
-    id value = [arguments objectAtIndex:1];
-    NSString* key = [arguments objectAtIndex:2];
+    NSString* key = [arguments objectAtIndex:1];
+    id value = [arguments objectAtIndex:2];
     if ([value isKindOfClass:[NSString class]]) {
         NSString* stringData = value;
         [[ATConnect sharedConnection] addCustomPersonData:stringData withKey:key];
     }
-    else if ([value isKindOfClass:[NSNumber class]]) {
-        NSDate* dateData = value;
-        [[ATConnect sharedConnection] addCustomPersonData:dateData withKey:key];
-    }
-    else if ([value isKindOfClass:[NSNumber class]]) {
-        NSNumber* numberData = value;
-        [[ATConnect sharedConnection] addCustomPersonData:numberData withKey:key];
-    }
+//    else if ([value isKindOfClass:[NSNumber class]]) {
+//        NSDate* dateData = value;
+//        [[ATConnect sharedConnection] addCustomPersonData:dateData withKey:key];
+//    }
+//    else if ([value isKindOfClass:[NSNumber class]]) {
+//        NSNumber* numberData = value;
+//        [[ATConnect sharedConnection] addCustomPersonData:numberData withKey:key];
+//    }
 }
 
 - (void) addIntegration:(NSArray*)arguments callBackString:(NSString*)callbackId {
@@ -299,14 +303,22 @@
     [[ATConnect sharedConnection] addIntegration:integration withConfiguration:configuration];
 }
 
-- (void) addIntegrationWithDeviceToken:(NSArray*)arguments callBackString:(NSString*)callbackId {
+- (void) addIntegrationWithDeviceToken:(NSArray*)arguments callBackString:(NSString*)callbackId  {
     NSString* integration = [arguments objectAtIndex:1];
-    NSData* token = [[arguments objectAtIndex:2] dataUsingEncoding:NSUTF8StringEncoding];
+    NSString* deviceToken = [arguments objectAtIndex:2];
+    NSData* token = [deviceToken dataUsingEncoding:NSUTF8StringEncoding];
     [[ATConnect sharedConnection] addIntegration:integration withDeviceToken:token];
 }
 
-- (void) addUrbanAirshipIntegrationWithDeviceToken:(NSArray*)arguments callBackString:(NSString*)callbackId {
-    NSData* data = [[arguments objectAtIndex:1] dataUsingEncoding:NSUTF8StringEncoding];
+- (void) addParseIntegrationWithDeviceToken:(NSArray*)arguments callBackString:(NSString*)callbackId  {
+    NSString* deviceToken = [arguments objectAtIndex:1];
+    NSData* data = [deviceToken dataUsingEncoding:NSUTF8StringEncoding];
+    [[ATConnect sharedConnection] addParseIntegrationWithDeviceToken:data];
+}
+
+- (void) addUrbanAirshipIntegrationWithDeviceToken:(NSArray*)arguments callBackString:(NSString*)callbackId  {
+    NSString* deviceToken = [arguments objectAtIndex:1];
+    NSData* data = [deviceToken dataUsingEncoding:NSUTF8StringEncoding];
     [[ATConnect sharedConnection] addUrbanAirshipIntegrationWithDeviceToken:data];
 }
 
@@ -327,6 +339,11 @@
         }
         [[ATConnect sharedConnection] engage:eventLabel withCustomData:customData fromViewController:self.viewController];
     }
+}
+
+- (void) forwardPushNotificationToApptentive:(NSArray*)arguments callBackString:(NSString*)callbackId {
+    NSDictionary *userInfo = [self parseDictionaryFromString:[arguments objectAtIndex:1]];
+    [[ATConnect sharedConnection] didReceiveRemoteNotification:userInfo fromViewController:self.viewController];
 }
 
 - (void) openAppStore {

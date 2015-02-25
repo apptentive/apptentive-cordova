@@ -62,20 +62,38 @@
     <!-- ios -->
     <platform name="ios">
         <!-- Require API key -->
-        <!-- <preference name="IOS_API_KEY" />  -->
-
-        <js-module src="www/ApptentIos.js" name="Apptentive">
-            <clobbers target="Apptentive" />
-        </js-module>
-
+        <preference name="IOS_API_KEY" />
+        
         <config-file target="config.xml" parent="/widget">
             <feature name="ApptentiveBridge">
                 <param name="ios-package" value="ApptentiveBridge" />
             </feature>
         </config-file>
         
+        <config-file target="*-Info.plist" parent="Apptentive_API_KEY">
+                <key>"Apptentive_API_KEY"</key>
+                <string>$IOS_API_KEY</string>
+        </config-file>
+        
+        <!-- ApptentiveBridge -->
         <header-file src="src/ios/ApptentiveBridge.h" target-dir="Apptentive"/>
         <source-file src="src/ios/ApptentiveBridge.m" target-dir="Apptentive"/>
+        
+        <!-- Apptentive SDK -->
+        <source-file src="src/ios/apptentive_ios_sdk-1.7.1/libApptentiveConnect.a" framework="true" target-dir="apptentive_ios_sdk-1.7.1"/>
+        <resource-file src="src/ios/apptentive_ios_sdk-1.7.1/ApptentiveResources.bundle" target-dir="apptentive_ios_sdk-1.7.1"/>
+        <header-file src="src/ios/apptentive_ios_sdk-1.7.1/include/ATConnect.h"  target-dir="apptentive_ios_sdk-1.7.1" />
+        
+        <!-- required system frameworks -->
+        <framework src="Accelerate.framework" weak="true" />
+        <framework src="CoreData.framework" weak="true" />
+        <framework src="CoreTelephony.framework" weak="true" />
+        <framework src="CoreText.framework" weak="true" />
+        <framework src="Foundation.framework" weak="true" />
+        <framework src="QuartzCore.framework" weak="true" />
+        <framework src="Storekit.framework" weak="true" />
+        <framework src="SystemConfiguration.framework" weak="true" />
+        <framework src="UIKit.framework" weak="true" />
     </platform>
     
 </plugin>

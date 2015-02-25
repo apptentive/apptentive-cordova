@@ -1,7 +1,7 @@
 var Apptentive = {
-	
-	init: function(successCallback, errorCallback, apiKey) {
-		console.log("Apptentive.js init called");
+    
+    init: function(successCallback, errorCallback, apiKey) {
+        console.log("Apptentive.js init called");
 
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "init", [apiKey]);
     },
@@ -23,15 +23,15 @@ var Apptentive = {
     },
 
     addParsePushIntegration: function(successCallback, errorCallback, deviceToken) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addParsePushItegration", [deviceToken]);
+        console.log("Apptentive.addParsePushIntegration");
+        
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addParsePushIntegration", [deviceToken]);
     },
     addUrbanAirshipPushIntegration: function(successCallback, errorCallback, appId) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addUrbanAirshipPushIntegration", [appId]);
     },
 
     engage: function(successCallback, errorCallback, eventId, customData) {
-        console.log("Apptentive.engage");
-
         if( customData && typeof customData === 'object' ) {
             cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "engage", [eventId, customData]);
         } else {
@@ -44,12 +44,10 @@ var Apptentive = {
     },
 
     handleOpenedPushNotification: function(successCallback, errorCallback) {
-        console.log("Apptentive.handleOpenedPushNotification");
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "handleOpenedPushNotification", []);
     },
 
     isApptentivePushNotification: function(successCallback, errorCallback, notificationPayload) {
-        console.log("All arguments:", arguments);
         console.log("Apptentive.isApptentivePushNotification", notificationPayload);
         if (notificationPayload) {
             if (notificationPayload.action && notificationPayload.action === "com.apptentive.PUSH") {
@@ -131,8 +129,8 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setRatingProvider", [ratingProvider]);
     },
 
-    setUnreadMessagesListener: function(successCallback, errorCallback, listener) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setUnreadMessagesListener", [listener]);
+    setUnreadMessagesListener: function(unreadMessagesCallback, errorCallback) {
+        cordova.exec(unreadMessagesCallback, errorCallback, "ApptentiveBridge", "setUnreadMessagesListener", []);
     },
 
     showMessageCenter: function(successCallback, errorCallback, customData) {
