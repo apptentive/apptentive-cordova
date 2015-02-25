@@ -63,6 +63,10 @@
     <platform name="ios">
         <!-- Require API key -->
         <preference name="IOS_API_KEY" />
+
+        <js-module src="www/ApptentiveIos.js" name="Apptentive">
+            <clobbers target="Apptentive" />
+        </js-module>
         
         <config-file target="config.xml" parent="/widget">
             <feature name="ApptentiveBridge">
