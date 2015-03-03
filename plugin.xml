@@ -10,9 +10,6 @@
     <engines>
         <engine name="cordova" version=">=3.6.0" />
     </engines>
-    
-
-    <dependency id="com.phonegap.plugins.PushPlugin" url="https://github.com/phonegap-build/PushPlugin" />
 
     <!-- android -->
     <platform name="android">
