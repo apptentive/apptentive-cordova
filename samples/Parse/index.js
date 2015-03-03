@@ -41,10 +41,10 @@ var app = {
         // ---- Init Parse here ----
         var appId = "YOUR_PARSE_APP_ID";           // -- change to your app id
         var clientKey = "YOUR_PARSE_CLIENT_KEY";   // -- change to your client key  
-        parsePlugin.initialize(appId, clientKey, function() {
-
+        parsePlugin.initialize(appId, clientKey, "window.onNotificationAPN", function() {
 			parsePlugin.getDeviceToken(function(deviceToken) {
 				// ---- device token returned successfully, now register Parse with Apptentive
+				alert(deviceToken);
 				Apptentive.addParsePushIntegration(apptentiveSuccess, apptentiveFailure, deviceToken);
 	        }, function(e) {
 	            alert('error');
@@ -53,6 +53,14 @@ var app = {
 		}, function(e) {
 		    alert('error');
 		});
+		
+		// handle APNS notifications for iOS
+        window.onNotificationAPN = function(e) {
+            if (e) {
+	            //forward the notification to Apptentive - if it is an Apptentive message, it will be processed, otherwise ignored
+                 Apptentive.forwardPushNotificationToApptentive(apptentiveSuccess, apptentiveFailure, e);
+            }
+        }
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
