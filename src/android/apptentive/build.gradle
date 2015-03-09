@@ -1,0 +1,34 @@
+apply plugin: 'com.android.library'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.0.1'
+    }
+}
+
+android {
+    compileSdkVersion 15
+    buildToolsVersion '21.1.2'
+
+    defaultConfig {
+        minSdkVersion 7
+        targetSdkVersion 21
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            res.srcDirs = ['res']
+        }
+    }
+}
+
+apply from: '../maven_push.gradle'
