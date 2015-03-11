@@ -13,25 +13,30 @@
 
     <!-- android -->
     <platform name="android">
+
         <!-- Require API key -->
         <preference name="ANDROID_API_KEY" />
 
+        <!-- Define namespace for javascript reference -->
         <js-module src="www/ApptentiveAndroid.js" name="Apptentive">
             <clobbers target="Apptentive" />
         </js-module>
-        
+
+        <!-- Add dependencies -->
         <dependency id="com.google.playservices@21.0.0" url="https://github.com/MobileChromeApps/google-play-services" />
 
+        <!-- Setup Cordova config.xml file -->
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="ApptentiveBridge" >
-                <param name="android-package" value="com.apptentive.cordova.bridge.ApptentiveBridge"/>
+                <param name="android-package" value="com.apptentive.cordova.ApptentiveBridge"/>
             </feature>
         </config-file>
-        
+
+        <!-- Setup Android Manifest file for plugin -->
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.INTERNET"/>
             <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-            
+
             <!-- GET_ACCOUNTS IS OPTIONAL -->
             <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
@@ -40,19 +45,14 @@
         </config-file>
         
         <config-file target="AndroidManifest.xml" parent="application">
-            <!-- TODO REMOVE AFTER DEVELOPMENT IS COMPLETE -->
-            <meta-data android:name="apptentive_log_level" android:value="VERBOSE"/>
-            <meta-data android:name="apptentive_debug" android:value="true"/>
-            
             <activity android:name="com.apptentive.android.sdk.ViewActivity" android:theme="@style/Apptentive.Theme.Transparent"/>
             <meta-data android:name="apptentive_api_key" android:value="$ANDROID_API_KEY"/>
         </config-file>
 
-        <!-- Grab all the apptentive integration files -->
-        <framework src="src/android/ApptentiveSDK" custom="true" />
-        <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova/bridge" />
-        <source-file src="src/android/JsonHelper.java" target-dir="src/com/apptentive/cordova/bridge" />
-
+        <!-- Copy over all the apptentive integration files and native SDK -->
+        <framework src="src/android/apptentive" custom="true" />
+        <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova" />
+        <source-file src="src/android/JsonHelper.java" target-dir="src/com/apptentive/cordova" />
     </platform>
     
 

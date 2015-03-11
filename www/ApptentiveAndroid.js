@@ -23,13 +23,13 @@ var Apptentive = {
     },
 
     addParsePushIntegration: function(successCallback, errorCallback, deviceToken) {
-        console.log("Apptentive.addParsePushIntegration");
-        
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addParsePushIntegration", [deviceToken]);
     },
-    addUrbanAirshipPushIntegration: function(successCallback, errorCallback, appId) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addUrbanAirshipPushIntegration", [appId]);
-    },
+
+    // Disabled until native integration is fixed
+    // addUrbanAirshipPushIntegration: function(successCallback, errorCallback, appId) {
+    //     cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addUrbanAirshipPushIntegration", [appId]);
+    // },
 
     engage: function(successCallback, errorCallback, eventId, customData) {
         if( customData && typeof customData === 'object' ) {
@@ -121,6 +121,7 @@ var Apptentive = {
     setPendingPushNotification: function(successCallback, errorCallback, intentPayload) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setPendingPushNotification", [intentPayload]);
     },
+    
     setProperty: function(success_callback, error_callback, property_id, value) {
         cordova.exec(success_callback, error_callback, "ApptentiveBridge", "setProperty", [property_id, value]);
     },

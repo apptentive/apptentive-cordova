@@ -1,4 +1,4 @@
-package com.apptentive.cordova.bridge;
+package com.apptentive.cordova;
 
 import android.util.Log;
 import android.provider.Settings;
@@ -64,18 +64,6 @@ public class ApptentiveBridge extends CordovaPlugin {
     */
     public ApptentiveBridge() {}
 
-    /**
-    * Sets the context of the Command. This can then be used to do things like
-    * get file paths associated with the Activity.
-    *
-    * @param cordova The context of the main Activity.
-    * @param webView The CordovaWebView Cordova is running in.
-    */
-    // public void initialize(CordovaInterface cordova, CordovaWebView webView) {
-    //     Log.v(TAG,"initialize");
-    //     super.initialize(cordova, webView);
-    // }
-
     public boolean execute(final String action, JSONArray args, final CallbackContext callbackContext) throws JSONException  {
         Log.v(TAG, "executing action: "+action);
 
@@ -121,11 +109,8 @@ public class ApptentiveBridge extends CordovaPlugin {
             return true;
             
         } else if( action.equals(ACTION_ADD_PARSE_PUSH_INTEGRATION) ) {
-            Log.v(TAG, "trying to add parse push integration");
             String deviceToken = args.getString(0);
-            Log.v(TAG, "Parse push device token: "+deviceToken);
             Apptentive.addParsePushIntegration(cordova.getActivity(), deviceToken);
-            Log.v(TAG, "done adding parse push integration");
             callbackContext.success();
             return true;
             
@@ -145,33 +130,10 @@ public class ApptentiveBridge extends CordovaPlugin {
             callbackContext.success( Apptentive.getUnreadMessageCount(cordova.getActivity()) );
             return true;
             
-        } else if( action.equals(ACTION_SET_PENDING_PUSH_NOTIFICATION) ) {
-            JSONObject notificationPayload = args.getJSONObject(0);
-            Intent intent = cordova.getActivity().getIntent();
-
-            // The payload(bundle) from the original intent that created the notification is stripped
-            // off by the Cordova Plugin system. To compensate for this we need to add the original
-            // notification payload back to the current intent for the Apptentive SDK to access correctly
-            String key = null;
-            for(Iterator it = notificationPayload.keys(); it.hasNext();) {
-                key = (String)it.next();
-                intent.putExtra(key, notificationPayload.getString(key));
-                Log.i(TAG, "     "+key+": "+notificationPayload.getString(key));
-            }
-
-            Apptentive.setPendingPushNotification(cordova.getActivity(), intent );
-            callbackContext.success();
-            return true;
-            
         } else if( action.equals(ACTION_HANDLE_OPENED_PUSH_NOTIFICATION) ) {
-            Log.v(TAG, ACTION_HANDLE_OPENED_PUSH_NOTIFICATION);
-
             Apptentive.handleOpenedPushNotification(cordova.getActivity());
             callbackContext.success();
             return true;
-            
-        } else if( action.equals(ACTION_IS_APPTENTIVE_PUSH_NOTIFICATION) ) {
-            // This is handled only in the plugin javascript due to not having access to the intent
             
         } else if( action.equals(ACTION_PUT_RATING_PROVIDER_ARG) ) {
             String key = args.getString(0);
@@ -243,11 +205,6 @@ public class ApptentiveBridge extends CordovaPlugin {
             callbackContext.success( bool );
             return true;
             
-        } else if( action.equals(ACTION_SET_PARSE_PUSH_CALLBACK) ) {
-            Apptentive.setParsePushCallback(cordova.getActivity().getClass());
-            callbackContext.success();
-            return true;
-            
         } else if( action.equals(ACTION_SET_UNREAD_MESSAGE_LISTENER) ) {
             UnreadMessagesListener listener = new UnreadMessagesListener() {
                 public void onUnreadMessageCountChanged( int unreadMessages ) {
@@ -273,7 +230,7 @@ public class ApptentiveBridge extends CordovaPlugin {
             return true;
         }
 
-        Log.w(TAG, "Unhandled action in ApptentiveBridge:"+action);
+        Log.w(TAG, "Unhandled action in ApptentiveBridge: "+action);
 
         callbackContext.error("Unhandled action in ApptentiveBridge: "+action);
         return false;

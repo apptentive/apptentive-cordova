@@ -1,4 +1,4 @@
-package com.apptentive.cordova.bridge;
+package com.apptentive.cordova;
 
 import org.json.JSONArray;
 import org.json.JSONException;
