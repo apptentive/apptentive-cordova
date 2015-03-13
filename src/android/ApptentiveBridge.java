@@ -9,7 +9,7 @@ import android.os.Bundle;
 import com.apptentive.android.sdk.Apptentive;
 import com.apptentive.android.sdk.module.messagecenter.UnreadMessagesListener;
 import com.apptentive.android.sdk.module.survey.OnSurveyFinishedListener;
-import com.apptentive.cordova.bridge.JsonHelper;
+import com.apptentive.cordova.JsonHelper;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
