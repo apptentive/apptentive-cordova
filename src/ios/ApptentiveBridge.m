@@ -147,6 +147,9 @@
     //access info.plist for API key
     NSDictionary *infoPlist = [[NSBundle mainBundle] infoDictionary];
     NSString *apiKey = [infoPlist objectForKey:@"Apptentive_API_KEY"];
+
+    NSLog(@"Initializing Apptentive API Key: %@", apiKey);
+
     if (!apiKey) {
         [self sendFailureMessage:@"Insufficient arguments - no apiKey" callbackId:callbackId];
         return;
