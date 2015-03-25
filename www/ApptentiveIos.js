@@ -55,7 +55,7 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["openAppStore"]);
     },
 
-    presentMessageCenterFromViewController: function(successCallback, errorCallback) {
+    showMessageCenter: function(successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["presentMessageCenterFromViewController"]);
     },
 
