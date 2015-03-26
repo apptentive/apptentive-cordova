@@ -1,13 +1,6 @@
-// The following line is just an example to illistrate that you could define variables
-// here and then use them inside the scope of the 'Apptentive' object later on if that
-// feels appropriate for the situation
-
-// var someLocalVars = [ 'varOne', 'varTwo'];
-
-
 var Apptentive = {
-	
-    init: function(successCallback, errorCallback, api_key, app_id) {
+
+    init: function(successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["init"]);
     },
 
@@ -74,7 +67,7 @@ var Apptentive = {
     registerForSurveyNotifications: function(successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["registerForSurveyNotifications"]);
     },
-    
+
     removeCustomDeviceData: function(successCallback, errorCallback, key) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["removeCustomDeviceData", key]);
     },
@@ -115,7 +108,7 @@ var Apptentive = {
     unreadMessageCount: function(successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["unreadMessageCount"]);
     }
-}
+};
 
 //window.Apptentive = Apptentive;
 module.exports = Apptentive;

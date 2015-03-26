@@ -5,7 +5,7 @@
 - (void)execute:(CDVInvokedUrlCommand*)command {
     NSString* callbackId = [command callbackId];
     if ([command arguments].count == 0) {
-        [self sendFailureMessage:@"Insufficient arguments" callbackId:callbackId];
+        [self sendFailureMessage:@"Insufficient arguments: No method name specified." callbackId:callbackId];
         return;
     }
     NSString* functionCall = [command argumentAtIndex:0];
