@@ -1,9 +1,8 @@
 var Apptentive = {
 
-    init: function (successCallback, errorCallback, apiKey) {
+    init: function (successCallback, errorCallback) {
         console.log("Apptentive.js init called");
-
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "init", [apiKey]);
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "init", []);
     },
 
     addAmazonSnsPushIntegration: function (successCallback, errorCallback, registrationId) {
