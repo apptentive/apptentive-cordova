@@ -17,53 +17,57 @@
  * under the License.
  */
 var app = {
+
     // Application Constructor
-    initialize: function() {
+    initialize: function () {
         this.bindEvents();
     },
+
     // Bind Event Listeners
     //
     // Bind any events that are required on startup. Common events are:
     // 'load', 'deviceready', 'offline', and 'online'.
-    bindEvents: function() {
+    bindEvents: function () {
         document.addEventListener('deviceready', this.onDeviceReady, false);
     },
+
     // deviceready Event Handler
     //
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
-    onDeviceReady: function() {
+    onDeviceReady: function () {
         app.receivedEvent('deviceready');
-        
+
         // ---- Init apptentive here ----
         Apptentive.init(apptentiveSuccess, apptentiveFailure);
-        
+
         // ---- Init Parse here ----
         var appId = "YOUR_PARSE_APP_ID";           // -- change to your app id
         var clientKey = "YOUR_PARSE_CLIENT_KEY";   // -- change to your client key  
-        parsePlugin.initialize(appId, clientKey, "window.onNotificationAPN", function() {
-			parsePlugin.getDeviceToken(function(deviceToken) {
-				// ---- device token returned successfully, now register Parse with Apptentive
-				alert(deviceToken);
-				Apptentive.addParsePushIntegration(apptentiveSuccess, apptentiveFailure, deviceToken);
-	        }, function(e) {
-	            alert('error');
-	        });
-		
-		}, function(e) {
-		    alert('error');
-		});
-		
-		// handle APNS notifications for iOS
-        window.onNotificationAPN = function(e) {
+        parsePlugin.initialize(appId, clientKey, "window.onNotificationAPN", function () {
+            parsePlugin.getDeviceToken(function (deviceToken) {
+                // ---- device token returned successfully, now register Parse with Apptentive
+                alert(deviceToken);
+                Apptentive.addParsePushIntegration(apptentiveSuccess, apptentiveFailure, deviceToken);
+            }, function (e) {
+                alert('error');
+            });
+
+        }, function (e) {
+            alert('error');
+        });
+
+        // handle APNS notifications for iOS
+        window.onNotificationAPN = function (e) {
             if (e) {
-	            //forward the notification to Apptentive - if it is an Apptentive message, it will be processed, otherwise ignored
-                 Apptentive.forwardPushNotificationToApptentive(apptentiveSuccess, apptentiveFailure, e);
+                //forward the notification to Apptentive - if it is an Apptentive message, it will be processed, otherwise ignored
+                Apptentive.forwardPushNotificationToApptentive(apptentiveSuccess, apptentiveFailure, e);
             }
         }
     },
+
     // Update DOM on a Received Event
-    receivedEvent: function(id) {
+    receivedEvent: function (id) {
         var parentElement = document.getElementById(id);
         var listeningElement = parentElement.querySelector('.listening');
         var receivedElement = parentElement.querySelector('.received');
@@ -75,7 +79,7 @@ var app = {
     }
 };
 
-function apptentiveSuccess (message) {
+function apptentiveSuccess(message) {
     alert(message);
 }
 
