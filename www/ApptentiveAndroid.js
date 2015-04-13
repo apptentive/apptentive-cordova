@@ -1,8 +1,20 @@
 var Apptentive = {
+    initialized: false,
 
-    init: function (successCallback, errorCallback) {
-        console.log("Apptentive.js init called");
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "init", []);
+    deviceReady: function (successCallback, errorCallback) {
+        console.log("Apptentive.deviceReady()");
+        Apptentive.initialized = true;
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "deviceReady", []);
+    },
+
+    pause: function (successCallback, errorCallback) {
+        console.log("Apptentive.pause()");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "pause", []);
+    },
+
+    resume: function (successCallback, errorCallback) {
+        console.log("Apptentive.resume()");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "resume", []);
     },
 
     addAmazonSnsPushIntegration: function (successCallback, errorCallback, registrationId) {
@@ -25,11 +37,6 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addParsePushIntegration", [deviceToken]);
     },
 
-    // Disabled until native integration is fixed
-    // addUrbanAirshipPushIntegration: function(successCallback, errorCallback, appId) {
-    //     cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addUrbanAirshipPushIntegration", [appId]);
-    // },
-
     engage: function (successCallback, errorCallback, eventId, customData) {
         if (customData && typeof customData === 'object') {
             cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "engage", [eventId, customData]);
@@ -41,6 +48,28 @@ var Apptentive = {
     getUnreadMessageCount: function (successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "getUnreadMessageCount", []);
     },
+
+    removeCustomDeviceData: function (successCallback, errorCallback, key) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "removeCustomDeviceData", [key]);
+    },
+
+    removeCustomPersonData: function (successCallback, errorCallback, key) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "removeCustomPersonData", [key]);
+    },
+
+    showMessageCenter: function (successCallback, errorCallback, customData) {
+        if (customData) {
+            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "showMessageCenter", [customData]);
+        } else {
+            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "showMessageCenter", []);
+        }
+    },
+
+    /* Unmatched */
+    // Disabled until native integration is fixed
+    // addUrbanAirshipPushIntegration: function(successCallback, errorCallback, appId) {
+    //     cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addUrbanAirshipPushIntegration", [appId]);
+    // }
 
     handleOpenedPushNotification: function (successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "handleOpenedPushNotification", []);
@@ -73,14 +102,6 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "putRatingProviderArg", [key, value]);
     },
 
-    removeCustomDeviceData: function (successCallback, errorCallback, key) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "removeCustomDeviceData", [key]);
-    },
-
-    removeCustomPersonData: function (successCallback, errorCallback, key) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "removeCustomPersonData", [key]);
-    },
-
     sendAttachmentFileUri: function (successCallback, errorCallback, uri) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "sendAttachmentFile", [uri]);
     },
@@ -99,6 +120,11 @@ var Apptentive = {
 
     setCustomPersonData: function (successCallback, errorCallback, customPersonData) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setCustomPersonData", [customPersonData]);
+    },
+
+    // This is not implemented in the brige for some reason.
+    setProperty: function (success_callback, error_callback, property_id, value) {
+        cordova.exec(success_callback, error_callback, "ApptentiveBridge", "setProperty", [property_id, value]);
     },
 
     setInitialUserEmail: function (successCallback, errorCallback, email) {
@@ -121,26 +147,12 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setPendingPushNotification", [intentPayload]);
     },
 
-    setProperty: function (success_callback, error_callback, property_id, value) {
-        cordova.exec(success_callback, error_callback, "ApptentiveBridge", "setProperty", [property_id, value]);
-    },
-
     setRatingProvider: function (successCallback, errorCallback, ratingProvider) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setRatingProvider", [ratingProvider]);
     },
 
     setUnreadMessagesListener: function (unreadMessagesCallback, errorCallback) {
         cordova.exec(unreadMessagesCallback, errorCallback, "ApptentiveBridge", "setUnreadMessagesListener", []);
-    },
-
-    showMessageCenter: function (successCallback, errorCallback, customData) {
-        console.log("Apptentive.showMessageCenter");
-
-        if (customData) {
-            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "showMessageCenter", [customData]);
-        } else {
-            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "showMessageCenter", []);
-        }
     },
 
     willShowInteraction: function (successCallback, errorCallback, eventId) {

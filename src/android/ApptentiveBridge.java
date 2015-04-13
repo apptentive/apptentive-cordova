@@ -31,7 +31,9 @@ public class ApptentiveBridge extends CordovaPlugin {
 
     public static final String TAG = "ApptentiveBridge";
 
-    private static final String ACTION_INIT = "init";
+    private static final String ACTION_DEVICE_READY = "deviceReady";
+    private static final String ACTION_RESUME = "resume";
+    private static final String ACTION_PAUSE = "pause";
     private static final String ACTION_SHOW_MESSAGE_CENTER = "showMessageCenter";
     private static final String ACTION_ADD_AMAZON_SNS_PUSH_INTEGRATION = "addAmazonSnsPushIntegration";
     private static final String ACTION_ADD_CUSTOM_DEVICE_DATA = "addCustomDeviceData";
@@ -67,7 +69,17 @@ public class ApptentiveBridge extends CordovaPlugin {
     public boolean execute(final String action, JSONArray args, final CallbackContext callbackContext) throws JSONException  {
         Log.v(TAG, "executing action: "+action);
 
-        if( action.equals(ACTION_INIT) ) {
+        if( action.equals(ACTION_DEVICE_READY) ) {
+            Apptentive.onStart(cordova.getActivity());
+            callbackContext.success();
+            return true;
+
+        } else if( action.equals(ACTION_PAUSE) ) {
+            Apptentive.onStop(cordova.getActivity());
+            callbackContext.success();
+            return true;
+
+        } else if( action.equals(ACTION_RESUME) ) {
             Apptentive.onStart(cordova.getActivity());
             callbackContext.success();
             return true;

@@ -1,7 +1,20 @@
 var Apptentive = {
+    initialized: false,
 
-    init: function (successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["init"]);
+    deviceReady: function (successCallback, errorCallback) {
+        console.log("Apptentive.deviceReady()");
+        Apptentive.initialized = true;
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["deviceReady"]);
+    },
+
+    pause: function (successCallback, errorCallback) {
+        console.log("Apptentive.pause()");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["pause"]);
+    },
+
+    resume: function (successCallback, errorCallback) {
+        console.log("Apptentive.resume()");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["resume"]);
     },
 
     addAmazonSnsPushIntegration: function (successCallback, errorCallback, deviceToken) {
@@ -20,16 +33,8 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addIntegration", integration, config]);
     },
 
-    addIntegrationWithDeviceToken: function (successCallback, errorCallback, integration, deviceToken) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addIntegration", integration, deviceToken]);
-    },
-
     addParsePushIntegration: function (successCallback, errorCallback, deviceToken) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addParsePushIntegration", deviceToken]);
-    },
-
-    addUrbanAirshipPushIntegration: function (successCallback, errorCallback, deviceToken) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addUrbanAirshipPushIntegration", deviceToken]);
     },
 
     engage: function (successCallback, errorCallback, eventId, customData) {
@@ -40,20 +45,38 @@ var Apptentive = {
         }
     },
 
-    forwardPushNotificationToApptentive: function (successCallback, errorCallback, userInfo) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["forwardPushNotificationToApptentive", userInfo]);
+    getUnreadMessageCount: function (successCallback, errorCallback) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["unreadMessageCount"]);
     },
 
-    openAppStore: function (successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["openAppStore"]);
+    removeCustomDeviceData: function (successCallback, errorCallback, key) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["removeCustomDeviceData", key]);
+    },
+
+    removeCustomPersonData: function (successCallback, errorCallback, key) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["removeCustomPersonData", key]);
     },
 
     showMessageCenter: function (successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["presentMessageCenterFromViewController"]);
     },
 
-    presentMessageCenterFromViewControllerWithCustomData: function (successCallback, errorCallback, customData) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["presentMessageCenterFromViewControllerWithCustomData", customData]);
+
+    /* Unmatched */
+
+    addIntegrationWithDeviceToken: function (successCallback, errorCallback, integration, deviceToken) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addIntegration", integration, deviceToken]);
+    },
+
+    addUrbanAirshipPushIntegration: function (successCallback, errorCallback, deviceToken) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addUrbanAirshipPushIntegration", deviceToken]);
+    },
+    forwardPushNotificationToApptentive: function (successCallback, errorCallback, userInfo) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["forwardPushNotificationToApptentive", userInfo]);
+    },
+
+    openAppStore: function (successCallback, errorCallback) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["openAppStore"]);
     },
 
     registerForMessageNotifications: function (successCallback, errorCallback) {
@@ -66,14 +89,6 @@ var Apptentive = {
 
     registerForSurveyNotifications: function (successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["registerForSurveyNotifications"]);
-    },
-
-    removeCustomDeviceData: function (successCallback, errorCallback, key) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["removeCustomDeviceData", key]);
-    },
-
-    removeCustomPersonData: function (successCallback, errorCallback, key) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["removeCustomPersonData", key]);
     },
 
     removeIntegration: function (successCallback, errorCallback, integration) {
@@ -100,13 +115,15 @@ var Apptentive = {
         cordova.exec(success_callback, error_callback, "ApptentiveBridge", "execute", ["setProperty", property_id, value]);
     },
 
+    // Todo: Combine this into showMessageCenter() with varargs.
+    /*
+     presentMessageCenterFromViewControllerWithCustomData: function (successCallback, errorCallback, customData) {
+     cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["presentMessageCenterFromViewControllerWithCustomData", customData]);
+     },
+     */
+
     unregisterForNotifications: function (successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["unregisterForNotifications"]);
-    },
-
-
-    unreadMessageCount: function (successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["unreadMessageCount"]);
     }
 };
 

@@ -12,7 +12,7 @@
     NSLog([NSString stringWithFormat:@"Function call: %@",functionCall]);
     
     //initialization
-    if ([functionCall isEqualToString:@"init"]) {
+    if ([functionCall isEqualToString:@"deviceReady"]) {
         [self initAPIKey:callbackId];
         return;
     }
@@ -52,6 +52,10 @@
     else if ([functionCall isEqualToString:@"openAppStore"]) {
         [self openAppStore];
     }
+    else if ([functionCall isEqualToString:@"pause"]) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+    }
     else if ([functionCall isEqualToString:@"presentMessageCenterFromViewController"]) {
         [self presentMessageCenterFromViewController];
     }
@@ -67,14 +71,18 @@
     else if ([functionCall isEqualToString:@"registerForSurveyNotifications"]) {
         [self registerForSurveyNotifications:[command arguments] callBackString:callbackId];
     }
-    else if ([functionCall isEqualToString:@"removeCustomDeviceDataWithKey"]) {
+    else if ([functionCall isEqualToString:@"removeCustomDeviceData"]) {
         [self removeCustomDeviceData:[command arguments] callBackString:callbackId];
     }
-    else if ([functionCall isEqualToString:@"removeCustomPersonDataWithKey"]) {
+    else if ([functionCall isEqualToString:@"removeCustomPersonData"]) {
         [self removeCustomPersonData:[command arguments] callBackString:callbackId];
     }
     else if ([functionCall isEqualToString:@"removeIntegration"]) {
         [self removeIntegration:[command arguments] callBackString:callbackId];
+    }
+    else if ([functionCall isEqualToString:@"resume"]) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
     else if ([functionCall isEqualToString:@"sendAttachmentFileWithMimeType"]) {
         [self sendAttachmentFileWithMimeType:[command arguments] callBackString:callbackId];
@@ -103,16 +111,12 @@
 }
 
 - (void)sendSuccessMessage:(NSString*)msg callbackId:(NSString *)callbackId {
-    CDVPluginResult* result = [CDVPluginResult
-                               resultWithStatus:CDVCommandStatus_OK
-                               messageAsString:msg];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:msg];
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)sendFailureMessage:(NSString*)error callbackId:(NSString *)callbackId {
-    CDVPluginResult* result = [CDVPluginResult
-                               resultWithStatus:CDVCommandStatus_ERROR
-                               messageAsString:error];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
@@ -281,6 +285,8 @@
 //        NSNumber* numberData = value;
 //        [[ATConnect sharedConnection] addCustomDeviceData:numberData withKey:key];
 //    }
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void) addCustomPersonData:(NSArray*)arguments callBackString:(NSString*)callbackId {
@@ -298,6 +304,8 @@
 //        NSNumber* numberData = value;
 //        [[ATConnect sharedConnection] addCustomPersonData:numberData withKey:key];
 //    }
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void) addIntegration:(NSArray*)arguments callBackString:(NSString*)callbackId {
@@ -331,8 +339,9 @@
         [self sendFailureMessage:@"Insufficient arguments to call engage - label is null" callbackId:callbackId];
         return;
     }
+    BOOL shown = false;
     if (arguments.count == 2) {
-        [[ATConnect sharedConnection] engage:eventLabel fromViewController:self.viewController];
+        shown = [[ATConnect sharedConnection] engage:eventLabel fromViewController:self.viewController];
     }
     else if (arguments.count == 3) {
         NSDictionary *customData = [self parseDictionaryFromString:[arguments objectAtIndex:2]];
@@ -340,8 +349,12 @@
             [self sendFailureMessage:@"Improperly formed json or object for engage custom data" callbackId:callbackId];
             return;
         }
-        [[ATConnect sharedConnection] engage:eventLabel withCustomData:customData fromViewController:self.viewController];
+        shown = [[ATConnect sharedConnection] engage:eventLabel withCustomData:customData fromViewController:self.viewController];
     }
+    CDVPluginResult* result = [CDVPluginResult
+                               resultWithStatus:CDVCommandStatus_OK
+                               messageAsBool:shown];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void) forwardPushNotificationToApptentive:(NSArray*)arguments callBackString:(NSString*)callbackId {
@@ -365,16 +378,22 @@
 - (void) removeCustomDeviceData:(NSArray*)arguments callBackString:(NSString*)callbackId {
     NSString* key = [arguments objectAtIndex:1];
     [[ATConnect sharedConnection] removeCustomDeviceDataWithKey:key];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void) removeCustomPersonData:(NSArray*)arguments callBackString:(NSString*)callbackId {
     NSString* key = [arguments objectAtIndex:1];
     [[ATConnect sharedConnection] removeCustomPersonDataWithKey:key];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void) removeIntegration:(NSArray*)arguments callBackString:(NSString*)callbackId {
     NSString* integration = [arguments objectAtIndex:1];
     [[ATConnect sharedConnection] removeIntegration:integration];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void) sendAttachmentFileWithMimeType:(NSArray*)arguments callBackString:(NSString*)callbackId {
@@ -401,8 +420,10 @@
 
 - (void) unreadMessageCount:(NSString*)callbackId {
     NSUInteger unreadMessageCount = [[ATConnect sharedConnection] unreadMessageCount];
-    NSString *messageCountAsString = [NSString stringWithFormat:@"%lu", (unsigned long)unreadMessageCount];
-    [self sendSuccessMessage:messageCountAsString callbackId:callbackId];
+    CDVPluginResult* result = [CDVPluginResult
+                               resultWithStatus:CDVCommandStatus_OK
+                               messageAsInt:unreadMessageCount];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 @end
