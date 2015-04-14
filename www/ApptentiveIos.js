@@ -111,8 +111,16 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["sendAttachmentText", text]);
     },
 
-    setProperty: function (success_callback, error_callback, property_id, value) {
-        cordova.exec(success_callback, error_callback, "ApptentiveBridge", "execute", ["setProperty", property_id, value]);
+    setInitialUserEmail: function (successCallback, errorCallback, email) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", "initialUserEmailAddress", email]);
+    },
+
+    setInitialUserName: function (successCallback, errorCallback, name) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", "initialUserName", name]);
+    },
+
+    setProperty: function (successCallback, errorCallback, key, value) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", key, value]);
     },
 
     // Todo: Combine this into showMessageCenter() with varargs.

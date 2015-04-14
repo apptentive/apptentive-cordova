@@ -123,8 +123,8 @@ var Apptentive = {
     },
 
     // This is not implemented in the brige for some reason.
-    setProperty: function (success_callback, error_callback, property_id, value) {
-        cordova.exec(success_callback, error_callback, "ApptentiveBridge", "setProperty", [property_id, value]);
+    setProperty: function (successCallback, errorCallback, key, value) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setProperty", [key, value]);
     },
 
     setInitialUserEmail: function (successCallback, errorCallback, email) {
