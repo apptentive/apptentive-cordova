@@ -51,12 +51,9 @@ public class ApptentiveBridge extends CordovaPlugin {
     private static final String ACTION_SEND_ATTACHMENT_FILE_URI = "sendAttachmentFileUri";
     private static final String ACTION_SEND_ATTACHMENT_FILE = "sendAttachmentFile";
     private static final String ACTION_SEND_ATTACHMENT_TEXT = "sendAttachmentText";
-    private static final String ACTION_SET_CUSTOM_DEVICE_DATA = "setCustomDeviceData";
-    private static final String ACTION_SET_CUSTOM_PERSON_DATA = "setCustomPersonData";
     private static final String ACTION_SET_INITIAL_USER_EMAIL = "setInitialUserEmail";
     private static final String ACTION_SET_INITIAL_USER_NAME = "setInitialUserName";
     private static final String ACTION_WILL_SHOW_INTERACTION = "willShowInteraction";
-    private static final String ACTION_SET_PARSE_PUSH_CALLBACK = "setParsePushCallback";
     private static final String ACTION_SET_UNREAD_MESSAGE_LISTENER = "setUnreadMessagesListener";
     private static final String ACTION_SET_ON_SURVEY_FINISHED_LISTENER = "setOnSurveyFinishedListener";
     private static final String ACTION_SET_PENDING_PUSH_NOTIFICATION = "setPendingPushNotification";
@@ -180,18 +177,6 @@ public class ApptentiveBridge extends CordovaPlugin {
         } else if( action.equals(ACTION_SEND_ATTACHMENT_TEXT) ) {
             String text = args.getString(0);
             Apptentive.sendAttachmentText(cordova.getActivity(), text );
-            callbackContext.success();
-            return true;
-            
-        } else if( action.equals(ACTION_SET_CUSTOM_DEVICE_DATA) ) {
-            Map data = JsonHelper.toMap(args.getJSONObject(0));
-            Apptentive.setCustomDeviceData(cordova.getActivity(), data);
-            callbackContext.success();
-            return true;
-            
-        } else if( action.equals(ACTION_SET_CUSTOM_PERSON_DATA) ) {
-            Map data = JsonHelper.toMap(args.getJSONObject(0));
-            Apptentive.setCustomPersonData(cordova.getActivity(), data);
             callbackContext.success();
             return true;
             

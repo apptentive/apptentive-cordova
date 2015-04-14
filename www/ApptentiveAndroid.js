@@ -114,14 +114,6 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "sendAttachmentText", [text]);
     },
 
-    setCustomDeviceData: function (successCallback, errorCallback, customDeviceData) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setCustomDeviceData", [customDeviceData]);
-    },
-
-    setCustomPersonData: function (successCallback, errorCallback, customPersonData) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setCustomPersonData", [customPersonData]);
-    },
-
     // This is not implemented in the brige for some reason.
     setProperty: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setProperty", [key, value]);
@@ -137,10 +129,6 @@ var Apptentive = {
 
     setOnSurveyFinishedListener: function (successCallback, errorCallback, listener) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setOnSurveyFinishedListener", [listener]);
-    },
-
-    setParsePushCallback: function (successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setParsePushCallback", []);
     },
 
     setPendingPushNotification: function (successCallback, errorCallback, intentPayload) {
