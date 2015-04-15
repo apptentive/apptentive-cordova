@@ -79,6 +79,11 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["openAppStore"]);
     },
 
+    putRatingProviderArg: function (successCallback, errorCallback, key, value) {
+        // Does nothing on iOS.
+        successCallback();
+    },
+
     registerForMessageNotifications: function (successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["registerForMessageNotifications"]);
     },
