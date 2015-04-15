@@ -137,6 +137,10 @@ var Apptentive = {
 
     unregisterForNotifications: function (successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["unregisterForNotifications"]);
+    },
+
+    willShowInteraction: function (successCallback, errorCallback, eventName) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["willShowInteraction", eventName]);
     }
 };
 

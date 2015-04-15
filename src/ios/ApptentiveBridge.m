@@ -102,7 +102,10 @@
     else if ([functionCall isEqualToString:@"unregisterForNotifications"]) {
         [self unregisterForNotifications];
     }
-    
+    else if ([functionCall isEqualToString:@"willShowInteraction"]) {
+        [self willShowInteraction:[command arguments] callBackString:callbackId];
+    }
+
     else {
         //command not recognized
         [self sendFailureMessage:@"Command not recognized" callbackId:callbackId];
@@ -423,6 +426,19 @@
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK
                                messageAsInt:unreadMessageCount];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+}
+
+- (void)willShowInteraction:(NSArray*)arguments callBackString:(NSString*)callbackId {
+    NSString* eventName = [arguments objectAtIndex:1];
+    if([eventName isEqual:[NSNull null]]) {
+        [self sendFailureMessage:@"Insufficient arguments to call willShowInteraction - eventName is null" callbackId:callbackId];
+        return;
+    }
+    BOOL willShow = [[ATConnect sharedConnection] willShowInteractionForEvent:eventName];
+    CDVPluginResult* result = [CDVPluginResult
+                               resultWithStatus:CDVCommandStatus_OK
+                               messageAsBool:willShow];
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 

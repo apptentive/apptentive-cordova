@@ -143,8 +143,8 @@ var Apptentive = {
         cordova.exec(unreadMessagesCallback, errorCallback, "ApptentiveBridge", "setUnreadMessagesListener", []);
     },
 
-    willShowInteraction: function (successCallback, errorCallback, eventId) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "willShowInteraction", [eventId]);
+    willShowInteraction: function (successCallback, errorCallback, eventName) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "willShowInteraction", [eventName]);
     }
 };
 

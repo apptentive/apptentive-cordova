@@ -204,12 +204,10 @@ public class ApptentiveBridge extends CordovaPlugin {
 
         } else if( action.equals(ACTION_WILL_SHOW_INTERACTION) ) {
             // TODO change this to run on different thread to avoid Plugin Blocking Warnings
-
-            String eventId = args.getString(0);
-            // Convert boolean to int because we can't pass booleans back through cordova
-            int bool = Apptentive.willShowInteraction(cordova.getActivity(), eventId ) ? 1 : 0;
-
-            callbackContext.success( bool );
+            String eventName = args.getString(0);
+            boolean willShow = Apptentive.willShowInteraction(cordova.getActivity(), eventName);
+            PluginResult result = new PluginResult(PluginResult.Status.OK, willShow);
+            callbackContext.sendPluginResult(result);
             return true;
             
         } else if( action.equals(ACTION_SET_UNREAD_MESSAGE_LISTENER) ) {
