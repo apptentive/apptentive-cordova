@@ -123,6 +123,11 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", key, value]);
     },
 
+    setRatingProvider: function (successCallback, errorCallback, ratingProviderName) {
+        // Does nothing on iOS.
+        successCallback();
+    },
+
     // Todo: Combine this into showMessageCenter() with varargs.
     /*
      presentMessageCenterFromViewControllerWithCustomData: function (successCallback, errorCallback, customData) {

@@ -135,8 +135,8 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setPendingPushNotification", [intentPayload]);
     },
 
-    setRatingProvider: function (successCallback, errorCallback, ratingProvider) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setRatingProvider", [ratingProvider]);
+    setRatingProvider: function (successCallback, errorCallback, ratingProviderName) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setRatingProvider", [ratingProviderName]);
     },
 
     setUnreadMessagesListener: function (unreadMessagesCallback, errorCallback) {

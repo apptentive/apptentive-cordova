@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.apptentive.android.sdk.module.messagecenter.UnreadMessagesListener;
+import com.apptentive.android.sdk.module.rating.impl.AmazonAppstoreRatingProvider;
 import com.apptentive.android.sdk.module.survey.OnSurveyFinishedListener;
 import com.apptentive.cordova.JsonHelper;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -34,7 +35,6 @@ public class ApptentiveBridge extends CordovaPlugin {
     private static final String ACTION_DEVICE_READY = "deviceReady";
     private static final String ACTION_RESUME = "resume";
     private static final String ACTION_PAUSE = "pause";
-    private static final String ACTION_SHOW_MESSAGE_CENTER = "showMessageCenter";
     private static final String ACTION_ADD_AMAZON_SNS_PUSH_INTEGRATION = "addAmazonSnsPushIntegration";
     private static final String ACTION_ADD_CUSTOM_DEVICE_DATA = "addCustomDeviceData";
     private static final String ACTION_ADD_CUSTOM_PERSON_DATA = "addCustomPersonData";
@@ -53,10 +53,12 @@ public class ApptentiveBridge extends CordovaPlugin {
     private static final String ACTION_SEND_ATTACHMENT_TEXT = "sendAttachmentText";
     private static final String ACTION_SET_INITIAL_USER_EMAIL = "setInitialUserEmail";
     private static final String ACTION_SET_INITIAL_USER_NAME = "setInitialUserName";
-    private static final String ACTION_WILL_SHOW_INTERACTION = "willShowInteraction";
     private static final String ACTION_SET_UNREAD_MESSAGE_LISTENER = "setUnreadMessagesListener";
     private static final String ACTION_SET_ON_SURVEY_FINISHED_LISTENER = "setOnSurveyFinishedListener";
     private static final String ACTION_SET_PENDING_PUSH_NOTIFICATION = "setPendingPushNotification";
+    private static final String ACTION_SET_RATING_PROVIDER = "setRatingProvider";
+    private static final String ACTION_SHOW_MESSAGE_CENTER = "showMessageCenter";
+    private static final String ACTION_WILL_SHOW_INTERACTION = "willShowInteraction";
 
     /**
     * Constructor.
@@ -192,6 +194,14 @@ public class ApptentiveBridge extends CordovaPlugin {
             callbackContext.success();
             return true;
             
+        } else if( action.equals(ACTION_SET_RATING_PROVIDER) ) {
+            String providerName = args.getString(0);
+            if (providerName.equals("amazon")) {
+                Apptentive.setRatingProvider(new AmazonAppstoreRatingProvider());
+            }
+            callbackContext.success();
+            return true;
+
         } else if( action.equals(ACTION_WILL_SHOW_INTERACTION) ) {
             // TODO change this to run on different thread to avoid Plugin Blocking Warnings
 
