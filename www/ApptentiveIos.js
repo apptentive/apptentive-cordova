@@ -1,26 +1,6 @@
 var Apptentive = {
     initialized: false,
 
-    deviceReady: function (successCallback, errorCallback) {
-        console.log("Apptentive.deviceReady()");
-        Apptentive.initialized = true;
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["deviceReady"]);
-    },
-
-    pause: function (successCallback, errorCallback) {
-        console.log("Apptentive.pause()");
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["pause"]);
-    },
-
-    resume: function (successCallback, errorCallback) {
-        console.log("Apptentive.resume()");
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["resume"]);
-    },
-
-    addAmazonSnsPushIntegration: function (successCallback, errorCallback, deviceToken) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addAmazonSnsPushIntegration", deviceToken]);
-    },
-
     addCustomDeviceData: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addCustomDeviceData", key, value]);
     },
@@ -29,12 +9,10 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addCustomPersonData", key, value]);
     },
 
-    addIntegration: function (successCallback, errorCallback, integration, config) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addIntegration", integration, config]);
-    },
-
-    addParsePushIntegration: function (successCallback, errorCallback, deviceToken) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addParsePushIntegration", deviceToken]);
+    deviceReady: function (successCallback, errorCallback) {
+        console.log("Apptentive.deviceReady()");
+        Apptentive.initialized = true;
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["deviceReady"]);
     },
 
     engage: function (successCallback, errorCallback, eventId, customData) {
@@ -49,6 +27,15 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["unreadMessageCount"]);
     },
 
+    pause: function (successCallback, errorCallback) {
+        console.log("Apptentive.pause()");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["pause"]);
+    },
+
+    putRatingProviderArg: function (successCallback, errorCallback, key, value) {
+        successCallback(); // Does nothing on iOS.
+    },
+
     removeCustomDeviceData: function (successCallback, errorCallback, key) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["removeCustomDeviceData", key]);
     },
@@ -57,31 +44,36 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["removeCustomPersonData", key]);
     },
 
+    resume: function (successCallback, errorCallback) {
+        console.log("Apptentive.resume()");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["resume"]);
+    },
+
+    setInitialUserEmail: function (successCallback, errorCallback, email) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", "initialUserEmailAddress", email]);
+    },
+
+    setInitialUserName: function (successCallback, errorCallback, name) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", "initialUserName", name]);
+    },
+
+    setRatingProvider: function (successCallback, errorCallback, ratingProviderName) {
+        successCallback(); // Does nothing on iOS.
+    },
+
     showMessageCenter: function (successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["presentMessageCenterFromViewController"]);
+    },
+
+    willShowInteraction: function (successCallback, errorCallback, eventName) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["willShowInteraction", eventName]);
     },
 
 
     /* Unmatched */
 
-    addIntegrationWithDeviceToken: function (successCallback, errorCallback, integration, deviceToken) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addIntegration", integration, deviceToken]);
-    },
-
-    addUrbanAirshipPushIntegration: function (successCallback, errorCallback, deviceToken) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["addUrbanAirshipPushIntegration", deviceToken]);
-    },
-    forwardPushNotificationToApptentive: function (successCallback, errorCallback, userInfo) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["forwardPushNotificationToApptentive", userInfo]);
-    },
-
     openAppStore: function (successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["openAppStore"]);
-    },
-
-    putRatingProviderArg: function (successCallback, errorCallback, key, value) {
-        // Does nothing on iOS.
-        successCallback();
     },
 
     registerForMessageNotifications: function (successCallback, errorCallback) {
@@ -96,57 +88,14 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["registerForSurveyNotifications"]);
     },
 
-    removeIntegration: function (successCallback, errorCallback, integration) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["removeIntegration", integration]);
-    },
-
-    sendAttachmentFileWithMimeType: function (successCallback, errorCallback, uri, mimeType) {
-        if (mimeType) {
-            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["sendAttachmentFile", uri, mimeType]);
-        } else {
-            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["sendAttachmentFile", uri]);
-        }
-    },
-
-    sendAttachmentImage: function (successCallback, errorCallback, image) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["sendAttachmentImage", image]);
-    },
-
-    sendAttachmentText: function (successCallback, errorCallback, text) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["sendAttachmentText", text]);
-    },
-
-    setInitialUserEmail: function (successCallback, errorCallback, email) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", "initialUserEmailAddress", email]);
-    },
-
-    setInitialUserName: function (successCallback, errorCallback, name) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", "initialUserName", name]);
-    },
-
     setProperty: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", key, value]);
     },
 
-    setRatingProvider: function (successCallback, errorCallback, ratingProviderName) {
-        // Does nothing on iOS.
-        successCallback();
-    },
-
-    // Todo: Combine this into showMessageCenter() with varargs.
-    /*
-     presentMessageCenterFromViewControllerWithCustomData: function (successCallback, errorCallback, customData) {
-     cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["presentMessageCenterFromViewControllerWithCustomData", customData]);
-     },
-     */
-
     unregisterForNotifications: function (successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["unregisterForNotifications"]);
-    },
-
-    willShowInteraction: function (successCallback, errorCallback, eventName) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["willShowInteraction", eventName]);
     }
+
 };
 
 module.exports = Apptentive;
