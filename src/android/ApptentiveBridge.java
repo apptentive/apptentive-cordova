@@ -1,12 +1,12 @@
 package com.apptentive.cordova;
 
-import android.util.Log;
 import android.provider.Settings;
 import android.widget.Toast;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.apptentive.android.sdk.Apptentive;
+import com.apptentive.android.sdk.Log;
 import com.apptentive.android.sdk.module.messagecenter.UnreadMessagesListener;
 import com.apptentive.android.sdk.module.rating.impl.AmazonAppstoreRatingProvider;
 import com.apptentive.android.sdk.module.survey.OnSurveyFinishedListener;
@@ -66,7 +66,7 @@ public class ApptentiveBridge extends CordovaPlugin {
     public ApptentiveBridge() {}
 
     public boolean execute(final String action, JSONArray args, final CallbackContext callbackContext) throws JSONException  {
-        Log.v(TAG, "executing action: "+action);
+        Log.v("Executing action: %s", action);
 
         if( action.equals(ACTION_DEVICE_READY) ) {
             Apptentive.onStart(cordova.getActivity());
@@ -118,13 +118,13 @@ public class ApptentiveBridge extends CordovaPlugin {
             Apptentive.addIntegration(cordova.getActivity(), integrationId, config);
             callbackContext.success();
             return true;
-            
+
         } else if( action.equals(ACTION_ADD_PARSE_PUSH_INTEGRATION) ) {
             String deviceToken = args.getString(0);
             Apptentive.addParsePushIntegration(cordova.getActivity(), deviceToken);
             callbackContext.success();
             return true;
-            
+
         } else if( action.equals(ACTION_ADD_URBAN_AIRSHIP_INTEGRATION) ) {
             String apid = args.getString(0);
             Apptentive.addUrbanAirshipPushIntegration(cordova.getActivity(), apid);
@@ -133,19 +133,26 @@ public class ApptentiveBridge extends CordovaPlugin {
 
         } else if( action.equals(ACTION_ENGAGE) ) {
             String eventId = args.getString(0);
-            Apptentive.engage(cordova.getActivity(), eventId);
-            callbackContext.success();
+            boolean shown = false;
+            if( args.length() > 1 ) {
+                Map customData = JsonHelper.toMap(args.getJSONObject(1));
+                shown = Apptentive.engage(cordova.getActivity(), eventId, customData);
+            } else {
+                shown = Apptentive.engage(cordova.getActivity(), eventId);
+            }
+            PluginResult result = new PluginResult(PluginResult.Status.OK, shown);
+            callbackContext.sendPluginResult(result);
             return true;
 
         } else if( action.equals(ACTION_GET_UNREAD_MESSAGE_COUNT) ) {
             callbackContext.success( Apptentive.getUnreadMessageCount(cordova.getActivity()) );
             return true;
-            
+
         } else if( action.equals(ACTION_HANDLE_OPENED_PUSH_NOTIFICATION) ) {
             Apptentive.handleOpenedPushNotification(cordova.getActivity());
             callbackContext.success();
             return true;
-            
+
         } else if( action.equals(ACTION_PUT_RATING_PROVIDER_ARG) ) {
             String key = args.getString(0);
             String value = args.getString(1);
@@ -169,31 +176,31 @@ public class ApptentiveBridge extends CordovaPlugin {
             String uri = args.getString(0);
             Apptentive.sendAttachmentFile( cordova.getActivity(), uri );
             return true;
-            
+
         } else if( action.equals(ACTION_SEND_ATTACHMENT_FILE) ) {
             byte[] content = args.getString(0).getBytes();
             String mimeType = args.getString(1);
             Apptentive.sendAttachmentFile( cordova.getActivity(), content, mimeType );
             return true;
-            
+
         } else if( action.equals(ACTION_SEND_ATTACHMENT_TEXT) ) {
             String text = args.getString(0);
             Apptentive.sendAttachmentText(cordova.getActivity(), text );
             callbackContext.success();
             return true;
-            
+
         } else if( action.equals(ACTION_SET_INITIAL_USER_EMAIL) ) {
             String email = args.getString(0);
             Apptentive.setInitialUserEmail(cordova.getActivity(), email );
             callbackContext.success();
             return true;
-            
+
         } else if( action.equals(ACTION_SET_INITIAL_USER_NAME) ) {
             String name = args.getString(0);
             Apptentive.setInitialUserName(cordova.getActivity(), name );
             callbackContext.success();
             return true;
-            
+
         } else if( action.equals(ACTION_SET_RATING_PROVIDER) ) {
             String providerName = args.getString(0);
             if (providerName.equals("amazon")) {
@@ -209,7 +216,7 @@ public class ApptentiveBridge extends CordovaPlugin {
             PluginResult result = new PluginResult(PluginResult.Status.OK, willShow);
             callbackContext.sendPluginResult(result);
             return true;
-            
+
         } else if( action.equals(ACTION_SET_UNREAD_MESSAGE_LISTENER) ) {
             UnreadMessagesListener listener = new UnreadMessagesListener() {
                 public void onUnreadMessageCountChanged( int unreadMessages ) {
@@ -220,7 +227,7 @@ public class ApptentiveBridge extends CordovaPlugin {
             };
             Apptentive.setUnreadMessagesListener( listener );
             return true;
-            
+
         } else if( action.equals(ACTION_SET_ON_SURVEY_FINISHED_LISTENER) ) {
             OnSurveyFinishedListener listener = new OnSurveyFinishedListener() {
                 public void onSurveyFinished( boolean finished ) {
@@ -235,7 +242,7 @@ public class ApptentiveBridge extends CordovaPlugin {
             return true;
         }
 
-        Log.w(TAG, "Unhandled action in ApptentiveBridge: "+action);
+        Log.w("Unhandled action in ApptentiveBridge: %s", action);
 
         callbackContext.error("Unhandled action in ApptentiveBridge: "+action);
         return false;
