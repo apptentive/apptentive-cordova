@@ -61,8 +61,12 @@ var Apptentive = {
         successCallback(); // Does nothing on iOS.
     },
 
-    showMessageCenter: function (successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["presentMessageCenterFromViewController"]);
+    showMessageCenter: function (successCallback, errorCallback, customData) {
+        if (customData) {
+            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["showMessageCenter", customData]);
+        } else {
+            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["showMessageCenter"]);
+        }
     },
 
     willShowInteraction: function (successCallback, errorCallback, eventName) {

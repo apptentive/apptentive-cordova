@@ -56,11 +56,8 @@
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
-    else if ([functionCall isEqualToString:@"presentMessageCenterFromViewController"]) {
-        [self presentMessageCenterFromViewController];
-    }
-    else if ([functionCall isEqualToString:@"presentMessageCenterFromViewControllerWithCustomData"]) {
-        [self presentMessageCenterFromViewControllerWithCustomData:[command arguments] callBackString:callbackId];
+    else if ([functionCall isEqualToString:@"showMessageCenter"]) {
+        [self showMessageCenter:[command arguments] callBackString:callbackId];
     }
     else if ([functionCall isEqualToString:@"registerForMessageNotifications"]) {
         [self registerForMessageNotifications:[command arguments] callBackString:callbackId];
@@ -369,13 +366,13 @@
     [[ATConnect sharedConnection] openAppStore];
 }
 
-- (void) presentMessageCenterFromViewController {
-    [[ATConnect sharedConnection] presentMessageCenterFromViewController:self.viewController];
-}
-
-- (void) presentMessageCenterFromViewControllerWithCustomData:(NSArray*)arguments callBackString:(NSString*)callbackId  {
-    NSDictionary *customData = [self parseDictionaryFromString:[arguments objectAtIndex:1]];
-    [[ATConnect sharedConnection] presentMessageCenterFromViewController:self.viewController withCustomData:customData];
+- (void) showMessageCenter:(NSArray*)arguments callBackString:(NSString*)callbackId  {
+    if (arguments.count == 2) {
+        NSDictionary *customData = [self parseDictionaryFromString:[arguments objectAtIndex:1]];
+        [[ATConnect sharedConnection] presentMessageCenterFromViewController:self.viewController withCustomData:customData];
+    } else {
+        [[ATConnect sharedConnection] presentMessageCenterFromViewController:self.viewController];
+    }
 }
 
 - (void) removeCustomDeviceData:(NSArray*)arguments callBackString:(NSString*)callbackId {
