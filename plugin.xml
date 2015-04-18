@@ -23,7 +23,6 @@
         </js-module>
 
         <!-- Add dependencies -->
-        <dependency id="com.google.playservices@21.0.0" url="https://github.com/MobileChromeApps/google-play-services" />
 
         <!-- Setup Cordova config.xml file -->
         <config-file target="res/xml/config.xml" parent="/*">
@@ -70,7 +69,7 @@
                 <param name="ios-package" value="ApptentiveBridge" />
             </feature>
         </config-file>
-        
+
         <config-file target="*-Info.plist" parent="Apptentive_API_KEY">
                 <key>"Apptentive_API_KEY"</key>
                 <string>$IOS_API_KEY</string>
