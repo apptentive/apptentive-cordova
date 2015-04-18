@@ -61,6 +61,10 @@ var Apptentive = {
         successCallback(); // Does nothing on iOS.
     },
 
+    setUnreadMessagesListener: function (successCallback, errorCallback) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["registerForMessageNotifications"]);
+    },
+
     showMessageCenter: function (successCallback, errorCallback, customData) {
         if (customData) {
             cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["showMessageCenter", customData]);
@@ -73,33 +77,9 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["willShowInteraction", eventName]);
     },
 
-
-    /* Unmatched */
-
-    openAppStore: function (successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["openAppStore"]);
-    },
-
-    registerForMessageNotifications: function (successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["registerForMessageNotifications"]);
-    },
-
-    registerForRateNotifications: function (successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["registerForRateNotifications"]);
-    },
-
-    registerForSurveyNotifications: function (successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["registerForSurveyNotifications"]);
-    },
-
     setProperty: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", key, value]);
-    },
-
-    unregisterForNotifications: function (successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["unregisterForNotifications"]);
     }
-
 };
 
 module.exports = Apptentive;

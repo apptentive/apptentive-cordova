@@ -206,7 +206,8 @@
 - (void)unreadMessageCountChanged:(NSNotification *)notification {
     // Unread message count is contained in the notification's userInfo dictionary.
     NSNumber *unreadMessageCount = [notification.userInfo objectForKey:@"count"];
-    [self sendSuccessMessage:[unreadMessageCount stringValue] callbackId:messageNotificationCallback];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:[unreadMessageCount intValue]];
+    [self.commandDelegate sendPluginResult:result callbackId:messageNotificationCallback];
 }
 
 - (void) userAgreedToRateNotification:(NSNotification *)notification {
