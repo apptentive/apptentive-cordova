@@ -5,28 +5,28 @@
         version="1.7.0">
 
     <name>ApptentiveBridge</name>
-	<description>Apptentive Plugin For Cordova</description>
+    <description>Apptentive Plugin For Cordova</description>
     <keywords>apptentive</keywords>
     <engines>
-        <engine name="cordova" version=">=3.6.0" />
+        <engine name="cordova" version=">=3.6.0"/>
     </engines>
 
     <!-- android -->
     <platform name="android">
 
         <!-- Require API key -->
-        <preference name="ANDROID_API_KEY" />
+        <preference name="ANDROID_API_KEY"/>
 
         <!-- Define namespace for javascript reference -->
         <js-module src="www/ApptentiveAndroid.js" name="Apptentive">
-            <clobbers target="Apptentive" />
+            <clobbers target="Apptentive"/>
         </js-module>
 
         <!-- Add dependencies -->
 
         <!-- Setup Cordova config.xml file -->
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="ApptentiveBridge" >
+            <feature name="ApptentiveBridge">
                 <param name="android-package" value="com.apptentive.cordova.ApptentiveBridge"/>
             </feature>
         </config-file>
@@ -40,35 +40,37 @@
             <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
             <!-- Make sure to support high resolution screens so Apptentive's UI looks great. -->
-             <supports-screens android:largeScreens="true" android:normalScreens="true" android:smallScreens="true" android:anyDensity="true"/>
+            <supports-screens android:largeScreens="true" android:normalScreens="true" android:smallScreens="true"
+                              android:anyDensity="true"/>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="application">
-            <activity android:name="com.apptentive.android.sdk.ViewActivity" android:theme="@style/Apptentive.Theme.Transparent"/>
+            <activity android:name="com.apptentive.android.sdk.ViewActivity"
+                      android:theme="@style/Apptentive.Theme.Transparent"/>
             <meta-data android:name="apptentive_api_key" android:value="$ANDROID_API_KEY"/>
             <meta-data android:name="apptentive_sdk_distribution" android:value="Cordova"/>
             <meta-data android:name="apptentive_sdk_distribution_version" android:value="1.7.0"/>
         </config-file>
 
         <!-- Copy over all the apptentive integration files and native SDK -->
-        <framework src="src/android/apptentive" custom="true" />
-        <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova" />
-        <source-file src="src/android/JsonHelper.java" target-dir="src/com/apptentive/cordova" />
+        <framework src="src/android/apptentive" custom="true"/>
+        <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova"/>
+        <source-file src="src/android/JsonHelper.java" target-dir="src/com/apptentive/cordova"/>
     </platform>
 
 
     <!-- ios -->
     <platform name="ios">
         <!-- Require API key -->
-        <preference name="IOS_API_KEY" />
+        <preference name="IOS_API_KEY"/>
 
         <js-module src="www/ApptentiveIos.js" name="Apptentive">
-            <clobbers target="Apptentive" />
+            <clobbers target="Apptentive"/>
         </js-module>
 
         <config-file target="config.xml" parent="/widget">
             <feature name="ApptentiveBridge">
-                <param name="ios-package" value="ApptentiveBridge" />
+                <param name="ios-package" value="ApptentiveBridge"/>
             </feature>
         </config-file>
 
@@ -81,20 +83,22 @@
         <source-file src="src/ios/ApptentiveBridge.m" target-dir="Apptentive"/>
 
         <!-- Apptentive SDK -->
-        <source-file src="src/ios/apptentive_ios_sdk-1.7.1/libApptentiveConnect.a" framework="true" target-dir="apptentive_ios_sdk-1.7.1"/>
-        <resource-file src="src/ios/apptentive_ios_sdk-1.7.1/ApptentiveResources.bundle" target-dir="apptentive_ios_sdk-1.7.1"/>
-        <header-file src="src/ios/apptentive_ios_sdk-1.7.1/include/ATConnect.h"  target-dir="apptentive_ios_sdk-1.7.1" />
+        <source-file src="src/ios/apptentive_ios_sdk-1.7.1/libApptentiveConnect.a" framework="true"
+                     target-dir="apptentive_ios_sdk-1.7.1"/>
+        <resource-file src="src/ios/apptentive_ios_sdk-1.7.1/ApptentiveResources.bundle"
+                       target-dir="apptentive_ios_sdk-1.7.1"/>
+        <header-file src="src/ios/apptentive_ios_sdk-1.7.1/include/ATConnect.h" target-dir="apptentive_ios_sdk-1.7.1"/>
 
         <!-- required system frameworks -->
-        <framework src="Accelerate.framework" weak="true" />
-        <framework src="CoreData.framework" weak="true" />
-        <framework src="CoreTelephony.framework" weak="true" />
-        <framework src="CoreText.framework" weak="true" />
-        <framework src="Foundation.framework" weak="true" />
-        <framework src="QuartzCore.framework" weak="true" />
-        <framework src="Storekit.framework" weak="true" />
-        <framework src="SystemConfiguration.framework" weak="true" />
-        <framework src="UIKit.framework" weak="true" />
+        <framework src="Accelerate.framework" weak="true"/>
+        <framework src="CoreData.framework" weak="true"/>
+        <framework src="CoreTelephony.framework" weak="true"/>
+        <framework src="CoreText.framework" weak="true"/>
+        <framework src="Foundation.framework" weak="true"/>
+        <framework src="QuartzCore.framework" weak="true"/>
+        <framework src="Storekit.framework" weak="true"/>
+        <framework src="SystemConfiguration.framework" weak="true"/>
+        <framework src="UIKit.framework" weak="true"/>
     </platform>
 
 </plugin>
