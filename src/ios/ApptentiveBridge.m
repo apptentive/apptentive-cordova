@@ -148,14 +148,14 @@
 
 #pragma mark Initialization and Events
 - (void)initAPIKey:(NSString*)callbackId {
-    //access info.plist for API key
+    // Access Info.plist for ATInfoApiKey
     NSDictionary *infoPlist = [[NSBundle mainBundle] infoDictionary];
-    NSString *apiKey = [infoPlist objectForKey:@"Apptentive_API_KEY"];
+    NSString *apiKey = [infoPlist objectForKey:@"ATInfoApiKey"];
 
     NSLog(@"Initializing Apptentive API Key: %@", apiKey);
 
     if (!apiKey) {
-        [self sendFailureMessage:@"Insufficient arguments - no apiKey" callbackId:callbackId];
+        [self sendFailureMessage:@"Insufficient arguments - no API key." callbackId:callbackId];
         return;
     }
     if (![apiKey isEqualToString:@""]) {
