@@ -148,9 +148,9 @@
 
 #pragma mark Initialization and Events
 - (void)initAPIKey:(NSString*)callbackId {
-    // Access Info.plist for ATInfoApiKey
+    // Access Info.plist for ApptentiveAPIKey
     NSDictionary *infoPlist = [[NSBundle mainBundle] infoDictionary];
-    NSString *apiKey = [infoPlist objectForKey:@"ATInfoApiKey"];
+    NSString *apiKey = [infoPlist objectForKey:@"ApptentiveAPIKey"];
 
     NSLog(@"Initializing Apptentive API Key: %@", apiKey);
 
