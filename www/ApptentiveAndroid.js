@@ -61,6 +61,10 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setRatingProvider", [ratingProviderName]);
     },
 
+    setUnreadMessagesListener: function (unreadMessagesCallback, errorCallback) {
+        cordova.exec(unreadMessagesCallback, errorCallback, "ApptentiveBridge", "setUnreadMessagesListener", []);
+    },
+
     showMessageCenter: function (successCallback, errorCallback, customData) {
         if (customData) {
             cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "showMessageCenter", [customData]);
@@ -73,21 +77,9 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "willShowInteraction", [eventName]);
     },
 
-
-    // This is not implemented in the brige for some reason.
     setProperty: function (successCallback, errorCallback, key, value) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setProperty", [key, value]);
-    },
-
-    setOnSurveyFinishedListener: function (successCallback, errorCallback, listener) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setOnSurveyFinishedListener", [listener]);
-    },
-
-    setUnreadMessagesListener: function (unreadMessagesCallback, errorCallback) {
-        cordova.exec(unreadMessagesCallback, errorCallback, "ApptentiveBridge", "setUnreadMessagesListener", []);
+        successCallback(); // Does nothing on Android
     }
-
-
 };
 
 module.exports = Apptentive;
