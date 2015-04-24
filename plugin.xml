@@ -83,11 +83,11 @@
         <source-file src="src/ios/ApptentiveBridge.m" target-dir="Apptentive"/>
 
         <!-- Apptentive SDK -->
-        <source-file src="src/ios/apptentive_ios_sdk-1.7.1/libApptentiveConnect.a" framework="true"
-                     target-dir="apptentive_ios_sdk-1.7.1"/>
-        <resource-file src="src/ios/apptentive_ios_sdk-1.7.1/ApptentiveResources.bundle"
-                       target-dir="apptentive_ios_sdk-1.7.1"/>
-        <header-file src="src/ios/apptentive_ios_sdk-1.7.1/include/ATConnect.h" target-dir="apptentive_ios_sdk-1.7.1"/>
+        <source-file src="src/ios/apptentive_ios_sdk/libApptentiveConnect.a" framework="true"
+                     target-dir="apptentive_ios_sdk"/>
+        <resource-file src="src/ios/apptentive_ios_sdk/ApptentiveResources.bundle"
+                       target-dir="apptentive_ios_sdk"/>
+        <header-file src="src/ios/apptentive_ios_sdk/include/ATConnect.h" target-dir="apptentive_ios_sdk"/>
 
         <!-- required system frameworks -->
         <framework src="Accelerate.framework" weak="true"/>
