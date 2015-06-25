@@ -15,11 +15,11 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["deviceReady"]);
     },
 
-    engage: function (successCallback, errorCallback, eventId, customData) {
+    engage: function (successCallback, errorCallback, eventName, customData) {
         if (customData) {
-            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["engage", eventId, customData]);
+            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["engage", eventName, customData]);
         } else {
-            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["engage", eventId]);
+            cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["engage", eventName]);
         }
     },
 
