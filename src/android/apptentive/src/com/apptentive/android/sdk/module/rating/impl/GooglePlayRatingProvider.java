@@ -21,7 +21,7 @@ public class GooglePlayRatingProvider implements IRatingProvider {
 	public void startRating(Context context, Map<String, String> args) throws InsufficientRatingArgumentsException {
 		if (!args.containsKey("package")) {
 			String packageName = context.getPackageName();
-			Log.w("Rating provider did not contain package. Adding default package: \"%s\"", packageName);
+			Log.w("Rating provider args did not contain package name. Adding default package: \"%s\"", packageName);
 			args.put("package", packageName);
 		}
 		Uri uri = Uri.parse("market://details?id=" + args.get("package"));

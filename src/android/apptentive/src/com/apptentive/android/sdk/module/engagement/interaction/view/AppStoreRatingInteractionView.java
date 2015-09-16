@@ -70,7 +70,6 @@ public class AppStoreRatingInteractionView extends InteractionView<AppStoreRatin
 			displayError(activity, activity.getString(R.string.apptentive_rating_error));
 		} finally {
 			if (!showingDialog) {
-				Log.d("Finishing Activity.");
 				activity.finish();
 			}
 		}
@@ -94,7 +93,6 @@ public class AppStoreRatingInteractionView extends InteractionView<AppStoreRatin
 		alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
 			@Override
 			public void onDismiss(DialogInterface dialog) {
-				Log.d("Dismissing dialog and finishing Activity.");
 				activity.finish();
 			}
 		});
