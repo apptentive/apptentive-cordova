@@ -49,12 +49,20 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["resume"]);
     },
 
-    setInitialUserEmail: function (successCallback, errorCallback, email) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", "initialUserEmailAddress", email]);
+    setPersonEmail: function (successCallback, errorCallback, email) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", "personEmailAddress", email]);
     },
 
-    setInitialUserName: function (successCallback, errorCallback, name) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", "initialUserName", name]);
+    getPersonEmail: function (successCallback, errorCallback) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["getProperty", "personEmailAddress"]);
+    },
+
+    setPersonName: function (successCallback, errorCallback, name) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", "personName", name]);
+    },
+
+    getPersonName: function (successCallback, errorCallback) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["getProperty", "personName"]);
     },
 
     setRatingProvider: function (successCallback, errorCallback, ratingProviderName) {
@@ -73,12 +81,20 @@ var Apptentive = {
         }
     },
 
-    willShowInteraction: function (successCallback, errorCallback, eventName) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["willShowInteraction", eventName]);
+    canShowInteraction: function (successCallback, errorCallback, eventName) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["canShowInteraction", eventName]);
+    },
+
+    canShowMessageCenter: function (successCallback, errorCallback) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["canShowMessageCenter"]);
     },
 
     setProperty: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", key, value]);
+    }
+
+    getProperty: function (successCallback, errorCallback, key, value) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["getProperty", key]);
     }
 };
 
