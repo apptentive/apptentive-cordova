@@ -91,7 +91,7 @@ var Apptentive = {
 
     setProperty: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["setProperty", key, value]);
-    }
+    },
 
     getProperty: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["getProperty", key]);
