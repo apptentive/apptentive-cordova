@@ -27,203 +27,204 @@ import org.json.JSONObject;
 
 public class ApptentiveBridge extends CordovaPlugin {
 
-    private static final String ACTION_DEVICE_READY = "deviceReady";
-    private static final String ACTION_RESUME = "resume";
-    private static final String ACTION_PAUSE = "pause";
-    private static final String ACTION_ADD_CUSTOM_DEVICE_DATA = "addCustomDeviceData";
-    private static final String ACTION_ADD_CUSTOM_PERSON_DATA = "addCustomPersonData";
-    private static final String ACTION_ENGAGE = "engage";
-    private static final String ACTION_GET_UNREAD_MESSAGE_COUNT = "getUnreadMessageCount";
-    private static final String ACTION_PUT_RATING_PROVIDER_ARG = "putRatingProviderArg";
-    private static final String ACTION_REMOVE_CUSTOM_DEVICE_DATA = "removeCustomDeviceData";
-    private static final String ACTION_REMOVE_CUSTOM_PERSON_DATA = "removeCustomPersonData";
-    private static final String ACTION_SEND_ATTACHMENT_FILE_URI = "sendAttachmentFileUri";
-    private static final String ACTION_SEND_ATTACHMENT_FILE = "sendAttachmentFile";
-    private static final String ACTION_SEND_ATTACHMENT_TEXT = "sendAttachmentText";
-    private static final String ACTION_GET_PERSON_EMAIL = "getPersonEmail";
-    private static final String ACTION_SET_PERSON_EMAIL = "setPersonEmail";
-    private static final String ACTION_GET_PERSON_NAME = "getPersonName";
-    private static final String ACTION_SET_PERSON_NAME = "setPersonName";
-    private static final String ACTION_ADD_UNREAD_MESSAGES_LISTENER = "addUnreadMessagesListener";
-    private static final String ACTION_SET_ON_SURVEY_FINISHED_LISTENER = "setOnSurveyFinishedListener";
-    private static final String ACTION_SET_RATING_PROVIDER = "setRatingProvider";
-    private static final String ACTION_SHOW_MESSAGE_CENTER = "showMessageCenter";
-    private static final String ACTION_CAN_SHOW_MESSAGE_CENTER = "canShowMessageCenter";
-    private static final String ACTION_CAN_SHOW_INTERACTION = "canShowInteraction";
+	private static final String ACTION_DEVICE_READY = "deviceReady";
+	private static final String ACTION_RESUME = "resume";
+	private static final String ACTION_PAUSE = "pause";
+	private static final String ACTION_ADD_CUSTOM_DEVICE_DATA = "addCustomDeviceData";
+	private static final String ACTION_ADD_CUSTOM_PERSON_DATA = "addCustomPersonData";
+	private static final String ACTION_ENGAGE = "engage";
+	private static final String ACTION_GET_UNREAD_MESSAGE_COUNT = "getUnreadMessageCount";
+	private static final String ACTION_PUT_RATING_PROVIDER_ARG = "putRatingProviderArg";
+	private static final String ACTION_REMOVE_CUSTOM_DEVICE_DATA = "removeCustomDeviceData";
+	private static final String ACTION_REMOVE_CUSTOM_PERSON_DATA = "removeCustomPersonData";
+	private static final String ACTION_SEND_ATTACHMENT_FILE_URI = "sendAttachmentFileUri";
+	private static final String ACTION_SEND_ATTACHMENT_FILE = "sendAttachmentFile";
+	private static final String ACTION_SEND_ATTACHMENT_TEXT = "sendAttachmentText";
+	private static final String ACTION_GET_PERSON_EMAIL = "getPersonEmail";
+	private static final String ACTION_SET_PERSON_EMAIL = "setPersonEmail";
+	private static final String ACTION_GET_PERSON_NAME = "getPersonName";
+	private static final String ACTION_SET_PERSON_NAME = "setPersonName";
+	private static final String ACTION_ADD_UNREAD_MESSAGES_LISTENER = "addUnreadMessagesListener";
+	private static final String ACTION_SET_ON_SURVEY_FINISHED_LISTENER = "setOnSurveyFinishedListener";
+	private static final String ACTION_SET_RATING_PROVIDER = "setRatingProvider";
+	private static final String ACTION_SHOW_MESSAGE_CENTER = "showMessageCenter";
+	private static final String ACTION_CAN_SHOW_MESSAGE_CENTER = "canShowMessageCenter";
+	private static final String ACTION_CAN_SHOW_INTERACTION = "canShowInteraction";
 
-    /**
-    * Constructor.
-    */
-    public ApptentiveBridge() {}
+	/**
+	 * Constructor.
+	 */
+	public ApptentiveBridge() {
+	}
 
-    public boolean execute(final String action, JSONArray args, final CallbackContext callbackContext) throws JSONException  {
-        Log.v("Executing action: %s", action);
+	public boolean execute(final String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
+		Log.v("Executing action: %s", action);
 
-        if( action.equals(ACTION_DEVICE_READY) ) {
-            Apptentive.onStart(cordova.getActivity());
-            callbackContext.success();
-            return true;
+		if (action.equals(ACTION_DEVICE_READY)) {
+			Apptentive.onStart(cordova.getActivity());
+			callbackContext.success();
+			return true;
 
-        } else if( action.equals(ACTION_PAUSE) ) {
-            Apptentive.onStop(cordova.getActivity());
-            callbackContext.success();
-            return true;
+		} else if (action.equals(ACTION_PAUSE)) {
+			Apptentive.onStop(cordova.getActivity());
+			callbackContext.success();
+			return true;
 
-        } else if( action.equals(ACTION_RESUME) ) {
-            Apptentive.onStart(cordova.getActivity());
-            callbackContext.success();
-            return true;
+		} else if (action.equals(ACTION_RESUME)) {
+			Apptentive.onStart(cordova.getActivity());
+			callbackContext.success();
+			return true;
 
-        } else if( action.equals(ACTION_CAN_SHOW_MESSAGE_CENTER) ) {
-            boolean canShowMessageCenter = Apptentive.canShowMessageCenter(cordova.getActivity());
-            PluginResult result = new PluginResult(PluginResult.Status.OK, canShowMessageCenter);
-            callbackContext.sendPluginResult(result);
-            return true;
+		} else if (action.equals(ACTION_CAN_SHOW_MESSAGE_CENTER)) {
+			boolean canShowMessageCenter = Apptentive.canShowMessageCenter(cordova.getActivity());
+			PluginResult result = new PluginResult(PluginResult.Status.OK, canShowMessageCenter);
+			callbackContext.sendPluginResult(result);
+			return true;
 
-        } else if( action.equals(ACTION_SHOW_MESSAGE_CENTER) ) {
-            if( args.length() > 0 ) {
-                Map config = JsonHelper.toMap(args.getJSONObject(0));
-                Apptentive.showMessageCenter(cordova.getActivity(), config);
-            } else {
-                Apptentive.showMessageCenter(cordova.getActivity());
-            }
-            callbackContext.success();
-            return true;
+		} else if (action.equals(ACTION_SHOW_MESSAGE_CENTER)) {
+			if (args.length() > 0) {
+				Map config = JsonHelper.toMap(args.getJSONObject(0));
+				Apptentive.showMessageCenter(cordova.getActivity(), config);
+			} else {
+				Apptentive.showMessageCenter(cordova.getActivity());
+			}
+			callbackContext.success();
+			return true;
 
-        } else if( action.equals(ACTION_ADD_CUSTOM_DEVICE_DATA) ) {
-            String key = args.getString(0);
-            String value = args.getString(1);
-            Apptentive.addCustomDeviceData(cordova.getActivity(), key, value);
-            callbackContext.success();
-            return true;
+		} else if (action.equals(ACTION_ADD_CUSTOM_DEVICE_DATA)) {
+			String key = args.getString(0);
+			String value = args.getString(1);
+			Apptentive.addCustomDeviceData(cordova.getActivity(), key, value);
+			callbackContext.success();
+			return true;
 
-        } else if( action.equals(ACTION_ADD_CUSTOM_PERSON_DATA) ) {
-            String key = args.getString(0);
-            String value = args.getString(1);
-            Apptentive.addCustomPersonData(cordova.getActivity(), key, value);
-            callbackContext.success();
-            return true;
+		} else if (action.equals(ACTION_ADD_CUSTOM_PERSON_DATA)) {
+			String key = args.getString(0);
+			String value = args.getString(1);
+			Apptentive.addCustomPersonData(cordova.getActivity(), key, value);
+			callbackContext.success();
+			return true;
 
-        } else if( action.equals(ACTION_CAN_SHOW_INTERACTION) ) {
-            String eventId = args.getString(0);
-            boolean canShowInteraction = Apptentive.canShowInteraction(cordova.getActivity(), eventId);
-            PluginResult result = new PluginResult(PluginResult.Status.OK, canShowInteraction);
-            callbackContext.sendPluginResult(result);
-            return true;
+		} else if (action.equals(ACTION_CAN_SHOW_INTERACTION)) {
+			String eventId = args.getString(0);
+			boolean canShowInteraction = Apptentive.canShowInteraction(cordova.getActivity(), eventId);
+			PluginResult result = new PluginResult(PluginResult.Status.OK, canShowInteraction);
+			callbackContext.sendPluginResult(result);
+			return true;
 
-        } else if( action.equals(ACTION_ENGAGE) ) {
-            String eventId = args.getString(0);
-            boolean shown = false;
-            if( args.length() > 1 ) {
-                Map customData = JsonHelper.toMap(args.getJSONObject(1));
-                shown = Apptentive.engage(cordova.getActivity(), eventId, customData);
-            } else {
-                shown = Apptentive.engage(cordova.getActivity(), eventId);
-            }
-            PluginResult result = new PluginResult(PluginResult.Status.OK, shown);
-            callbackContext.sendPluginResult(result);
-            return true;
+		} else if (action.equals(ACTION_ENGAGE)) {
+			String eventId = args.getString(0);
+			boolean shown = false;
+			if (args.length() > 1) {
+				Map customData = JsonHelper.toMap(args.getJSONObject(1));
+				shown = Apptentive.engage(cordova.getActivity(), eventId, customData);
+			} else {
+				shown = Apptentive.engage(cordova.getActivity(), eventId);
+			}
+			PluginResult result = new PluginResult(PluginResult.Status.OK, shown);
+			callbackContext.sendPluginResult(result);
+			return true;
 
-        } else if( action.equals(ACTION_GET_UNREAD_MESSAGE_COUNT) ) {
-            int unreadMessageCount = Apptentive.getUnreadMessageCount(cordova.getActivity());
-            PluginResult result = new PluginResult(PluginResult.Status.OK, unreadMessageCount);
-            callbackContext.sendPluginResult(result);
-            return true;
+		} else if (action.equals(ACTION_GET_UNREAD_MESSAGE_COUNT)) {
+			int unreadMessageCount = Apptentive.getUnreadMessageCount(cordova.getActivity());
+			PluginResult result = new PluginResult(PluginResult.Status.OK, unreadMessageCount);
+			callbackContext.sendPluginResult(result);
+			return true;
 
-        } else if( action.equals(ACTION_PUT_RATING_PROVIDER_ARG) ) {
-            String key = args.getString(0);
-            String value = args.getString(1);
-            Apptentive.putRatingProviderArg(key, value);
-            callbackContext.success();
-            return true;
+		} else if (action.equals(ACTION_PUT_RATING_PROVIDER_ARG)) {
+			String key = args.getString(0);
+			String value = args.getString(1);
+			Apptentive.putRatingProviderArg(key, value);
+			callbackContext.success();
+			return true;
 
-        } else if( action.equals(ACTION_REMOVE_CUSTOM_DEVICE_DATA) ) {
-            String key = args.getString(0);
-            Apptentive.removeCustomDeviceData(cordova.getActivity(), key);
-            callbackContext.success();
-            return true;
+		} else if (action.equals(ACTION_REMOVE_CUSTOM_DEVICE_DATA)) {
+			String key = args.getString(0);
+			Apptentive.removeCustomDeviceData(cordova.getActivity(), key);
+			callbackContext.success();
+			return true;
 
-        } else if( action.equals(ACTION_REMOVE_CUSTOM_PERSON_DATA)) {
-            String key = args.getString(0);
-            Apptentive.removeCustomPersonData(cordova.getActivity(), key);
-            callbackContext.success();
-            return true;
+		} else if (action.equals(ACTION_REMOVE_CUSTOM_PERSON_DATA)) {
+			String key = args.getString(0);
+			Apptentive.removeCustomPersonData(cordova.getActivity(), key);
+			callbackContext.success();
+			return true;
 
-        } else if( action.equals(ACTION_SEND_ATTACHMENT_FILE_URI) ) {
-            String uri = args.getString(0);
-            Apptentive.sendAttachmentFile(cordova.getActivity(), uri );
-            return true;
+		} else if (action.equals(ACTION_SEND_ATTACHMENT_FILE_URI)) {
+			String uri = args.getString(0);
+			Apptentive.sendAttachmentFile(cordova.getActivity(), uri);
+			return true;
 
-        } else if( action.equals(ACTION_SEND_ATTACHMENT_FILE) ) {
-            byte[] content = args.getString(0).getBytes();
-            String mimeType = args.getString(1);
-            Apptentive.sendAttachmentFile(cordova.getActivity(), content, mimeType );
-            return true;
+		} else if (action.equals(ACTION_SEND_ATTACHMENT_FILE)) {
+			byte[] content = args.getString(0).getBytes();
+			String mimeType = args.getString(1);
+			Apptentive.sendAttachmentFile(cordova.getActivity(), content, mimeType);
+			return true;
 
-        } else if( action.equals(ACTION_SEND_ATTACHMENT_TEXT) ) {
-            String text = args.getString(0);
-            Apptentive.sendAttachmentText(cordova.getActivity(), text );
-            callbackContext.success();
-            return true;
+		} else if (action.equals(ACTION_SEND_ATTACHMENT_TEXT)) {
+			String text = args.getString(0);
+			Apptentive.sendAttachmentText(cordova.getActivity(), text);
+			callbackContext.success();
+			return true;
 
-        } else if( action.equals(ACTION_GET_PERSON_EMAIL) ) {
-            String email = Apptentive.getPersonEmail(cordova.getActivity());
-            PluginResult result = new PluginResult(PluginResult.Status.OK, email);
-            callbackContext.sendPluginResult(result);
-            return true;
+		} else if (action.equals(ACTION_GET_PERSON_EMAIL)) {
+			String email = Apptentive.getPersonEmail(cordova.getActivity());
+			PluginResult result = new PluginResult(PluginResult.Status.OK, email);
+			callbackContext.sendPluginResult(result);
+			return true;
 
-        } else if( action.equals(ACTION_SET_PERSON_EMAIL)) {
-            String email = args.getString(0);
-            Apptentive.setPersonEmail(cordova.getActivity(), email);
-            callbackContext.success();
-            return true;
+		} else if (action.equals(ACTION_SET_PERSON_EMAIL)) {
+			String email = args.getString(0);
+			Apptentive.setPersonEmail(cordova.getActivity(), email);
+			callbackContext.success();
+			return true;
 
-        } else if( action.equals(ACTION_GET_PERSON_NAME) ) {
-            String name = Apptentive.getPersonName(cordova.getActivity());
-            PluginResult result = new PluginResult(PluginResult.Status.OK, name);
-            callbackContext.sendPluginResult(result);
-            return true;
+		} else if (action.equals(ACTION_GET_PERSON_NAME)) {
+			String name = Apptentive.getPersonName(cordova.getActivity());
+			PluginResult result = new PluginResult(PluginResult.Status.OK, name);
+			callbackContext.sendPluginResult(result);
+			return true;
 
-        } else if( action.equals(ACTION_SET_PERSON_NAME) ) {
-            String name = args.getString(0);
-            Apptentive.setPersonName(cordova.getActivity(), name);
-            callbackContext.success();
-            return true;
+		} else if (action.equals(ACTION_SET_PERSON_NAME)) {
+			String name = args.getString(0);
+			Apptentive.setPersonName(cordova.getActivity(), name);
+			callbackContext.success();
+			return true;
 
-        } else if( action.equals(ACTION_SET_RATING_PROVIDER) ) {
-            String providerName = args.getString(0);
-            if (providerName.equals("amazon")) {
-                Apptentive.setRatingProvider(new AmazonAppstoreRatingProvider());
-            }
-            callbackContext.success();
-            return true;
+		} else if (action.equals(ACTION_SET_RATING_PROVIDER)) {
+			String providerName = args.getString(0);
+			if (providerName.equals("amazon")) {
+				Apptentive.setRatingProvider(new AmazonAppstoreRatingProvider());
+			}
+			callbackContext.success();
+			return true;
 
-        } else if( action.equals(ACTION_ADD_UNREAD_MESSAGES_LISTENER) ) {
-            UnreadMessagesListener listener = new UnreadMessagesListener() {
-                public void onUnreadMessageCountChanged(int unreadMessages) {
-                    PluginResult result = new PluginResult(PluginResult.Status.OK, unreadMessages);
-                    result.setKeepCallback(true);
-                    callbackContext.sendPluginResult(result);
-                }
-            };
-            return true;
+		} else if (action.equals(ACTION_ADD_UNREAD_MESSAGES_LISTENER)) {
+			UnreadMessagesListener listener = new UnreadMessagesListener() {
+				public void onUnreadMessageCountChanged(int unreadMessages) {
+					PluginResult result = new PluginResult(PluginResult.Status.OK, unreadMessages);
+					result.setKeepCallback(true);
+					callbackContext.sendPluginResult(result);
+				}
+			};
+			return true;
 
-        } else if( action.equals(ACTION_SET_ON_SURVEY_FINISHED_LISTENER) ) {
-            OnSurveyFinishedListener listener = new OnSurveyFinishedListener() {
-                public void onSurveyFinished( boolean finished ) {
-                    int completed = finished ? 1 : 0;
-                    PluginResult result = new PluginResult(PluginResult.Status.OK, completed);
-                    result.setKeepCallback(true);
-                    callbackContext.sendPluginResult( result );
-                }
-            };
-            Apptentive.setOnSurveyFinishedListener( listener );
-            return true;
-        }
+		} else if (action.equals(ACTION_SET_ON_SURVEY_FINISHED_LISTENER)) {
+			OnSurveyFinishedListener listener = new OnSurveyFinishedListener() {
+				public void onSurveyFinished(boolean finished) {
+					int completed = finished ? 1 : 0;
+					PluginResult result = new PluginResult(PluginResult.Status.OK, completed);
+					result.setKeepCallback(true);
+					callbackContext.sendPluginResult(result);
+				}
+			};
+			Apptentive.setOnSurveyFinishedListener(listener);
+			return true;
+		}
 
-        Log.w("Unhandled action in ApptentiveBridge: %s", action);
+		Log.w("Unhandled action in ApptentiveBridge: %s", action);
 
-        callbackContext.error("Unhandled action in ApptentiveBridge: "+action);
-        return false;
-    }
+		callbackContext.error("Unhandled action in ApptentiveBridge: " + action);
+		return false;
+	}
 }
