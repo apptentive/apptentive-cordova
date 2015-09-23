@@ -69,7 +69,7 @@ var Apptentive = {
         successCallback(); // Does nothing on iOS.
     },
 
-    setUnreadMessagesListener: function (unreadMessagesCallback, errorCallback) {
+    addUnreadMessagesListener: function (unreadMessagesCallback, errorCallback) {
         cordova.exec(unreadMessagesCallback, errorCallback, "ApptentiveBridge", "execute", ["registerForMessageNotifications"]);
     },
 
