@@ -207,6 +207,7 @@ public class ApptentiveBridge extends CordovaPlugin {
 					callbackContext.sendPluginResult(result);
 				}
 			};
+			Apptentive.addUnreadMessagesListener(listener);
 			return true;
 
 		} else if (action.equals(ACTION_SET_ON_SURVEY_FINISHED_LISTENER)) {
