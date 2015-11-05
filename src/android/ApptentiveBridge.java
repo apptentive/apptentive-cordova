@@ -57,6 +57,8 @@ public class ApptentiveBridge extends CordovaPlugin {
 	public ApptentiveBridge() {
 	}
 
+	UnreadMessagesListener listener = null;
+
 	public boolean execute(final String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
 		Log.v("Executing action: %s", action);
 
@@ -200,8 +202,10 @@ public class ApptentiveBridge extends CordovaPlugin {
 			return true;
 
 		} else if (action.equals(ACTION_ADD_UNREAD_MESSAGES_LISTENER)) {
-			UnreadMessagesListener listener = new UnreadMessagesListener() {
+			Log.i("Adding message listener.");
+			listener = new UnreadMessagesListener() {
 				public void onUnreadMessageCountChanged(int unreadMessages) {
+					Log.i("Unread messages: %d", unreadMessages);
 					PluginResult result = new PluginResult(PluginResult.Status.OK, unreadMessages);
 					result.setKeepCallback(true);
 					callbackContext.sendPluginResult(result);
