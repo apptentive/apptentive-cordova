@@ -255,7 +255,7 @@
         [[ATConnect sharedConnection] addCustomDeviceDataString:stringData withKey:key];
     }
     else if ([value isKindOfClass:[NSNumber class]] ) {
-        if (value == [NSNumber numberWithBool:YES] || value == [NSNumber numberWithBool:NO])) {
+        if (value == [NSNumber numberWithBool:YES] || value == [NSNumber numberWithBool:NO]) {
             NSNumber* boolData = value;
             [[ATConnect sharedConnection] addCustomDeviceDataBool:boolData.boolValue withKey:key];
         } else {
@@ -278,7 +278,7 @@
         [[ATConnect sharedConnection] addCustomPersonDataString:stringData withKey:key];
     }
     else if ([value isKindOfClass:[NSNumber class]] ) {
-        if (value == [NSNumber numberWithBool:YES] || value == [NSNumber numberWithBool:NO])) {
+        if (value == [NSNumber numberWithBool:YES] || value == [NSNumber numberWithBool:NO]) {
             NSNumber* boolData = value;
             [[ATConnect sharedConnection] addCustomPersonDataBool:boolData.boolValue withKey:key];
         } else {

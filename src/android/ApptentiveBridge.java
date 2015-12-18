@@ -11,7 +11,6 @@ import com.apptentive.android.sdk.module.messagecenter.UnreadMessagesListener;
 import com.apptentive.android.sdk.module.rating.impl.AmazonAppstoreRatingProvider;
 import com.apptentive.android.sdk.module.survey.OnSurveyFinishedListener;
 import com.apptentive.cordova.JsonHelper;
-import com.sun.org.apache.xpath.internal.operations.Number;
 
 import java.io.IOException;
 import java.lang.Boolean;
