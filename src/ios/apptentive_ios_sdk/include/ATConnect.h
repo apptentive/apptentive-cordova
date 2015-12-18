@@ -13,7 +13,7 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
-#define kATConnectVersionString @"2.0.5"
+#define kATConnectVersionString @"2.1.0"
 
 #if TARGET_OS_IPHONE
 #	define kATConnectPlatformString @"iOS"
@@ -21,6 +21,8 @@
 #	define kATConnectPlatformString @"Mac OS X"
 @class ATFeedbackWindowController;
 #endif
+
+NS_ASSUME_NONNULL_BEGIN
 
 @protocol ATConnectDelegate;
 
@@ -112,14 +114,14 @@ Before calling any other methods on the shared `ATConnect` instance, set the API
 
  This key is found on the Apptentive website under Settings, API & Development.
  */
-@property (nonatomic, copy) NSString *apiKey;
+@property (nonatomic, copy) NSString *_Nullable apiKey;
 
 /**
  The app's iTunes App ID.
 
  You can find this in iTunes Connect, and is the numeric "Apple ID" shown on your app details page.
  */
-@property (nonatomic, copy) NSString *appID;
+@property (nonatomic, copy) NSString *_Nullable appID;
 
 /** The shared singleton of `ATConnect`. */
 + (ATConnect *)sharedConnection;
@@ -185,7 +187,7 @@ Before calling any other methods on the shared `ATConnect` instance, set the API
 
  @return `YES` if Message Center was presented, `NO` otherwise.
  */
-- (BOOL)presentMessageCenterFromViewController:(UIViewController *)viewController withCustomData:(NSDictionary *)customData;
+- (BOOL)presentMessageCenterFromViewController:(UIViewController *)viewController withCustomData:(nullable NSDictionary *)customData;
 
 /**
  Returns the current number of unread messages in Message Center.
@@ -212,12 +214,40 @@ Before calling any other methods on the shared `ATConnect` instance, set the API
 /**
  Forwards a push notification from your application delegate to Apptentive Connect.
 
- If the push notification originated from Apptentive, Message Center will be presented from the view controller.
+ If the push notification originated from Apptentive, Message Center will be presented from the view controller
+ when the notification is tapped.
 
  @param userInfo The `userInfo` dictionary of the notification.
  @param viewController The view controller Message Center may be presented from.
+
+ @return `YES` if the notification was sent by Apptentive, `NO` otherwise.
  */
-- (void)didReceiveRemoteNotification:(NSDictionary *)userInfo fromViewController:(UIViewController *)viewController;
+- (BOOL)didReceiveRemoteNotification:(NSDictionary *)userInfo fromViewController:(UIViewController *)viewController;
+
+/**
+ Forwards a push notification from your application delegate to Apptentive Connect.
+
+ If the push notification originated from Apptentive, Message Center will be presented from the view controller
+ when the notification is tapped.
+
+ Apptentive will attempt to fetch Messages Center messages in the background when the notification is received.
+
+ To enable background fetching of Message Center messages upon receiving a remote notification,
+ add `remote-notification` as a `UIBackgroundModes` value in your app's Info.plist.
+
+ The `completionHandler` block will be called when the message fetch is completed. To ensure that messages can be
+ retrieved, please do not call the `completionHandler` block yourself if the notification was sent by Apptentive.
+
+ If the notification was not sent by Apptentive, the parent app is responsible for calling the `completionHandler` block.
+
+ @param userInfo The `userInfo` dictionary of the notification.
+ @param viewController The view controller Message Center may be presented from.
+ @param completionHandler The block to execute when the message fetch operation is complete.
+
+ @return `YES` if the notification was sent by Apptentive, `NO` otherwise.
+ */
+
+- (BOOL)didReceiveRemoteNotification:(NSDictionary *)userInfo fromViewController:(UIViewController *)viewController fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler;
 
 /**
  Deprecated in 2.0.0 in favor of the better-named `canShowInteractionForEvent:`
@@ -261,7 +291,7 @@ Returns a Boolean value indicating whether the given event will cause an Interac
 
  @return `YES` if an interaction was triggered by the event, `NO` otherwise.
 */
-- (BOOL)engage:(NSString *)event withCustomData:(NSDictionary *)customData fromViewController:(UIViewController *)viewController;
+- (BOOL)engage:(NSString *)event withCustomData:(nullable NSDictionary *)customData fromViewController:(UIViewController *)viewController;
 
 /**
  Shows interaction UI, if applicable, related to a given event. Attaches the specified custom data to the event along with the specified extended data.
@@ -273,7 +303,7 @@ Returns a Boolean value indicating whether the given event will cause an Interac
 
  @return `YES` if an interaction was triggered by the event, `NO` otherwise.
  */
-- (BOOL)engage:(NSString *)event withCustomData:(NSDictionary *)customData withExtendedData:(NSArray *)extendedData fromViewController:(UIViewController *)viewController;
+- (BOOL)engage:(NSString *)event withCustomData:(nullable NSDictionary *)customData withExtendedData:(nullable NSArray<NSDictionary *> *)extendedData fromViewController:(UIViewController *)viewController;
 
 /**
  Dismisses Message Center.
@@ -283,7 +313,7 @@ Returns a Boolean value indicating whether the given event will cause an Interac
 
  @discussion Under normal circumstances, Message Center will be dismissed by the user tapping the Close button, so it is not necessary to call this method.
  */
-- (void)dismissMessageCenterAnimated:(BOOL)animated completion:(void (^)(void))completion;
+- (void)dismissMessageCenterAnimated:(BOOL)animated completion:(nullable void (^)(void))completion;
 
 #elif TARGET_OS_MAC
 
@@ -334,13 +364,13 @@ Returns a Boolean value indicating whether the given event will cause an Interac
 
  @return An extended data dictionary representing a commerce transaction, to be included in an event's extended data.
   */
-+ (NSDictionary *)extendedDataCommerceWithTransactionID:(NSString *)transactionID
-											affiliation:(NSString *)affiliation
-												revenue:(NSNumber *)revenue
-											   shipping:(NSNumber *)shipping
-													tax:(NSNumber *)tax
-											   currency:(NSString *)currency
-										  commerceItems:(NSArray *)commerceItems;
++ (NSDictionary *)extendedDataCommerceWithTransactionID:(nullable NSString *)transactionID
+											affiliation:(nullable NSString *)affiliation
+												revenue:(nullable NSNumber *)revenue
+											   shipping:(nullable NSNumber *)shipping
+													tax:(nullable NSNumber *)tax
+											   currency:(nullable NSString *)currency
+										  commerceItems:(nullable NSArray<NSDictionary *> *)commerceItems;
 
 /**
  Used to specify a commercial transaction (consisting of a single item) in an event's extended data.
@@ -354,12 +384,12 @@ Returns a Boolean value indicating whether the given event will cause an Interac
 
  @return An extended data dictionary representing a single item in a commerce transaction, to be included in an event's extended data.
  */
-+ (NSDictionary *)extendedDataCommerceItemWithItemID:(NSString *)itemID
-												name:(NSString *)name
-											category:(NSString *)category
-											   price:(NSNumber *)price
-											quantity:(NSNumber *)quantity
-											currency:(NSString *)currency;
++ (NSDictionary *)extendedDataCommerceItemWithItemID:(nullable NSString *)itemID
+												name:(nullable NSString *)name
+											category:(nullable NSString *)category
+											   price:(nullable NSNumber *)price
+											quantity:(nullable NSNumber *)quantity
+											currency:(nullable NSString *)currency;
 
 
 ///-------------------------------------
@@ -399,9 +429,9 @@ Returns a Boolean value indicating whether the given event will cause an Interac
 ///---------------------------------------
 
 /** The name of the app user when communicating with Apptentive. */
-@property (nonatomic, copy) NSString *personName;
+@property (copy, nonatomic) NSString *_Nullable personName;
 /** The email address of the app user in form fields and communicating with Apptentive. */
-@property (nonatomic, copy) NSString *personEmailAddress;
+@property (copy, nonatomic) NSString *_Nullable personEmailAddress;
 
 /**
  Adds custom data associated with the current person.
@@ -444,18 +474,86 @@ Returns a Boolean value indicating whether the given event will cause an Interac
 - (void)removeCustomDeviceDataWithKey:(NSString *)key;
 
 /**
- Deprecated. Use `-addCustomDeviceData:withKey:` instead.
+ Adds custom text data associated with the current device.
 
- @warning Deprecated!
+ Adds an additional data field to any feedback sent. This will show up in the device data in the
+ conversation on your Apptentive dashboard.
+
+ @param string Custom data of type `NSString`.
+ @param key A key to associate the data with.
+ */
+- (void)addCustomDeviceDataString:(NSString *)string withKey:(NSString *)key;
+
+/**
+ Adds custom numeric data associated with the current device.
+
+ Adds an additional data field to any feedback sent. This will show up in the device data in the
+ conversation on your Apptentive dashboard.
+
+ @param number Custom data of type `NSNumber`.
+ @param key A key to associate the data with.
+ */
+- (void)addCustomDeviceDataNumber:(NSNumber *)number withKey:(NSString *)key;
+
+/**
+ Adds custom Boolean data associated with the current device.
+
+ Adds an additional data field to any feedback sent. This will show up in the device data in the
+ conversation on your Apptentive dashboard.
+
+ @param boolValue Custom data of type `BOOL`.
+ @param key A key to associate the data with.
+ */
+- (void)addCustomDeviceDataBool:(BOOL)boolValue withKey:(NSString *)key;
+
+/**
+ Adds custom text data associated with the current person.
+
+ Adds an additional data field to any feedback sent. This will show up in the person data in the
+ conversation on your Apptentive dashboard.
+
+ @param string Custom data of type `NSString`.
+ @param key A key to associate the data with.
+ */
+- (void)addCustomPersonDataString:(NSString *)string withKey:(NSString *)key;
+
+/**
+ Adds custom numeric data associated with the current person.
+
+ Adds an additional data field to any feedback sent. This will show up in the person data in the
+ conversation on your Apptentive dashboard.
+
+ @param number Custom data of type `NSNumber`.
+ @param key A key to associate the data with.
+ */
+- (void)addCustomPersonDataNumber:(NSNumber *)number withKey:(NSString *)key;
+
+/**
+ Adds custom Boolean data associated with the current person.
+
+ Adds an additional data field to any feedback sent. This will show up in the person data in the
+ conversation on your Apptentive dashboard.
+
+ @param boolValue Custom data of type `BOOL`.
+ @param key A key to associate the data with.
+ */
+- (void)addCustomPersonDataBool:(BOOL)boolValue withKey:(NSString *)key;
+
+/**
+ Adds the specified custom data value associated with the specified key.
+
  @param object The custom data.
  @param key The key of the data.
+
+ @deprecated Use `-addCustomDeviceData:withKey:` instead.
  */
 - (void)addCustomData:(NSObject<NSCoding> *)object withKey:(NSString *)key DEPRECATED_ATTRIBUTE;
 
-/** Deprecated. Use `-removeCustomDeviceDataWithKey:` instead.
+/** Removes custom data associated with the specified key.
 
- @warning Deprecated!
  @param key The key of the data.
+
+ @deprecated Use `-removeCustomDeviceDataWithKey:` instead.
  */
 - (void)removeCustomDataWithKey:(NSString *)key DEPRECATED_ATTRIBUTE;
 
@@ -482,6 +580,9 @@ Returns a Boolean value indicating whether the given event will cause an Interac
 
  Only one Push Notification Integration can be added at a time. Setting a Push Notification
  Integration removes all previously set Push Notification Integrations.
+
+ To enable background fetching of Message Center messages upon receiving a remote notification,
+ add `remote-notification` as a `UIBackgroundModes` value in your app's Info.plist.
 
  @param pushProvider The Push Notification provider with which to register.
  @param deviceToken The device token used to send Remote Notifications.
@@ -526,3 +627,5 @@ Returns a Boolean value indicating whether the given event will cause an Interac
  */
 @interface ATNavigationController : UINavigationController
 @end
+
+NS_ASSUME_NONNULL_END
