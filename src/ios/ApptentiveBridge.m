@@ -286,7 +286,7 @@
             [[ATConnect sharedConnection] addCustomPersonDataNumber:numberData withKey:key];
         }
     } else {
-        [self sendFailureMessage:@"Custom Device data type not recognized" callbackId:callbackId];
+        [self sendFailureMessage:@"Custom Person data type not recognized" callbackId:callbackId];
         return;
     }
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
