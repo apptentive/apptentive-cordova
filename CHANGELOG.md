@@ -11,7 +11,7 @@ v2.1.0 - December 22, 2015
 
 - Apptentive Android SDK: 2.1.1
 - Apptentive iOS SDK: 2.1.0
-- `Apptentive.addCustomDeviceData(successCallback, errorCallback, key, value)` and `Apptentive.addCustomPersonData(successCallback, errorCallback, key, value)` support typed `value`. The supported value types are Number, Boolean and String
+- Sending custom data through `Apptentive.showMessageCenter()`, `Apptentive.addCustomDeviceData(successCallback, errorCallback, key, value)` and `Apptentive.addCustomPersonData(successCallback, errorCallback, key, value)` now support typed `value`. The supported value types are Number, Boolean and String
 - Updated to the latest Apptentive iOS SDK v2.1.0
 
 v2.0.1 - November 5, 2015
