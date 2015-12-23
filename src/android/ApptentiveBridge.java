@@ -107,7 +107,7 @@ public class ApptentiveBridge extends CordovaPlugin {
 				Apptentive.addCustomDeviceData(cordova.getActivity(), key, (Boolean) value);
 			}
 			else  {
-				callbackContext.error("Custom Device Data Type not supported: " + (value != null) ? value.getClass() : "NULL");
+				callbackContext.error("Custom Device Data Type not supported: " + ((value != null) ? value.getClass() : "NULL"));
 				return false;
 			}
 
@@ -127,7 +127,7 @@ public class ApptentiveBridge extends CordovaPlugin {
 				Apptentive.addCustomPersonData(cordova.getActivity(), key, (Boolean) value);
 			}
 			else {
-				callbackContext.error("Custom Person Data Type not supported: " + (value != null) ? value.getClass() : "NULL");
+				callbackContext.error("Custom Person Data Type not supported: " + ((value != null) ? value.getClass() : "NULL"));
 				return false;
 			}
 
