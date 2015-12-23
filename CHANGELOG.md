@@ -6,6 +6,14 @@ This document lets you know what has changed in the Cordova plugin. For changes 
 - [Android Changelog](https://github.com/apptentive/apptentive-android/blob/master/CHANGELOG.md)
 - [iOS Changelog](https://github.com/apptentive/apptentive-ios/blob/master/CHANGELOG.md)
 
+v2.1.0 - December 22, 2015
+=========================
+
+- Apptentive Android SDK: 2.1.1
+- Apptentive iOS SDK: 2.1.0
+- `Apptentive.addCustomDeviceData(successCallback, errorCallback, key, value)` and `Apptentive.addCustomPersonData(successCallback, errorCallback, key, value)` support typed `value`. The supported value types are Number, Boolean and String
+- Updated to the latest Apptentive iOS SDK v2.1.0
+
 v2.0.1 - November 5, 2015
 =========================
 
