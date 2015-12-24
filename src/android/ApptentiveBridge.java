@@ -13,6 +13,7 @@ import com.apptentive.android.sdk.module.survey.OnSurveyFinishedListener;
 import com.apptentive.cordova.JsonHelper;
 
 import java.io.IOException;
+import java.lang.Boolean;
 import java.util.Map;
 import java.util.Iterator;
 
@@ -95,15 +96,41 @@ public class ApptentiveBridge extends CordovaPlugin {
 
 		} else if (action.equals(ACTION_ADD_CUSTOM_DEVICE_DATA)) {
 			String key = args.getString(0);
-			String value = args.getString(1);
-			Apptentive.addCustomDeviceData(cordova.getActivity(), key, value);
+			Object value = args.get(1);
+			if (value instanceof String) {
+				Apptentive.addCustomDeviceData(cordova.getActivity(), key, (String) value);
+			}
+			else if (value instanceof Number) {
+				Apptentive.addCustomDeviceData(cordova.getActivity(), key, (Number) value);
+			}
+			else if (value instanceof Boolean) {
+				Apptentive.addCustomDeviceData(cordova.getActivity(), key, (Boolean) value);
+			}
+			else  {
+				callbackContext.error("Custom Device Data Type not supported: " + ((value != null) ? value.getClass() : "NULL"));
+				return false;
+			}
+
 			callbackContext.success();
 			return true;
 
 		} else if (action.equals(ACTION_ADD_CUSTOM_PERSON_DATA)) {
 			String key = args.getString(0);
-			String value = args.getString(1);
-			Apptentive.addCustomPersonData(cordova.getActivity(), key, value);
+			Object value = args.get(1);
+			if (value instanceof String) {
+				Apptentive.addCustomPersonData(cordova.getActivity(), key, (String) value);
+			}
+			else if (value instanceof Number) {
+				Apptentive.addCustomPersonData(cordova.getActivity(), key, (Number) value);
+			}
+			else if (value instanceof Boolean) {
+				Apptentive.addCustomPersonData(cordova.getActivity(), key, (Boolean) value);
+			}
+			else {
+				callbackContext.error("Custom Person Data Type not supported: " + ((value != null) ? value.getClass() : "NULL"));
+				return false;
+			}
+
 			callbackContext.success();
 			return true;
 

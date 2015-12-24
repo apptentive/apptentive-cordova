@@ -252,16 +252,20 @@
     id value = [arguments objectAtIndex:2];
     if ([value isKindOfClass:[NSString class]]) {
         NSString* stringData = value;
-        [[ATConnect sharedConnection] addCustomDeviceData:stringData withKey:key];
+        [[ATConnect sharedConnection] addCustomDeviceDataString:stringData withKey:key];
     }
-//    else if ([value isKindOfClass:[NSNumber class]]) {
-//        NSDate* dateData = value;
-//        [[ATConnect sharedConnection] addCustomDeviceData:dateData withKey:key];
-//    }
-//    else if ([value isKindOfClass:[NSNumber class]]) {
-//        NSNumber* numberData = value;
-//        [[ATConnect sharedConnection] addCustomDeviceData:numberData withKey:key];
-//    }
+    else if ([value isKindOfClass:[NSNumber class]] ) {
+        if (value == [NSNumber numberWithBool:YES] || value == [NSNumber numberWithBool:NO]) {
+            NSNumber* boolData = value;
+            [[ATConnect sharedConnection] addCustomDeviceDataBool:boolData.boolValue withKey:key];
+        } else {
+            NSNumber* numberData = value;
+            [[ATConnect sharedConnection] addCustomDeviceDataNumber:numberData withKey:key];
+        }
+    } else {
+        [self sendFailureMessage:@"Custom Device data type not recognized" callbackId:callbackId];
+        return;
+    }
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
@@ -271,16 +275,20 @@
     id value = [arguments objectAtIndex:2];
     if ([value isKindOfClass:[NSString class]]) {
         NSString* stringData = value;
-        [[ATConnect sharedConnection] addCustomPersonData:stringData withKey:key];
+        [[ATConnect sharedConnection] addCustomPersonDataString:stringData withKey:key];
     }
-//    else if ([value isKindOfClass:[NSNumber class]]) {
-//        NSDate* dateData = value;
-//        [[ATConnect sharedConnection] addCustomPersonData:dateData withKey:key];
-//    }
-//    else if ([value isKindOfClass:[NSNumber class]]) {
-//        NSNumber* numberData = value;
-//        [[ATConnect sharedConnection] addCustomPersonData:numberData withKey:key];
-//    }
+    else if ([value isKindOfClass:[NSNumber class]] ) {
+        if (value == [NSNumber numberWithBool:YES] || value == [NSNumber numberWithBool:NO]) {
+            NSNumber* boolData = value;
+            [[ATConnect sharedConnection] addCustomPersonDataBool:boolData.boolValue withKey:key];
+        } else {
+            NSNumber* numberData = value;
+            [[ATConnect sharedConnection] addCustomPersonDataNumber:numberData withKey:key];
+        }
+    } else {
+        [self sendFailureMessage:@"Custom Person data type not recognized" callbackId:callbackId];
+        return;
+    }
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }

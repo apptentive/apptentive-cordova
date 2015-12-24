@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="com.apptentive.cordova"
-        version="2.0.1">
+        version="2.1.0">
 
     <name>ApptentiveBridge</name>
     <description>Apptentive Plugin For Cordova</description>
@@ -52,10 +52,10 @@
                       android:theme="@style/ApptentiveTheme"/>
             <meta-data android:name="apptentive_api_key" android:value="$ANDROID_API_KEY"/>
             <meta-data android:name="apptentive_sdk_distribution" android:value="Cordova"/>
-            <meta-data android:name="apptentive_sdk_distribution_version" android:value="2.0.1"/>
+            <meta-data android:name="apptentive_sdk_distribution_version" android:value="2.1.0"/>
         </config-file>
 
-        <framework src="com.apptentive:apptentive-android:2.0.1"/>
+        <framework src="com.apptentive:apptentive-android:2.1.1"/>
         <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova"/>
         <source-file src="src/android/JsonHelper.java" target-dir="src/com/apptentive/cordova"/>
     </platform>
