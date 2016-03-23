@@ -1,6 +1,19 @@
+2016-03-09 frankus v2.1.3
+-------------------------
+Version 2.1.3 contains a fix for flagging automated messages as such. It also
+fixes an issue where the post-survey HUD view was rotating incorrectly on iOS 9
+devices. 
+
+2016-02-05 frankus v2.1.2
+-------------------------
+Version 2.1.2 contains a fix for a namespace collision with a system
+framework. It also fixes a race condition in the deallocation of Message Center.
+It sets the module name for CocoaPods users to simplify integration
+with Swift projects.
+
 2016-01-14 frankus v2.1.1
 -------------------------
-Version 2.1.1 contains bug fixes and fixes several deprecation warnings for 
+Version 2.1.1 contains bug fixes and fixes several deprecation warnings for
 iOS 8 deployment targets. The code formatting has been made more consistent.
 
 2015-12-09 frankus v2.1.0
