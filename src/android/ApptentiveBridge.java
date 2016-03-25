@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.apptentive.android.sdk.Apptentive;
-import com.apptentive.android.sdk.Log;
+import com.apptentive.android.sdk.ApptentiveLog;
 import com.apptentive.android.sdk.module.messagecenter.UnreadMessagesListener;
 import com.apptentive.android.sdk.module.rating.impl.AmazonAppstoreRatingProvider;
 import com.apptentive.android.sdk.module.survey.OnSurveyFinishedListener;
@@ -61,7 +61,7 @@ public class ApptentiveBridge extends CordovaPlugin {
 	UnreadMessagesListener listener = null;
 
 	public boolean execute(final String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
-		Log.v("Executing action: %s", action);
+		ApptentiveLog.v("Executing action: %s", action);
 
 		if (action.equals(ACTION_DEVICE_READY)) {
 			Apptentive.onStart(cordova.getActivity());
@@ -229,10 +229,10 @@ public class ApptentiveBridge extends CordovaPlugin {
 			return true;
 
 		} else if (action.equals(ACTION_ADD_UNREAD_MESSAGES_LISTENER)) {
-			Log.i("Adding message listener.");
+			ApptentiveLog.i("Adding message listener.");
 			listener = new UnreadMessagesListener() {
 				public void onUnreadMessageCountChanged(int unreadMessages) {
-					Log.i("Unread messages: %d", unreadMessages);
+					ApptentiveLog.i("Unread messages: %d", unreadMessages);
 					PluginResult result = new PluginResult(PluginResult.Status.OK, unreadMessages);
 					result.setKeepCallback(true);
 					callbackContext.sendPluginResult(result);
@@ -254,7 +254,7 @@ public class ApptentiveBridge extends CordovaPlugin {
 			return true;
 		}
 
-		Log.w("Unhandled action in ApptentiveBridge: %s", action);
+		ApptentiveLog.w("Unhandled action in ApptentiveBridge: %s", action);
 
 		callbackContext.error("Unhandled action in ApptentiveBridge: " + action);
 		return false;
