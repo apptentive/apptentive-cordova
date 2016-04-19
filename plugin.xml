@@ -101,6 +101,7 @@
         <framework src="Storekit.framework" weak="true"/>
         <framework src="SystemConfiguration.framework" weak="true"/>
         <framework src="UIKit.framework" weak="true"/>
+        <framework src="QuickLook.framework" weak="true" />
     </platform>
 
 </plugin>
