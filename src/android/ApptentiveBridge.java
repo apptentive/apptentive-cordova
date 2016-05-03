@@ -31,8 +31,6 @@ import org.json.JSONObject;
 public class ApptentiveBridge extends CordovaPlugin {
 
 	private static final String ACTION_DEVICE_READY = "deviceReady";
-	private static final String ACTION_RESUME = "resume";
-	private static final String ACTION_PAUSE = "pause";
 	private static final String ACTION_ADD_CUSTOM_DEVICE_DATA = "addCustomDeviceData";
 	private static final String ACTION_ADD_CUSTOM_PERSON_DATA = "addCustomPersonData";
 	private static final String ACTION_ENGAGE = "engage";
