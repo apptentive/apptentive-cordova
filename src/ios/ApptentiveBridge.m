@@ -7,6 +7,13 @@
     NSString* messageNotificationCallback;
 }
 
+ - (void)pluginInitialize {
+	 id<ApptentiveStyle> styleSheet = [Apptentive sharedConnection].styleSheet;
+	 if ([styleSheet respondsToSelector:@selector(didBecomeActive:)]) {
+		 [styleSheet performSelector:@selector(didBecomeActive:) withObject:nil];
+	 }
+ }
+
 - (void)execute:(CDVInvokedUrlCommand*)command {
     NSString* callbackId = [command callbackId];
     if ([command arguments].count == 0) {
