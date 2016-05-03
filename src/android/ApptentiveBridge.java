@@ -70,14 +70,6 @@ public class ApptentiveBridge extends CordovaPlugin {
 			callbackContext.success();
 			return true;
 
-		} else if (action.equals(ACTION_PAUSE)) {
-			callbackContext.success();
-			return true;
-
-		} else if (action.equals(ACTION_RESUME)) {
-			callbackContext.success();
-			return true;
-
 		} else if (action.equals(ACTION_CAN_SHOW_MESSAGE_CENTER)) {
 			boolean canShowMessageCenter = Apptentive.canShowMessageCenter();
 			PluginResult result = new PluginResult(PluginResult.Status.OK, canShowMessageCenter);
