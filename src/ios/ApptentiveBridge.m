@@ -39,10 +39,6 @@
     else if ([functionCall isEqualToString:@"openAppStore"]) {
         [self openAppStore];
     }
-    else if ([functionCall isEqualToString:@"pause"]) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
-    }
     else if ([functionCall isEqualToString:@"showMessageCenter"]) {
         [self showMessageCenter:[command arguments] callBackString:callbackId];
     }
@@ -54,10 +50,6 @@
     }
     else if ([functionCall isEqualToString:@"removeCustomPersonData"]) {
         [self removeCustomPersonData:[command arguments] callBackString:callbackId];
-    }
-    else if ([functionCall isEqualToString:@"resume"]) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
     else if ([functionCall isEqualToString:@"sendAttachmentFileWithMimeType"]) {
         [self sendAttachmentFileWithMimeType:[command arguments] callBackString:callbackId];

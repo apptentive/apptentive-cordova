@@ -27,11 +27,6 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["unreadMessageCount"]);
     },
 
-    pause: function (successCallback, errorCallback) {
-        console.log("Apptentive.pause()");
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["pause"]);
-    },
-
     putRatingProviderArg: function (successCallback, errorCallback, key, value) {
         successCallback(); // Does nothing on iOS.
     },
@@ -42,11 +37,6 @@ var Apptentive = {
 
     removeCustomPersonData: function (successCallback, errorCallback, key) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["removeCustomPersonData", key]);
-    },
-
-    resume: function (successCallback, errorCallback) {
-        console.log("Apptentive.resume()");
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["resume"]);
     },
 
     setPersonEmail: function (successCallback, errorCallback, email) {
