@@ -1,11 +1,21 @@
 #import "ApptentiveBridge.h"
-#import "ATConnect.h"
+#import "Apptentive.h"
 
 @implementation ApptentiveBridge  {
     BOOL apptentiveInitted;
     BOOL registeredForMessageNotifications;
     NSString* messageNotificationCallback;
 }
+
+ - (void)pluginInitialize {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+     id<ApptentiveStyle> styleSheet = [Apptentive sharedConnection].styleSheet;
+     if ([styleSheet respondsToSelector:@selector(didBecomeActive:)]) {
+         [styleSheet performSelector:@selector(didBecomeActive:) withObject:nil];
+     }
+#pragma clang diagnostic pop
+ }
 
 - (void)execute:(CDVInvokedUrlCommand*)command {
     NSString* callbackId = [command callbackId];
@@ -14,7 +24,7 @@
         return;
     }
     NSString* functionCall = [command argumentAtIndex:0];
-    NSLog([NSString stringWithFormat:@"Function call: %@",functionCall]);
+    NSLog(@"Function call: %@",functionCall);
 
     //initialization
     if ([functionCall isEqualToString:@"deviceReady"]) {
@@ -39,10 +49,6 @@
     else if ([functionCall isEqualToString:@"openAppStore"]) {
         [self openAppStore];
     }
-    else if ([functionCall isEqualToString:@"pause"]) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
-    }
     else if ([functionCall isEqualToString:@"showMessageCenter"]) {
         [self showMessageCenter:[command arguments] callBackString:callbackId];
     }
@@ -54,10 +60,6 @@
     }
     else if ([functionCall isEqualToString:@"removeCustomPersonData"]) {
         [self removeCustomPersonData:[command arguments] callBackString:callbackId];
-    }
-    else if ([functionCall isEqualToString:@"resume"]) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
     }
     else if ([functionCall isEqualToString:@"sendAttachmentFileWithMimeType"]) {
         [self sendAttachmentFileWithMimeType:[command arguments] callBackString:callbackId];
@@ -142,20 +144,20 @@
         return;
     }
     if (![apiKey isEqualToString:@""]) {
-        [ATConnect sharedConnection].apiKey = apiKey;
+        [Apptentive sharedConnection].APIKey = apiKey;
         apptentiveInitted = YES;
     }
 }
 
 - (void) registerForMessageNotifications:(NSArray*)arguments callBackString:(NSString*)callbackId {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(unreadMessageCountChanged:) name:ATMessageCenterUnreadCountChangedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(unreadMessageCountChanged:) name:ApptentiveMessageCenterUnreadCountChangedNotification object:nil];
     registeredForMessageNotifications = YES;
     messageNotificationCallback = callbackId;
 }
 
 - (void) unregisterForNotifications {
     if (registeredForMessageNotifications) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:ATMessageCenterUnreadCountChangedNotification object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:ApptentiveMessageCenterUnreadCountChangedNotification object:nil];
         registeredForMessageNotifications = NO;
         messageNotificationCallback = nil;
     }
@@ -182,27 +184,13 @@
     NSString *property_id = [arguments objectAtIndex:1];
     NSString *value = [arguments objectAtIndex:2];
     if ([property_id isEqualToString:@"appID"]) {
-        [ATConnect sharedConnection].appID = value;
-    }
-    else if ([property_id isEqualToString:@"showEmailField"]) {
-        [ATConnect sharedConnection].showEmailField = [self parseBoolValue:value];
-    }
-    else if ([property_id isEqualToString:@"customPlaceholderText"]) {
-        [ATConnect sharedConnection].customPlaceholderText = value;
+        [Apptentive sharedConnection].appID = value;
     }
     else if ([property_id isEqualToString:@"personName"]) {
-        [ATConnect sharedConnection].personName = value;
+        [Apptentive sharedConnection].personName = value;
     }
     else if ([property_id isEqualToString:@"personEmailAddress"]) {
-        [ATConnect sharedConnection].personEmailAddress = value;
-    }
-    else if ([property_id isEqualToString:@"tintColor"]) {
-        NSArray *colorValues = [value componentsSeparatedByString:@","];
-        if (colorValues == nil || colorValues.count < 4) {
-            [self sendFailureMessage:@"TintColor not set with 4 comma separated float values" callbackId:callbackId];
-        }
-        UIColor* tintColor = [UIColor colorWithRed:[[colorValues objectAtIndex:0] floatValue] green:[[colorValues objectAtIndex:1] floatValue] blue:[[colorValues objectAtIndex:2] floatValue] alpha:[[colorValues objectAtIndex:3] floatValue]];
-        [ATConnect sharedConnection].tintColor = tintColor;
+        [Apptentive sharedConnection].personEmailAddress = value;
     }
     else {
         [self sendFailureMessage:@"Property name not recognized" callbackId:callbackId];
@@ -217,25 +205,13 @@
     NSString *property_id = [arguments objectAtIndex:1];
     NSString *value = nil;
     if ([property_id isEqualToString:@"appID"]) {
-        value = [ATConnect sharedConnection].appID;
-    }
-    else if ([property_id isEqualToString:@"showEmailField"]) {
-        value = [ATConnect sharedConnection].showEmailField ? @"true" : @"false";
-    }
-    else if ([property_id isEqualToString:@"customPlaceholderText"]) {
-        value = [ATConnect sharedConnection].customPlaceholderText;
+        value = [Apptentive sharedConnection].appID;
     }
     else if ([property_id isEqualToString:@"personName"]) {
-        value = [ATConnect sharedConnection].personName;
+        value = [Apptentive sharedConnection].personName;
     }
     else if ([property_id isEqualToString:@"personEmailAddress"]) {
-        value = [ATConnect sharedConnection].personEmailAddress;
-    }
-    else if ([property_id isEqualToString:@"tintColor"]) {
-        CGFloat red, green, blue, alpha;
-
-        [[ATConnect sharedConnection].tintColor getRed:&red green:&green blue:&blue alpha:&alpha];
-        value = [NSString stringWithFormat:@"%f,%f,%f,%f", red, green, blue, alpha];
+        value = [Apptentive sharedConnection].personEmailAddress;
     }
     else {
         [self sendFailureMessage:@"Property name not recognized" callbackId:callbackId];
@@ -252,15 +228,15 @@
     id value = [arguments objectAtIndex:2];
     if ([value isKindOfClass:[NSString class]]) {
         NSString* stringData = value;
-        [[ATConnect sharedConnection] addCustomDeviceDataString:stringData withKey:key];
+        [[Apptentive sharedConnection] addCustomDeviceDataString:stringData withKey:key];
     }
     else if ([value isKindOfClass:[NSNumber class]] ) {
         if (value == [NSNumber numberWithBool:YES] || value == [NSNumber numberWithBool:NO]) {
             NSNumber* boolData = value;
-            [[ATConnect sharedConnection] addCustomDeviceDataBool:boolData.boolValue withKey:key];
+            [[Apptentive sharedConnection] addCustomDeviceDataBool:boolData.boolValue withKey:key];
         } else {
             NSNumber* numberData = value;
-            [[ATConnect sharedConnection] addCustomDeviceDataNumber:numberData withKey:key];
+            [[Apptentive sharedConnection] addCustomDeviceDataNumber:numberData withKey:key];
         }
     } else {
         [self sendFailureMessage:@"Custom Device data type not recognized" callbackId:callbackId];
@@ -275,15 +251,15 @@
     id value = [arguments objectAtIndex:2];
     if ([value isKindOfClass:[NSString class]]) {
         NSString* stringData = value;
-        [[ATConnect sharedConnection] addCustomPersonDataString:stringData withKey:key];
+        [[Apptentive sharedConnection] addCustomPersonDataString:stringData withKey:key];
     }
     else if ([value isKindOfClass:[NSNumber class]] ) {
         if (value == [NSNumber numberWithBool:YES] || value == [NSNumber numberWithBool:NO]) {
             NSNumber* boolData = value;
-            [[ATConnect sharedConnection] addCustomPersonDataBool:boolData.boolValue withKey:key];
+            [[Apptentive sharedConnection] addCustomPersonDataBool:boolData.boolValue withKey:key];
         } else {
             NSNumber* numberData = value;
-            [[ATConnect sharedConnection] addCustomPersonDataNumber:numberData withKey:key];
+            [[Apptentive sharedConnection] addCustomPersonDataNumber:numberData withKey:key];
         }
     } else {
         [self sendFailureMessage:@"Custom Person data type not recognized" callbackId:callbackId];
@@ -301,7 +277,7 @@
     }
     BOOL shown = false;
     if (arguments.count == 2) {
-        shown = [[ATConnect sharedConnection] engage:eventLabel fromViewController:self.viewController];
+        shown = [[Apptentive sharedConnection] engage:eventLabel fromViewController:self.viewController];
     }
     else if (arguments.count == 3) {
         NSDictionary *customData = [self parseDictionaryFromString:[arguments objectAtIndex:2]];
@@ -309,7 +285,7 @@
             [self sendFailureMessage:@"Improperly formed json or object for engage custom data" callbackId:callbackId];
             return;
         }
-        shown = [[ATConnect sharedConnection] engage:eventLabel withCustomData:customData fromViewController:self.viewController];
+        shown = [[Apptentive sharedConnection] engage:eventLabel withCustomData:customData fromViewController:self.viewController];
     }
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK
@@ -318,28 +294,28 @@
 }
 
 - (void) openAppStore {
-    [[ATConnect sharedConnection] openAppStore];
+    [[Apptentive sharedConnection] openAppStore];
 }
 
 - (void) showMessageCenter:(NSArray*)arguments callBackString:(NSString*)callbackId  {
     if (arguments.count == 2) {
         NSDictionary *customData = [self parseDictionaryFromString:[arguments objectAtIndex:1]];
-        [[ATConnect sharedConnection] presentMessageCenterFromViewController:self.viewController withCustomData:customData];
+        [[Apptentive sharedConnection] presentMessageCenterFromViewController:self.viewController withCustomData:customData];
     } else {
-        [[ATConnect sharedConnection] presentMessageCenterFromViewController:self.viewController];
+        [[Apptentive sharedConnection] presentMessageCenterFromViewController:self.viewController];
     }
 }
 
 - (void) removeCustomDeviceData:(NSArray*)arguments callBackString:(NSString*)callbackId {
     NSString* key = [arguments objectAtIndex:1];
-    [[ATConnect sharedConnection] removeCustomDeviceDataWithKey:key];
+    [[Apptentive sharedConnection] removeCustomDeviceDataWithKey:key];
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void) removeCustomPersonData:(NSArray*)arguments callBackString:(NSString*)callbackId {
     NSString* key = [arguments objectAtIndex:1];
-    [[ATConnect sharedConnection] removeCustomPersonDataWithKey:key];
+    [[Apptentive sharedConnection] removeCustomPersonDataWithKey:key];
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
@@ -347,7 +323,7 @@
 - (void) sendAttachmentFileWithMimeType:(NSArray*)arguments callBackString:(NSString*)callbackId {
     NSData* data = [[arguments objectAtIndex:1] dataUsingEncoding:NSUTF8StringEncoding];
     NSString* mimeType = [arguments objectAtIndex:2];
-    [[ATConnect sharedConnection] sendAttachmentFile:data withMimeType:mimeType];
+    [[Apptentive sharedConnection] sendAttachmentFile:data withMimeType:mimeType];
 }
 
 - (void) sendAttachmentImage:(NSArray*)arguments callBackString:(NSString*)callbackId {
@@ -358,19 +334,19 @@
     if (attachmentImage == nil) {
         [self sendFailureMessage:@"Image could not be constructed from the passed data" callbackId:callbackId];
     }
-    [[ATConnect sharedConnection] sendAttachmentImage:attachmentImage];
+    [[Apptentive sharedConnection] sendAttachmentImage:attachmentImage];
 }
 
 - (void) sendAttachmentText:(NSArray*)arguments callBackString:(NSString*)callbackId {
     NSString* text = [arguments objectAtIndex:1];
-    [[ATConnect sharedConnection] sendAttachmentText:text];
+    [[Apptentive sharedConnection] sendAttachmentText:text];
 }
 
 - (void) unreadMessageCount:(NSString*)callbackId {
-    NSUInteger unreadMessageCount = [[ATConnect sharedConnection] unreadMessageCount];
+    NSUInteger unreadMessageCount = [[Apptentive sharedConnection] unreadMessageCount];
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK
-                               messageAsInt:unreadMessageCount];
+                               messageAsInt:(int)unreadMessageCount];
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
@@ -380,7 +356,7 @@
         [self sendFailureMessage:@"Insufficient arguments to call willShowInteraction - eventName is null" callbackId:callbackId];
         return;
     }
-    BOOL canShow = [[ATConnect sharedConnection] canShowInteractionForEvent:eventName];
+    BOOL canShow = [[Apptentive sharedConnection] canShowInteractionForEvent:eventName];
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK
                                messageAsBool:canShow];
@@ -388,7 +364,7 @@
 }
 
 - (void)canShowMessageCenter:(NSString *)callbackId {
-    BOOL canShow = [[ATConnect sharedConnection] canShowMessageCenter];
+    BOOL canShow = [[Apptentive sharedConnection] canShowMessageCenter];
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK
                                messageAsBool:canShow];

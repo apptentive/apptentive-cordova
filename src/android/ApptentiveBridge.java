@@ -7,6 +7,8 @@ import android.os.Bundle;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.apptentive.android.sdk.ApptentiveLog;
+import com.apptentive.android.sdk.ApptentiveInternal;
+import com.apptentive.android.sdk.lifecycle.ApptentiveActivityLifecycleCallbacks;
 import com.apptentive.android.sdk.module.messagecenter.UnreadMessagesListener;
 import com.apptentive.android.sdk.module.rating.impl.AmazonAppstoreRatingProvider;
 import com.apptentive.android.sdk.module.survey.OnSurveyFinishedListener;
@@ -29,8 +31,6 @@ import org.json.JSONObject;
 public class ApptentiveBridge extends CordovaPlugin {
 
 	private static final String ACTION_DEVICE_READY = "deviceReady";
-	private static final String ACTION_RESUME = "resume";
-	private static final String ACTION_PAUSE = "pause";
 	private static final String ACTION_ADD_CUSTOM_DEVICE_DATA = "addCustomDeviceData";
 	private static final String ACTION_ADD_CUSTOM_PERSON_DATA = "addCustomPersonData";
 	private static final String ACTION_ENGAGE = "engage";
@@ -58,28 +58,18 @@ public class ApptentiveBridge extends CordovaPlugin {
 	public ApptentiveBridge() {
 	}
 
-	UnreadMessagesListener listener = null;
-
+	   UnreadMessagesListener listener = null;
+    
 	public boolean execute(final String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
 		ApptentiveLog.v("Executing action: %s", action);
 
+
 		if (action.equals(ACTION_DEVICE_READY)) {
-			Apptentive.onStart(cordova.getActivity());
-			callbackContext.success();
-			return true;
-
-		} else if (action.equals(ACTION_PAUSE)) {
-			Apptentive.onStop(cordova.getActivity());
-			callbackContext.success();
-			return true;
-
-		} else if (action.equals(ACTION_RESUME)) {
-			Apptentive.onStart(cordova.getActivity());
 			callbackContext.success();
 			return true;
 
 		} else if (action.equals(ACTION_CAN_SHOW_MESSAGE_CENTER)) {
-			boolean canShowMessageCenter = Apptentive.canShowMessageCenter(cordova.getActivity());
+			boolean canShowMessageCenter = Apptentive.canShowMessageCenter();
 			PluginResult result = new PluginResult(PluginResult.Status.OK, canShowMessageCenter);
 			callbackContext.sendPluginResult(result);
 			return true;
@@ -98,13 +88,13 @@ public class ApptentiveBridge extends CordovaPlugin {
 			String key = args.getString(0);
 			Object value = args.get(1);
 			if (value instanceof String) {
-				Apptentive.addCustomDeviceData(cordova.getActivity(), key, (String) value);
+				Apptentive.addCustomDeviceData(key, (String) value);
 			}
 			else if (value instanceof Number) {
-				Apptentive.addCustomDeviceData(cordova.getActivity(), key, (Number) value);
+				Apptentive.addCustomDeviceData(key, (Number) value);
 			}
 			else if (value instanceof Boolean) {
-				Apptentive.addCustomDeviceData(cordova.getActivity(), key, (Boolean) value);
+				Apptentive.addCustomDeviceData(key, (Boolean) value);
 			}
 			else  {
 				callbackContext.error("Custom Device Data Type not supported: " + ((value != null) ? value.getClass() : "NULL"));
@@ -118,13 +108,13 @@ public class ApptentiveBridge extends CordovaPlugin {
 			String key = args.getString(0);
 			Object value = args.get(1);
 			if (value instanceof String) {
-				Apptentive.addCustomPersonData(cordova.getActivity(), key, (String) value);
+				Apptentive.addCustomPersonData(key, (String) value);
 			}
 			else if (value instanceof Number) {
-				Apptentive.addCustomPersonData(cordova.getActivity(), key, (Number) value);
+				Apptentive.addCustomPersonData(key, (Number) value);
 			}
 			else if (value instanceof Boolean) {
-				Apptentive.addCustomPersonData(cordova.getActivity(), key, (Boolean) value);
+				Apptentive.addCustomPersonData(key, (Boolean) value);
 			}
 			else {
 				callbackContext.error("Custom Person Data Type not supported: " + ((value != null) ? value.getClass() : "NULL"));
@@ -136,7 +126,7 @@ public class ApptentiveBridge extends CordovaPlugin {
 
 		} else if (action.equals(ACTION_CAN_SHOW_INTERACTION)) {
 			String eventId = args.getString(0);
-			boolean canShowInteraction = Apptentive.canShowInteraction(cordova.getActivity(), eventId);
+			boolean canShowInteraction = Apptentive.canShowInteraction(eventId);
 			PluginResult result = new PluginResult(PluginResult.Status.OK, canShowInteraction);
 			callbackContext.sendPluginResult(result);
 			return true;
@@ -155,7 +145,7 @@ public class ApptentiveBridge extends CordovaPlugin {
 			return true;
 
 		} else if (action.equals(ACTION_GET_UNREAD_MESSAGE_COUNT)) {
-			int unreadMessageCount = Apptentive.getUnreadMessageCount(cordova.getActivity());
+			int unreadMessageCount = Apptentive.getUnreadMessageCount();
 			PluginResult result = new PluginResult(PluginResult.Status.OK, unreadMessageCount);
 			callbackContext.sendPluginResult(result);
 			return true;
@@ -169,54 +159,54 @@ public class ApptentiveBridge extends CordovaPlugin {
 
 		} else if (action.equals(ACTION_REMOVE_CUSTOM_DEVICE_DATA)) {
 			String key = args.getString(0);
-			Apptentive.removeCustomDeviceData(cordova.getActivity(), key);
+			Apptentive.removeCustomDeviceData(key);
 			callbackContext.success();
 			return true;
 
 		} else if (action.equals(ACTION_REMOVE_CUSTOM_PERSON_DATA)) {
 			String key = args.getString(0);
-			Apptentive.removeCustomPersonData(cordova.getActivity(), key);
+			Apptentive.removeCustomPersonData(key);
 			callbackContext.success();
 			return true;
 
 		} else if (action.equals(ACTION_SEND_ATTACHMENT_FILE_URI)) {
 			String uri = args.getString(0);
-			Apptentive.sendAttachmentFile(cordova.getActivity(), uri);
+			Apptentive.sendAttachmentFile(uri);
 			return true;
 
 		} else if (action.equals(ACTION_SEND_ATTACHMENT_FILE)) {
 			byte[] content = args.getString(0).getBytes();
 			String mimeType = args.getString(1);
-			Apptentive.sendAttachmentFile(cordova.getActivity(), content, mimeType);
+			Apptentive.sendAttachmentFile(content, mimeType);
 			return true;
 
 		} else if (action.equals(ACTION_SEND_ATTACHMENT_TEXT)) {
 			String text = args.getString(0);
-			Apptentive.sendAttachmentText(cordova.getActivity(), text);
+			Apptentive.sendAttachmentText(text);
 			callbackContext.success();
 			return true;
 
 		} else if (action.equals(ACTION_GET_PERSON_EMAIL)) {
-			String email = Apptentive.getPersonEmail(cordova.getActivity());
+			String email = Apptentive.getPersonEmail();
 			PluginResult result = new PluginResult(PluginResult.Status.OK, email);
 			callbackContext.sendPluginResult(result);
 			return true;
 
 		} else if (action.equals(ACTION_SET_PERSON_EMAIL)) {
 			String email = args.getString(0);
-			Apptentive.setPersonEmail(cordova.getActivity(), email);
+			Apptentive.setPersonEmail(email);
 			callbackContext.success();
 			return true;
 
 		} else if (action.equals(ACTION_GET_PERSON_NAME)) {
-			String name = Apptentive.getPersonName(cordova.getActivity());
+			String name = Apptentive.getPersonName();
 			PluginResult result = new PluginResult(PluginResult.Status.OK, name);
 			callbackContext.sendPluginResult(result);
 			return true;
 
 		} else if (action.equals(ACTION_SET_PERSON_NAME)) {
 			String name = args.getString(0);
-			Apptentive.setPersonName(cordova.getActivity(), name);
+			Apptentive.setPersonName(name);
 			callbackContext.success();
 			return true;
 

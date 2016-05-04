@@ -1,5 +1,4 @@
 var Apptentive = {
-    initialized: false,
 
     addCustomDeviceData: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addCustomDeviceData", [key, value]);
@@ -11,7 +10,6 @@ var Apptentive = {
 
     deviceReady: function (successCallback, errorCallback) {
         console.log("Apptentive.deviceReady()");
-        Apptentive.initialized = true;
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "deviceReady", []);
     },
 
@@ -27,11 +25,6 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "getUnreadMessageCount", []);
     },
 
-    pause: function (successCallback, errorCallback) {
-        console.log("Apptentive.pause()");
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "pause", []);
-    },
-
     putRatingProviderArg: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "putRatingProviderArg", [key, value]);
     },
@@ -42,11 +35,6 @@ var Apptentive = {
 
     removeCustomPersonData: function (successCallback, errorCallback, key) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "removeCustomPersonData", [key]);
-    },
-
-    resume: function (successCallback, errorCallback) {
-        console.log("Apptentive.resume()");
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "resume", []);
     },
 
     getPersonEmail: function (successCallback, errorCallback) {
