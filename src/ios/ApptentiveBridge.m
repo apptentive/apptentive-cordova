@@ -8,10 +8,13 @@
 }
 
  - (void)pluginInitialize {
-	 id<ApptentiveStyle> styleSheet = [Apptentive sharedConnection].styleSheet;
-	 if ([styleSheet respondsToSelector:@selector(didBecomeActive:)]) {
-		 [styleSheet performSelector:@selector(didBecomeActive:) withObject:nil];
-	 }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+     id<ApptentiveStyle> styleSheet = [Apptentive sharedConnection].styleSheet;
+     if ([styleSheet respondsToSelector:@selector(didBecomeActive:)]) {
+         [styleSheet performSelector:@selector(didBecomeActive:) withObject:nil];
+     }
+#pragma clang diagnostic pop
  }
 
 - (void)execute:(CDVInvokedUrlCommand*)command {
@@ -21,7 +24,7 @@
         return;
     }
     NSString* functionCall = [command argumentAtIndex:0];
-    NSLog([NSString stringWithFormat:@"Function call: %@",functionCall]);
+    NSLog(@"Function call: %@",functionCall);
 
     //initialization
     if ([functionCall isEqualToString:@"deviceReady"]) {
@@ -343,7 +346,7 @@
     NSUInteger unreadMessageCount = [[Apptentive sharedConnection] unreadMessageCount];
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK
-                               messageAsInt:unreadMessageCount];
+                               messageAsInt:(int)unreadMessageCount];
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
