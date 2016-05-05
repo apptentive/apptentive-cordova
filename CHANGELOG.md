@@ -11,6 +11,8 @@ v3.0.0 - May 02, 2016
 
 - Apptentive Android SDK: 3.0.0
 - Apptentive iOS SDK: 3.0.0
+- new Android required integration
+- removed `pause` and `resume` functions
 
 v2.1.3 - March 22, 2016
 =========================
