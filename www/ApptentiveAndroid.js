@@ -1,5 +1,4 @@
 var Apptentive = {
-
     addCustomDeviceData: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addCustomDeviceData", [key, value]);
     },
