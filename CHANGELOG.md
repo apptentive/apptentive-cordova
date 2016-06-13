@@ -6,6 +6,13 @@ This document lets you know what has changed in the Cordova plugin. For changes 
 - [Android Changelog](https://github.com/apptentive/apptentive-android/blob/master/CHANGELOG.md)
 - [iOS Changelog](https://github.com/apptentive/apptentive-ios/blob/master/CHANGELOG.md)
 
+v3.1.0 - June 13, 2016
+=========================
+
+- Apptentive Android SDK: 3.1.0
+- Apptentive iOS SDK: 3.1.0
+- removed Android integration requirement on changing Application class
+
 v3.0.0 - May 02, 2016
 =========================
 
