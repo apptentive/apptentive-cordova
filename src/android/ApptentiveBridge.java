@@ -66,7 +66,7 @@ public class ApptentiveBridge extends CordovaPlugin {
 
 		if (action.equals(ACTION_DEVICE_READY)) {
             final Activity currentActivity = cordova.getActivity();
-            if (currentActivity != null) {
+            if (currentActivity != null && !ApptentiveInternal.isApptentiveRegistered()) {
                 currentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
