@@ -144,7 +144,7 @@
         return;
     }
     if (![apiKey isEqualToString:@""]) {
-        [Apptentive sharedConnection].APIKey = apiKey;
+        [[Apptentive sharedConnection] setAPIKey:apiKey distributionName:@"Cordova" distributionVersion:CDV_VERSION];
         apptentiveInitted = YES;
     }
 }
