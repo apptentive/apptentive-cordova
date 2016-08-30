@@ -71,11 +71,7 @@
             <string>$IOS_API_KEY</string>
         </config-file>
 
-        <config-file target="*/Resources/ApptentiveResources.bundle/Info.plist" parent="ATInfoDistributionKey">
-            <string>Cordova</string>
-        </config-file>
-
-        <config-file target="*/Resources/ApptentiveResources.bundle/Info.plist" parent="ATInfoDistributionVersionKey">
+        <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
             <string>3.2.0</string>
         </config-file>
 

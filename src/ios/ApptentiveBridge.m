@@ -136,6 +136,7 @@
     // Access Info.plist for ApptentiveAPIKey
     NSDictionary *infoPlist = [[NSBundle mainBundle] infoDictionary];
     NSString *apiKey = [infoPlist objectForKey:@"ApptentiveAPIKey"];
+    NSString *pluginVersion = [infoPlist objectForKey:@"ApptentivePluginVersion"];
 
     NSLog(@"Initializing Apptentive API Key: %@", apiKey);
 
@@ -144,7 +145,7 @@
         return;
     }
     if (![apiKey isEqualToString:@""]) {
-        [[Apptentive sharedConnection] setAPIKey:apiKey distributionName:@"Cordova" distributionVersion:CDV_VERSION];
+        [[Apptentive sharedConnection] setAPIKey:apiKey distributionName:@"Cordova" distributionVersion:pluginVersion];
         apptentiveInitted = YES;
     }
 }
