@@ -12,6 +12,8 @@ The following guides explain the integration process:
 
  - [Xcode project setup guide](http://www.apptentive.com/docs/ios/setup/xcode/)
  - [CocoaPods installation guide](http://www.apptentive.com/docs/ios/setup/cocoapods)
+ 
+ As of version 3.3.1, we also support Carthage. 
 
 ## Using Apptentive in your App
 
@@ -22,9 +24,9 @@ You should begin by setting your app's API key, then engaging Apptentive events 
 ``` objective-c
 #import "Apptentive.h"
 ...
-[Apptentive sharedConnection].APIKey = @"<Your API Key>";
+Apptentive.shared.APIKey = @"<Your API Key>";
 ...
-[[Apptentive sharedConnection] engage:@"event_name" fromViewController:viewController];
+[Apptentive.shared engage:@"event_name" fromViewController:viewController];
 ```
 
 Or, in Swift:
@@ -32,9 +34,9 @@ Or, in Swift:
 ``` Swift
 import Apptentive
 ...
-Apptentive.sharedConnection().APIKey = "<Your API Key>"
+Apptentive.shared.APIKey = "<Your API Key>"
 ...
-Apptentive.sharedConnection().engage("event_name", fromViewController: viewController)
+Apptentive.shared.engage(event: "event_name", from: viewController)
 ```
 
 Later, on your Apptentive dashboard, you will target these events with Apptentive features such as Message Center, Ratings Prompts, and Surveys.
