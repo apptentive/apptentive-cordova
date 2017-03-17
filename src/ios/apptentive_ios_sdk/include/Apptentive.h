@@ -9,7 +9,7 @@
 
 #import <UIKit/UIKit.h>
 
-#define kApptentiveVersionString @"3.4.0"
+#define kApptentiveVersionString @"3.4.2"
 #define kApptentivePlatformString @"iOS"
 
 #ifdef __swift_compiler_version_at_least
@@ -390,7 +390,7 @@ Returns a Boolean value indicating whether the given event will cause an Interac
 ///-------------------------------------
 
 /**
- Attaches text to the user's feedback.
+ Attaches text to the user's feedback. This method should be called from the main thread only.
 
  This will appear in your online Apptentive dashboard, but will *not* appear in Message Center on the device.
 
@@ -399,7 +399,7 @@ Returns a Boolean value indicating whether the given event will cause an Interac
 - (void)sendAttachmentText:(NSString *)text APPTENTIVE_SWIFT_NAME(sendAttachment(_:));
 
 /**
- Attaches an image the user's feedback.
+ Attaches an image the user's feedback. This method should be called from the main thread only.
 
  This will appear in your online Apptentive dashboard, but will *not* appear in Message Center on the device.
 
@@ -408,7 +408,7 @@ Returns a Boolean value indicating whether the given event will cause an Interac
 - (void)sendAttachmentImage:(UIImage *)image APPTENTIVE_SWIFT_NAME(sendAttachment(_:));
 
 /**
- Attaches an arbitrary file to the user's feedback.
+ Attaches an arbitrary file to the user's feedback. This method should be called from the main thread only.
 
  This will appear in your online Apptentive dashboard, but will *not* appear in Message Center on the device.
 
@@ -565,6 +565,16 @@ Returns a Boolean value indicating whether the given event will cause an Interac
  **/
 
 - (void)setPushNotificationIntegration:(ApptentivePushProvider)pushProvider withDeviceToken:(NSData *)deviceToken APPTENTIVE_SWIFT_NAME(setPushProvider(_:deviceToken:));
+
+
+/**
+ Dismisses any currently-visible interactions. 
+ 
+ @discussion This method is for internal use and is subject to change.
+
+ @param animated Whether to animate the dismissal.
+ */
+- (void)dismissAllInteractions:(BOOL)animated APPTENTIVE_SWIFT_NAME(dismissAllInteractions(animated:));
 
 #if APPTENTIVE_DEBUG
 - (void)checkSDKConfiguration;
