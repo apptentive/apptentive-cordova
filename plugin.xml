@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="com.apptentive.cordova"
-        version="3.4.1">
+        version="3.5.0">
 
     <name>ApptentiveBridge</name>
     <description>Apptentive Plugin For Cordova</description>
@@ -72,7 +72,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
-            <string>3.4.1</string>
+            <string>3.5.0</string>
         </config-file>
 
         <!-- ApptentiveBridge -->
