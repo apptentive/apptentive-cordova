@@ -86,6 +86,14 @@ var Apptentive = {
     getProperty: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["getProperty", key]);
     }
+
+    login: function (successCallback, errorCallback, token) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["login", token]);
+    }
+
+    logout: function (successCallback, errorCallback) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["logout", token]);
+    }
 };
 
 module.exports = Apptentive;
