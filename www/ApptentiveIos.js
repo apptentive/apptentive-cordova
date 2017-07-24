@@ -92,7 +92,7 @@ var Apptentive = {
     }
 
     logout: function (successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["logout", token]);
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["logout"]);
     }
 };
 
