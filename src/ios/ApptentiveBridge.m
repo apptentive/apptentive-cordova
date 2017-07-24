@@ -1,5 +1,7 @@
+#import <Apptentive/Apptentive.h>
+
 #import "ApptentiveBridge.h"
-#import "Apptentive.h"
+
 
 @implementation ApptentiveBridge  {
     BOOL apptentiveInitted;
@@ -135,19 +137,23 @@
 - (void)initAPIKey:(NSString*)callbackId {
     // Access Info.plist for ApptentiveAPIKey
     NSDictionary *infoPlist = [[NSBundle mainBundle] infoDictionary];
-    NSString *apiKey = [infoPlist objectForKey:@"ApptentiveAPIKey"];
+    NSString *apptentiveKey = [infoPlist objectForKey:@"ApptentiveKey"];
+    NSString *apptentiveSignature = [infoPlist objectForKey:@"ApptentiveSignature"];
     NSString *pluginVersion = [infoPlist objectForKey:@"ApptentivePluginVersion"];
 
-    NSLog(@"Initializing Apptentive API Key: %@", apiKey);
+#warning Do we really want to be logging this?
+    NSLog(@"Initializing Apptentive Apptentive App Key: %@, Apptentive App Signature: %@", apptentiveKey, apptentiveSignature);
 
-    if (!apiKey) {
+    if (apptentiveKey.length == 0 || apptentiveSignature.length == 0) {
         [self sendFailureMessage:@"Insufficient arguments - no API key." callbackId:callbackId];
         return;
     }
-    if (![apiKey isEqualToString:@""]) {
-        [[Apptentive sharedConnection] setAPIKey:apiKey distributionName:@"Cordova" distributionVersion:pluginVersion];
-        apptentiveInitted = YES;
-    }
+    ApptentiveConfiguration *configuration = [ApptentiveConfiguration configurationWithApptentiveKey:apptentiveKey apptentiveSignature:apptentiveSignature];
+    configuration.distributionName = @"Cordova";
+    configuration.distributionVersion = pluginVersion;
+    
+    [Apptentive registerWithConfiguration:configuration];
+    apptentiveInitted = YES;
 }
 
 - (void) registerForMessageNotifications:(NSArray*)arguments callBackString:(NSString*)callbackId {

@@ -80,7 +80,7 @@
         <source-file src="src/ios/ApptentiveBridge.m" target-dir="Apptentive"/>
 
         <!-- Apptentive SDK -->
-        <framework src="src/ios/Apptentive.framework" embed="true"/>
+        <framework src="src/ios/Apptentive.framework" embed="true" custom="true"/>
 
         <!-- required system frameworks -->
         <framework src="Accelerate.framework" weak="true"/>
