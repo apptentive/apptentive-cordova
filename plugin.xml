@@ -80,11 +80,7 @@
         <source-file src="src/ios/ApptentiveBridge.m" target-dir="Apptentive"/>
 
         <!-- Apptentive SDK -->
-        <source-file src="src/ios/apptentive_ios_sdk/libApptentiveConnect.a" framework="true"
-                     target-dir="apptentive_ios_sdk"/>
-        <resource-file src="src/ios/apptentive_ios_sdk/ApptentiveResources.bundle"
-                       target-dir="apptentive_ios_sdk"/>
-        <header-file src="src/ios/apptentive_ios_sdk/include/Apptentive.h" target-dir="apptentive_ios_sdk"/>
+        <framework src="apptentive-ios" type="podspec" spec="~> 4.0.0" />
 
         <!-- required system frameworks -->
         <framework src="Accelerate.framework" weak="true"/>
