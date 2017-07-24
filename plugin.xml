@@ -55,7 +55,8 @@
     <!-- ios -->
     <platform name="ios">
         <!-- Require API key -->
-        <preference name="IOS_API_KEY"/>
+        <preference name="IOS_APP_KEY"/>
+        <preference name="IOS_APP_SIGNATURE"/>
 
         <js-module src="www/ApptentiveIos.js" name="Apptentive">
             <clobbers target="Apptentive"/>
