@@ -5,6 +5,8 @@ const xcode = require('xcode'),
     path = require('path');
 
 module.exports = function(context) {
+  const buildPhaseName = 'Strip Unused Architectures';
+  
     if(process.length >=5 && process.argv[1].indexOf('cordova') == -1) {
         if(process.argv[4] != 'ios') {
             return; // plugin only meant to work for ios platform.
@@ -48,6 +50,14 @@ module.exports = function(context) {
     // unquote (remove trailing ")
     var projectName = myProj.getFirstTarget().firstTarget.name.substr(1);
     projectName = projectName.substr(0, projectName.length-1); //Removing the char " at beginning and the end.
+    
+    var buildPhases = myProj.getFirstTarget().firstTarget.buildPhases;
+    var hasStripArchBuildPhase = buildPhases.filter(buildPhase => buildPhase.comment == buildPhaseName).length > 0
+    
+    if (hasStripArchBuildPhase) {
+      console.log('Skip adding Arch Trim run script build phase (already exists)');
+      return;
+    }
 
     var options = {};
     options['shellPath'] = '/bin/sh';
@@ -80,7 +90,7 @@ mv "$FRAMEWORK_EXECUTABLE_PATH-merged" "$FRAMEWORK_EXECUTABLE_PATH"
 
 done`;
 
-    var buildPhase = myProj.addBuildPhase([], 'PBXShellScriptBuildPhase', 'Run Script', myProj.getFirstTarget().uuid, options).buildPhase;
+    var buildPhase = myProj.addBuildPhase([], 'PBXShellScriptBuildPhase', buildPhaseName, myProj.getFirstTarget().uuid, options).buildPhase;
     buildPhase['runOnlyForDeploymentPostprocessing'] = 0;
 
     fs.writeFileSync(projectPath, myProj.writeSync());
