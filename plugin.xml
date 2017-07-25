@@ -97,6 +97,8 @@
         <framework src="Storekit.framework" weak="true"/>
         <framework src="SystemConfiguration.framework" weak="true"/>
         <framework src="UIKit.framework" weak="true"/>
+
+        <hook type="after_plugin_install" src="scripts/addStripArchBuildPhase.js"/>
     </platform>
 
 </plugin>
