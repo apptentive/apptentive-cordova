@@ -55,7 +55,8 @@
     <!-- ios -->
     <platform name="ios">
         <!-- Require API key -->
-        <preference name="IOS_API_KEY"/>
+        <preference name="IOS_APP_KEY"/>
+        <preference name="IOS_APP_SIGNATURE"/>
 
         <js-module src="www/ApptentiveIos.js" name="Apptentive">
             <clobbers target="Apptentive"/>
@@ -67,12 +68,16 @@
             </feature>
         </config-file>
 
-        <config-file target="*-Info.plist" parent="ApptentiveAPIKey">
-            <string>$IOS_API_KEY</string>
+        <config-file target="*-Info.plist" parent="ApptentiveKey">
+            <string>$IOS_APP_KEY</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="ApptentiveSignature">
+            <string>$IOS_APP_SIGNATURE</string>
         </config-file>
 
         <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
-            <string>3.5.0</string>
+            <string>4.0.0</string>
         </config-file>
 
         <!-- ApptentiveBridge -->
@@ -80,11 +85,7 @@
         <source-file src="src/ios/ApptentiveBridge.m" target-dir="Apptentive"/>
 
         <!-- Apptentive SDK -->
-        <source-file src="src/ios/apptentive_ios_sdk/libApptentiveConnect.a" framework="true"
-                     target-dir="apptentive_ios_sdk"/>
-        <resource-file src="src/ios/apptentive_ios_sdk/ApptentiveResources.bundle"
-                       target-dir="apptentive_ios_sdk"/>
-        <header-file src="src/ios/apptentive_ios_sdk/include/Apptentive.h" target-dir="apptentive_ios_sdk"/>
+        <framework src="src/ios/Apptentive.framework" embed="true" custom="true"/>
 
         <!-- required system frameworks -->
         <framework src="Accelerate.framework" weak="true"/>
@@ -96,6 +97,8 @@
         <framework src="Storekit.framework" weak="true"/>
         <framework src="SystemConfiguration.framework" weak="true"/>
         <framework src="UIKit.framework" weak="true"/>
+
+        <hook type="after_plugin_add" src="scripts/addStripArchBuildPhase.js"/>
     </platform>
 
 </plugin>

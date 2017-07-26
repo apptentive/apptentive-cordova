@@ -79,6 +79,14 @@ var Apptentive = {
     setProperty: function (successCallback, errorCallback, key, value) {
         successCallback(); // Does nothing on Android
     }
+
+    login: function (successCallback, errorCallback, token) {
+        errorCallback(); // FIXME: implement me
+    }
+
+    logout: function (successCallback, errorCallback) {
+        errorCallback(); // FIXME: implement me
+    }
 };
 
 module.exports = Apptentive;
