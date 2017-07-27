@@ -15,7 +15,8 @@
     <platform name="android">
 
         <!-- Require API key -->
-        <preference name="ANDROID_API_KEY"/>
+        <preference name="ANDROID_APP_KEY"/>
+        <preference name="ANDROID_APP_SIGNATURE"/>
 
         <!-- Define namespace for javascript reference -->
         <js-module src="www/ApptentiveAndroid.js" name="Apptentive">
@@ -42,11 +43,12 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="application">
-            <meta-data android:name="apptentive_api_key" android:value="$ANDROID_API_KEY"/>
+            <meta-data android:name="apptentive_key" android:value="$ANDROID_APP_KEY"/>
+            <meta-data android:name="apptentive_signature" android:value="$ANDROID_APP_SIGNATURE"/>
             <meta-data android:name="apptentive_sdk_distribution" android:value="Cordova"/>
-            <meta-data android:name="apptentive_sdk_distribution_version" android:value="3.5.0"/>
+            <meta-data android:name="apptentive_sdk_distribution_version" android:value="4.0.0"/>
         </config-file>
-        <framework src="com.apptentive:apptentive-android:3.4.1"/>
+        <framework src="com.apptentive:apptentive-android:4.0.1"/>
         <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova"/>
         <source-file src="src/android/JsonHelper.java" target-dir="src/com/apptentive/cordova"/>
     </platform>
