@@ -57,7 +57,8 @@
     <!-- ios -->
     <platform name="ios">
         <!-- Require API key -->
-        <preference name="IOS_API_KEY"/>
+        <preference name="IOS_APP_KEY"/>
+        <preference name="IOS_APP_SIGNATURE"/>
 
         <js-module src="www/ApptentiveIos.js" name="Apptentive">
             <clobbers target="Apptentive"/>
@@ -69,12 +70,16 @@
             </feature>
         </config-file>
 
-        <config-file target="*-Info.plist" parent="ApptentiveAPIKey">
-            <string>$IOS_API_KEY</string>
+        <config-file target="*-Info.plist" parent="ApptentiveKey">
+            <string>$IOS_APP_KEY</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="ApptentiveSignature">
+            <string>$IOS_APP_SIGNATURE</string>
         </config-file>
 
         <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
-            <string>3.5.0</string>
+            <string>4.0.0</string>
         </config-file>
 
         <!-- ApptentiveBridge -->

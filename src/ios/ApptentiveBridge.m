@@ -88,6 +88,12 @@
     else if ([functionCall isEqualToString:@"canShowMessageCenter"]) {
         [self canShowMessageCenter:callbackId];
     }
+    else if ([functionCall isEqualToString:@"login"]) {
+        [self login:[command arguments] callBackString:callbackId];
+    }
+    else if ([functionCall isEqualToString:@"logout"]) {
+        [self logoutWithCallBackString:callbackId];
+    }
     else {
         //command not recognized
         [self sendFailureMessage:@"Command not recognized" callbackId:callbackId];
@@ -135,19 +141,23 @@
 - (void)initAPIKey:(NSString*)callbackId {
     // Access Info.plist for ApptentiveAPIKey
     NSDictionary *infoPlist = [[NSBundle mainBundle] infoDictionary];
-    NSString *apiKey = [infoPlist objectForKey:@"ApptentiveAPIKey"];
+    NSString *apptentiveKey = [infoPlist objectForKey:@"ApptentiveKey"];
+    NSString *apptentiveSignature = [infoPlist objectForKey:@"ApptentiveSignature"];
     NSString *pluginVersion = [infoPlist objectForKey:@"ApptentivePluginVersion"];
 
-    NSLog(@"Initializing Apptentive API Key: %@", apiKey);
+#warning Do we really want to be logging this?
+    NSLog(@"Initializing Apptentive Apptentive App Key: %@, Apptentive App Signature: %@", apptentiveKey, apptentiveSignature);
 
-    if (!apiKey) {
+    if (apptentiveKey.length == 0 || apptentiveSignature.length == 0) {
         [self sendFailureMessage:@"Insufficient arguments - no API key." callbackId:callbackId];
         return;
     }
-    if (![apiKey isEqualToString:@""]) {
-        [[Apptentive sharedConnection] setAPIKey:apiKey distributionName:@"Cordova" distributionVersion:pluginVersion];
-        apptentiveInitted = YES;
-    }
+    ApptentiveConfiguration *configuration = [ApptentiveConfiguration configurationWithApptentiveKey:apptentiveKey apptentiveSignature:apptentiveSignature];
+    configuration.distributionName = @"Cordova";
+    configuration.distributionVersion = pluginVersion;
+    
+    [Apptentive registerWithConfiguration:configuration];
+    apptentiveInitted = YES;
 }
 
 - (void) registerForMessageNotifications:(NSArray*)arguments callBackString:(NSString*)callbackId {
@@ -369,6 +379,29 @@
     CDVPluginResult* result = [CDVPluginResult
                                resultWithStatus:CDVCommandStatus_OK
                                messageAsBool:canShow];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+}
+
+- (void)login:(NSArray*)arguments callBackString:(NSString*)callbackId {
+    NSString* token = [arguments objectAtIndex:1];
+    if([token isEqual:[NSNull null]]) {
+        [self sendFailureMessage:@"Insufficient arguments to call login - token is nil" callbackId:callbackId];
+        return;
+    }
+    [[Apptentive shared] logInWithToken:token completion:^(BOOL success, NSError * _Nonnull error) {
+        CDVPluginResult* result;
+        if (success) {
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        } else {
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
+        }
+        [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+    }];
+}
+
+- (void)logoutWithCallBackString:(NSString*)callbackId {
+    [[Apptentive shared] logOut];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
