@@ -31,6 +31,8 @@
     "url": "https://github.com/apptentive/apptentive-cordova/issues"
   },
   "homepage": "https://github.com/apptentive/apptentive-cordova#readme",
-  "dependencies": {}
+  "dependencies": {
+    "xcode": ">=0.9.3"
+  }
 }
 

@@ -1,5 +1,7 @@
+#import <Apptentive/Apptentive.h>
+
 #import "ApptentiveBridge.h"
-#import "Apptentive.h"
+
 
 @implementation ApptentiveBridge  {
     BOOL apptentiveInitted;

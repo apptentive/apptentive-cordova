@@ -87,12 +87,7 @@
         <source-file src="src/ios/ApptentiveBridge.m" target-dir="Apptentive"/>
 
         <!-- Apptentive SDK -->
-        <source-file src="src/ios/apptentive_ios_sdk/libApptentiveConnect.a" framework="true"
-                     target-dir="apptentive_ios_sdk"/>
-        <resource-file src="src/ios/apptentive_ios_sdk/ApptentiveResources.bundle"
-                       target-dir="apptentive_ios_sdk"/>
-        <header-file src="src/ios/apptentive_ios_sdk/include/Apptentive.h" target-dir="apptentive_ios_sdk"/>
-        <header-file src="src/ios/apptentive_ios_sdk/include/ApptentiveStyleSheet.h" target-dir="apptentive_ios_sdk"/>
+        <framework src="src/ios/Apptentive.framework" embed="true" custom="true"/>
 
         <!-- required system frameworks -->
         <framework src="Accelerate.framework" weak="true"/>
@@ -104,6 +99,8 @@
         <framework src="Storekit.framework" weak="true"/>
         <framework src="SystemConfiguration.framework" weak="true"/>
         <framework src="UIKit.framework" weak="true"/>
+
+        <hook type="after_plugin_add" src="scripts/addStripArchBuildPhase.js"/>
     </platform>
 
 </plugin>
