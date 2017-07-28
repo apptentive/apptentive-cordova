@@ -147,7 +147,7 @@
     NSString *apptentiveSignature = [infoPlist objectForKey:@"ApptentiveSignature"];
     NSString *pluginVersion = [infoPlist objectForKey:@"ApptentivePluginVersion"];
 
-#warning Do we really want to be logging this?
+    // FIXME: Do we really want to be logging this?
     NSLog(@"Initializing Apptentive Apptentive App Key: %@, Apptentive App Signature: %@", apptentiveKey, apptentiveSignature);
 
     if (apptentiveKey.length == 0 || apptentiveSignature.length == 0) {
