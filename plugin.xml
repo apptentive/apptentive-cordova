@@ -92,6 +92,7 @@
         <resource-file src="src/ios/apptentive_ios_sdk/ApptentiveResources.bundle"
                        target-dir="apptentive_ios_sdk"/>
         <header-file src="src/ios/apptentive_ios_sdk/include/Apptentive.h" target-dir="apptentive_ios_sdk"/>
+        <header-file src="src/ios/apptentive_ios_sdk/include/ApptentiveStyleSheet.h" target-dir="apptentive_ios_sdk"/>
 
         <!-- required system frameworks -->
         <framework src="Accelerate.framework" weak="true"/>
