@@ -78,6 +78,14 @@ var Apptentive = {
 
     setProperty: function (successCallback, errorCallback, key, value) {
         successCallback(); // Does nothing on Android
+    },
+
+    login: function (successCallback, errorCallback, token) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "login", [token]);
+    },
+
+    logout: function (successCallback, errorCallback) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "logout");
     }
 };
 

@@ -52,6 +52,8 @@ public class ApptentiveBridge extends CordovaPlugin {
 	private static final String ACTION_SHOW_MESSAGE_CENTER = "showMessageCenter";
 	private static final String ACTION_CAN_SHOW_MESSAGE_CENTER = "canShowMessageCenter";
 	private static final String ACTION_CAN_SHOW_INTERACTION = "canShowInteraction";
+	private static final String ACTION_LOGIN = "login";
+	private static final String ACTION_LOGOUT = "logout";
 
 	/**
 	 * Constructor.
@@ -253,6 +255,24 @@ public class ApptentiveBridge extends CordovaPlugin {
 				}
 			};
 			Apptentive.setOnSurveyFinishedListener(listener);
+			return true;
+		} else if (action.equals(ACTION_LOGIN)) {
+			String token = args.getString(0);
+			Apptentive.login(token, new Apptentive.LoginCallback() {
+				@Override
+				public void onLoginFinish() {
+					callbackContext.success();
+				}
+
+				@Override
+				public void onLoginFail(String errorMessage) {
+					callbackContext.error(errorMessage);
+				}
+			});
+			return true;
+		} else if (action.equals(ACTION_LOGOUT)) {
+			Apptentive.logout();
+			callbackContext.success();
 			return true;
 		}
 

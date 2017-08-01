@@ -2,7 +2,7 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="com.apptentive.cordova"
-        version="3.5.0">
+        version="4.0.1">
 
     <name>ApptentiveBridge</name>
     <description>Apptentive Plugin For Cordova</description>
@@ -15,7 +15,8 @@
     <platform name="android">
 
         <!-- Require API key -->
-        <preference name="ANDROID_API_KEY"/>
+        <preference name="ANDROID_APP_KEY"/>
+        <preference name="ANDROID_APP_SIGNATURE"/>
 
         <!-- Define namespace for javascript reference -->
         <js-module src="www/ApptentiveAndroid.js" name="Apptentive">
@@ -42,11 +43,12 @@
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="application">
-            <meta-data android:name="apptentive_api_key" android:value="$ANDROID_API_KEY"/>
+            <meta-data android:name="apptentive_key" android:value="$ANDROID_APP_KEY"/>
+            <meta-data android:name="apptentive_signature" android:value="$ANDROID_APP_SIGNATURE"/>
             <meta-data android:name="apptentive_sdk_distribution" android:value="Cordova"/>
-            <meta-data android:name="apptentive_sdk_distribution_version" android:value="3.5.0"/>
+            <meta-data android:name="apptentive_sdk_distribution_version" android:value="4.0.1"/>
         </config-file>
-        <framework src="com.apptentive:apptentive-android:3.4.1"/>
+        <framework src="com.apptentive:apptentive-android:4.0.1"/>
         <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova"/>
         <source-file src="src/android/JsonHelper.java" target-dir="src/com/apptentive/cordova"/>
     </platform>
@@ -55,7 +57,8 @@
     <!-- ios -->
     <platform name="ios">
         <!-- Require API key -->
-        <preference name="IOS_API_KEY"/>
+        <preference name="IOS_APP_KEY"/>
+        <preference name="IOS_APP_SIGNATURE"/>
 
         <js-module src="www/ApptentiveIos.js" name="Apptentive">
             <clobbers target="Apptentive"/>
@@ -67,12 +70,16 @@
             </feature>
         </config-file>
 
-        <config-file target="*-Info.plist" parent="ApptentiveAPIKey">
-            <string>$IOS_API_KEY</string>
+        <config-file target="*-Info.plist" parent="ApptentiveKey">
+            <string>$IOS_APP_KEY</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="ApptentiveSignature">
+            <string>$IOS_APP_SIGNATURE</string>
         </config-file>
 
         <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
-            <string>3.5.0</string>
+            <string>4.0.1</string>
         </config-file>
 
         <!-- ApptentiveBridge -->
@@ -80,11 +87,7 @@
         <source-file src="src/ios/ApptentiveBridge.m" target-dir="Apptentive"/>
 
         <!-- Apptentive SDK -->
-        <source-file src="src/ios/apptentive_ios_sdk/libApptentiveConnect.a" framework="true"
-                     target-dir="apptentive_ios_sdk"/>
-        <resource-file src="src/ios/apptentive_ios_sdk/ApptentiveResources.bundle"
-                       target-dir="apptentive_ios_sdk"/>
-        <header-file src="src/ios/apptentive_ios_sdk/include/Apptentive.h" target-dir="apptentive_ios_sdk"/>
+        <framework src="src/ios/Apptentive.framework" embed="true" custom="true"/>
 
         <!-- required system frameworks -->
         <framework src="Accelerate.framework" weak="true"/>
@@ -96,6 +99,8 @@
         <framework src="Storekit.framework" weak="true"/>
         <framework src="SystemConfiguration.framework" weak="true"/>
         <framework src="UIKit.framework" weak="true"/>
+
+        <hook type="after_plugin_add" src="scripts/addStripArchBuildPhase.js"/>
     </platform>
 
 </plugin>
