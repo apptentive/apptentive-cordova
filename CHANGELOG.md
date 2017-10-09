@@ -7,8 +7,8 @@ This document lets you know what has changed in the Cordova plugin. For changes 
 
 # 2017-08-03 - v4.0.2
 
-- Apptentive Android SDK: 4.0.1
-- Apptentive iOS SDK: 4.0.2
+- Apptentive Android SDK: 4.0.2
+- Apptentive iOS SDK: 4.0.6
 
 # 2017-08-01 - v4.0.1
 
