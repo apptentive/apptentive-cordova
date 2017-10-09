@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        id="com.apptentive.cordova"
-        version="4.0.1">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.apptentive.cordova" version="4.0.2">
 
     <name>ApptentiveBridge</name>
     <description>Apptentive Plugin For Cordova</description>
@@ -35,18 +32,14 @@
         <!-- Setup Android Manifest file for plugin -->
         <config-file target="AndroidManifest.xml" parent="/*">
             <!-- Make sure to support high resolution screens so Apptentive's UI looks great. -->
-            <supports-screens android:xlargeScreens="true"
-                              android:largeScreens="true"
-                              android:normalScreens="true"
-                              android:smallScreens="true"
-                              android:anyDensity="true"/>
+            <supports-screens android:xlargeScreens="true" android:largeScreens="true" android:normalScreens="true" android:smallScreens="true" android:anyDensity="true"/>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="application">
             <meta-data android:name="apptentive_key" android:value="$ANDROID_APP_KEY"/>
             <meta-data android:name="apptentive_signature" android:value="$ANDROID_APP_SIGNATURE"/>
             <meta-data android:name="apptentive_sdk_distribution" android:value="Cordova"/>
-            <meta-data android:name="apptentive_sdk_distribution_version" android:value="4.0.1"/>
+            <meta-data android:name="apptentive_sdk_distribution_version" android:value="4.0.2"/>
         </config-file>
         <framework src="com.apptentive:apptentive-android:4.0.1"/>
         <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova"/>
@@ -79,7 +72,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
-            <string>4.0.1</string>
+            <string>4.0.2</string>
         </config-file>
 
         <!-- ApptentiveBridge -->
