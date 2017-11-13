@@ -38,8 +38,10 @@
         <config-file target="AndroidManifest.xml" parent="application">
             <meta-data android:name="apptentive_key" android:value="$ANDROID_APP_KEY"/>
             <meta-data android:name="apptentive_signature" android:value="$ANDROID_APP_SIGNATURE"/>
-            <meta-data android:name="apptentive_sdk_distribution" android:value="Cordova"/>
-            <meta-data android:name="apptentive_sdk_distribution_version" android:value="4.0.2"/>
+        </config-file>
+        <config-file target="./res/values/strings.xml" parent="/resources">
+            <string name="apptentive_distribution">Cordova</string>
+            <string name="apptentive_distribution_version">4.0.2</string>
         </config-file>
         <framework src="com.apptentive:apptentive-android:4.0.2"/>
         <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova"/>
