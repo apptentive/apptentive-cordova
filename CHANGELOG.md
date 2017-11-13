@@ -5,6 +5,11 @@ This document lets you know what has changed in the Cordova plugin. For changes 
 - [Android Changelog](https://github.com/apptentive/apptentive-android/blob/master/CHANGELOG.md)
 - [iOS Changelog](https://github.com/apptentive/apptentive-ios/blob/master/CHANGELOG.md)
 
+# 2017-11-13 - v4.1.0
+
+- Apptentive Android SDK: 4.1.2
+- Apptentive iOS SDK: 4.1.0
+
 # 2017-10-13 - v4.0.2
 
 - Apptentive Android SDK: 4.0.2
