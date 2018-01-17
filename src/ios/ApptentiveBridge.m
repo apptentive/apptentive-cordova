@@ -9,16 +9,6 @@
     NSString* messageNotificationCallback;
 }
 
- - (void)pluginInitialize {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
-     id<ApptentiveStyle> styleSheet = [Apptentive sharedConnection].styleSheet;
-     if ([styleSheet respondsToSelector:@selector(didBecomeActive:)]) {
-         [styleSheet performSelector:@selector(didBecomeActive:) withObject:nil];
-     }
-#pragma clang diagnostic pop
- }
-
 - (void)execute:(CDVInvokedUrlCommand*)command {
     NSString* callbackId = [command callbackId];
     if ([command arguments].count == 0) {
@@ -157,9 +147,14 @@
     ApptentiveConfiguration *configuration = [ApptentiveConfiguration configurationWithApptentiveKey:apptentiveKey apptentiveSignature:apptentiveSignature];
     configuration.distributionName = @"Cordova";
     configuration.distributionVersion = pluginVersion;
-    
+
     [Apptentive registerWithConfiguration:configuration];
     apptentiveInitted = YES;
+
+    NSURL *styleSheetURL = [[NSBundle mainBundle] URLForResource:@"ApptentiveStyles" withExtension:@"plist"];
+    if (styleSheetURL != nil) {
+      Apptentive.shared.styleSheet = [[ApptentiveStyleSheet alloc] initWithContentsOfURL:styleSheetURL];
+    }
 }
 
 - (void) registerForMessageNotifications:(NSArray*)arguments callBackString:(NSString*)callbackId {
