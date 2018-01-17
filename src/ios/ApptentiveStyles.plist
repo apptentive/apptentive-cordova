@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Instructions</key>
+	<string>This plist is for configuring styles that are difficult or impossible to target with UIAppearance. See https://learn.apptentive.com/knowledge-base/interface-customization-ios/#initializing-from-a-property-list for how to configure this property list.</string>
+</dict>
+</plist>
