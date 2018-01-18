@@ -1,6 +1,6 @@
 {
   "name": "apptentive-cordova",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Apptentive Plugin For Cordova",
   "cordova": {
     "id": "com.apptentive.cordova",

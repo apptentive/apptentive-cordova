@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.apptentive.cordova" version="4.1.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.apptentive.cordova" version="4.1.1">
 
     <name>ApptentiveBridge</name>
     <description>Apptentive Plugin For Cordova</description>
@@ -41,9 +41,9 @@
         </config-file>
         <config-file target="./res/values/strings.xml" parent="/resources">
             <string name="apptentive_distribution">Cordova</string>
-            <string name="apptentive_distribution_version">4.1.0</string>
+            <string name="apptentive_distribution_version">4.1.1</string>
         </config-file>
-        <framework src="com.apptentive:apptentive-android:4.1.2"/>
+        <framework src="com.apptentive:apptentive-android:4.1.4"/>
         <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova"/>
         <source-file src="src/android/JsonHelper.java" target-dir="src/com/apptentive/cordova"/>
     </platform>
@@ -74,7 +74,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
-            <string>4.1.0</string>
+            <string>4.1.1</string>
         </config-file>
 
         <!-- ApptentiveBridge -->
@@ -86,6 +86,7 @@
         <resource-file src="src/ios/apptentive_ios_sdk/ApptentiveResources.bundle" target-dir="apptentive_ios_sdk"/>
         <header-file src="src/ios/apptentive_ios_sdk/include/Apptentive.h" target-dir="apptentive_ios_sdk"/>
         <header-file src="src/ios/apptentive_ios_sdk/include/ApptentiveStyleSheet.h" target-dir="apptentive_ios_sdk"/>
+        <resource-file src="src/ios/ApptentiveStyles.plist"/>
 
         <!-- required system frameworks -->
         <framework src="Accelerate.framework" weak="true"/>
