@@ -83,12 +83,17 @@ public class ApptentiveBridge extends CordovaPlugin {
 			return true;
 
 		} else if (action.equals(ACTION_CAN_SHOW_MESSAGE_CENTER)) {
-			boolean canShowMessageCenter = Apptentive.canShowMessageCenter();
-			PluginResult result = new PluginResult(PluginResult.Status.OK, canShowMessageCenter);
-			callbackContext.sendPluginResult(result);
+			Apptentive.canShowMessageCenter(new Apptentive.BooleanCallback() {
+				@Override
+				public void onFinish(boolean canShowMessageCenter) {
+					PluginResult result = new PluginResult(PluginResult.Status.OK, canShowMessageCenter);
+					callbackContext.sendPluginResult(result);
+				}
+			});
 			return true;
 
 		} else if (action.equals(ACTION_SHOW_MESSAGE_CENTER)) {
+			// TODO: pass boolean callback and use returned value
 			if (args.length() > 0) {
 				Map config = JsonHelper.toMap(args.getJSONObject(0));
 				Apptentive.showMessageCenter(cordova.getActivity(), config);
@@ -139,23 +144,32 @@ public class ApptentiveBridge extends CordovaPlugin {
 			return true;
 
 		} else if (action.equals(ACTION_CAN_SHOW_INTERACTION)) {
-			String eventId = args.getString(0);
-			boolean canShowInteraction = Apptentive.canShowInteraction(eventId);
-			PluginResult result = new PluginResult(PluginResult.Status.OK, canShowInteraction);
-			callbackContext.sendPluginResult(result);
+			final String eventId = args.getString(0);
+			Apptentive.canShowInteraction(eventId, new Apptentive.BooleanCallback() {
+				@Override
+				public void onFinish(boolean canShowInteraction) {
+					PluginResult result = new PluginResult(PluginResult.Status.OK, canShowInteraction);
+					callbackContext.sendPluginResult(result);
+				}
+			});
 			return true;
 
 		} else if (action.equals(ACTION_ENGAGE)) {
-			String eventId = args.getString(0);
-			boolean shown = false;
+			final String eventId = args.getString(0);
+			Apptentive.BooleanCallback callback = new Apptentive.BooleanCallback() {
+				@Override
+				public void onFinish(boolean shown) {
+					PluginResult result = new PluginResult(PluginResult.Status.OK, shown);
+					callbackContext.sendPluginResult(result);
+				}
+			};
+
 			if (args.length() > 1) {
 				Map customData = JsonHelper.toMap(args.getJSONObject(1));
-				shown = Apptentive.engage(cordova.getActivity(), eventId, customData);
+				Apptentive.engage(cordova.getActivity(), eventId, customData, callback);
 			} else {
-				shown = Apptentive.engage(cordova.getActivity(), eventId);
+				Apptentive.engage(cordova.getActivity(), eventId, callback);
 			}
-			PluginResult result = new PluginResult(PluginResult.Status.OK, shown);
-			callbackContext.sendPluginResult(result);
 			return true;
 
 		} else if (action.equals(ACTION_GET_UNREAD_MESSAGE_COUNT)) {
