@@ -41,9 +41,9 @@
         </config-file>
         <config-file target="./res/values/strings.xml" parent="/resources">
             <string name="apptentive_distribution">Cordova</string>
-            <string name="apptentive_distribution_version">4.1.1</string>
+            <string name="apptentive_distribution_version">5.0.0</string>
         </config-file>
-        <framework src="com.apptentive:apptentive-android:4.1.4"/>
+        <framework src="com.apptentive:apptentive-android:5.0.2"/>
         <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova"/>
         <source-file src="src/android/JsonHelper.java" target-dir="src/com/apptentive/cordova"/>
     </platform>
@@ -74,7 +74,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
-            <string>4.1.1</string>
+            <string>5.0.0</string>
         </config-file>
 
         <!-- ApptentiveBridge -->

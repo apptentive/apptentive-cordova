@@ -283,9 +283,17 @@
         [self sendFailureMessage:@"Insufficient arguments to call engage - label is null" callbackId:callbackId];
         return;
     }
-    BOOL shown = false;
+
+	void (^completion)(BOOL) = ^void(BOOL shown) {
+		CDVPluginResult* result = [CDVPluginResult
+								   resultWithStatus:CDVCommandStatus_OK
+								   messageAsBool:shown];
+		[self.commandDelegate sendPluginResult:result callbackId:callbackId];
+	};
+
     if (arguments.count == 2) {
-        shown = [[Apptentive sharedConnection] engage:eventLabel fromViewController:self.viewController];
+		[Apptentive.shared engage:eventLabel fromViewController:self.viewController completion:completion];
+		return;
     }
     else if (arguments.count == 3) {
         NSDictionary *customData = [self parseDictionaryFromString:[arguments objectAtIndex:2]];
@@ -293,12 +301,11 @@
             [self sendFailureMessage:@"Improperly formed json or object for engage custom data" callbackId:callbackId];
             return;
         }
-        shown = [[Apptentive sharedConnection] engage:eventLabel withCustomData:customData fromViewController:self.viewController];
+		[Apptentive.shared engage:eventLabel withCustomData:customData fromViewController:self.viewController completion:completion];
+		return;
     }
-    CDVPluginResult* result = [CDVPluginResult
-                               resultWithStatus:CDVCommandStatus_OK
-                               messageAsBool:shown];
-    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+
+	[self sendFailureMessage:@"Too many arguments" callbackId:callbackId];
 }
 
 - (void) openAppStore {
@@ -364,19 +371,21 @@
         [self sendFailureMessage:@"Insufficient arguments to call willShowInteraction - eventName is null" callbackId:callbackId];
         return;
     }
-    BOOL canShow = [[Apptentive sharedConnection] canShowInteractionForEvent:eventName];
-    CDVPluginResult* result = [CDVPluginResult
-                               resultWithStatus:CDVCommandStatus_OK
-                               messageAsBool:canShow];
-    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+	[Apptentive.shared queryCanShowInteractionForEvent:eventName completion:^(BOOL canShow) {
+		CDVPluginResult* result = [CDVPluginResult
+								   resultWithStatus:CDVCommandStatus_OK
+								   messageAsBool:canShow];
+		[self.commandDelegate sendPluginResult:result callbackId:callbackId];
+	}];
 }
 
 - (void)canShowMessageCenter:(NSString *)callbackId {
-    BOOL canShow = [[Apptentive sharedConnection] canShowMessageCenter];
-    CDVPluginResult* result = [CDVPluginResult
-                               resultWithStatus:CDVCommandStatus_OK
-                               messageAsBool:canShow];
-    [self.commandDelegate sendPluginResult:result callbackId:callbackId];
+	[Apptentive.shared queryCanShowMessageCenterWithCompletion:^(BOOL canShow) {
+		CDVPluginResult* result = [CDVPluginResult
+								   resultWithStatus:CDVCommandStatus_OK
+								   messageAsBool:canShow];
+		[self.commandDelegate sendPluginResult:result callbackId:callbackId];
+	}];
 }
 
 - (void)login:(NSArray*)arguments callBackString:(NSString*)callbackId {
