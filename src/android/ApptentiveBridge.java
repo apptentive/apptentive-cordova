@@ -1,33 +1,22 @@
 package com.apptentive.cordova;
 
-import android.provider.Settings;
-import android.widget.Toast;
-import android.content.Intent;
-import android.os.Bundle;
-
 import android.app.Activity;
+
 import com.apptentive.android.sdk.Apptentive;
-import com.apptentive.android.sdk.ApptentiveLog;
+import com.apptentive.android.sdk.Apptentive.BooleanCallback;
 import com.apptentive.android.sdk.ApptentiveInternal;
-import com.apptentive.android.sdk.lifecycle.ApptentiveActivityLifecycleCallbacks;
+import com.apptentive.android.sdk.ApptentiveLog;
 import com.apptentive.android.sdk.module.messagecenter.UnreadMessagesListener;
 import com.apptentive.android.sdk.module.rating.impl.AmazonAppstoreRatingProvider;
 import com.apptentive.android.sdk.module.survey.OnSurveyFinishedListener;
-import com.apptentive.cordova.JsonHelper;
 
-import java.io.IOException;
-import java.lang.Boolean;
-import java.util.Map;
-import java.util.Iterator;
-
-import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
+
+import java.util.Map;
 
 public class ApptentiveBridge extends CordovaPlugin {
 
@@ -61,36 +50,41 @@ public class ApptentiveBridge extends CordovaPlugin {
 	public ApptentiveBridge() {
 	}
 
-    UnreadMessagesListener listener = null;
-    
+	UnreadMessagesListener listener = null;
+
 	public boolean execute(final String action, JSONArray args, final CallbackContext callbackContext) throws JSONException {
 		ApptentiveLog.v("Executing action: %s", action);
 
 		if (action.equals(ACTION_DEVICE_READY)) {
-            final Activity currentActivity = cordova.getActivity();
-            if (currentActivity != null && !ApptentiveInternal.isApptentiveRegistered()) {
-                currentActivity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Apptentive.register(currentActivity.getApplication());
-                        ApptentiveInternal.getInstance().getRegisteredLifecycleCallbacks().onActivityCreated(currentActivity, null);
-                        ApptentiveInternal.getInstance().getRegisteredLifecycleCallbacks().onActivityStarted(currentActivity);
-                        ApptentiveInternal.getInstance().getRegisteredLifecycleCallbacks().onActivityResumed(currentActivity);
-                    }
-                });
-            }
+			final Activity currentActivity = cordova.getActivity();
+			if (currentActivity != null && !ApptentiveInternal.isApptentiveRegistered()) {
+				currentActivity.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						Apptentive.register(currentActivity.getApplication());
+						ApptentiveInternal.getInstance().getRegisteredLifecycleCallbacks().onActivityCreated(currentActivity, null);
+						ApptentiveInternal.getInstance().getRegisteredLifecycleCallbacks().onActivityStarted(currentActivity);
+						ApptentiveInternal.getInstance().getRegisteredLifecycleCallbacks().onActivityResumed(currentActivity);
+					}
+				});
+			}
 			callbackContext.success();
 			return true;
 
 		} else if (action.equals(ACTION_CAN_SHOW_MESSAGE_CENTER)) {
-			boolean canShowMessageCenter = Apptentive.canShowMessageCenter();
-			PluginResult result = new PluginResult(PluginResult.Status.OK, canShowMessageCenter);
-			callbackContext.sendPluginResult(result);
+			Apptentive.canShowMessageCenter(new BooleanCallback() {
+				@Override
+				public void onFinish(boolean canShowMessageCenter) {
+					PluginResult result = new PluginResult(PluginResult.Status.OK, canShowMessageCenter);
+					callbackContext.sendPluginResult(result);
+				}
+			});
 			return true;
 
 		} else if (action.equals(ACTION_SHOW_MESSAGE_CENTER)) {
+			// TODO: pass boolean callback and use returned value
 			if (args.length() > 0) {
-				Map config = JsonHelper.toMap(args.getJSONObject(0));
+				Map<String, Object> config = JsonHelper.toMap(args.getJSONObject(0));
 				Apptentive.showMessageCenter(cordova.getActivity(), config);
 			} else {
 				Apptentive.showMessageCenter(cordova.getActivity());
@@ -139,23 +133,32 @@ public class ApptentiveBridge extends CordovaPlugin {
 			return true;
 
 		} else if (action.equals(ACTION_CAN_SHOW_INTERACTION)) {
-			String eventId = args.getString(0);
-			boolean canShowInteraction = Apptentive.canShowInteraction(eventId);
-			PluginResult result = new PluginResult(PluginResult.Status.OK, canShowInteraction);
-			callbackContext.sendPluginResult(result);
+			final String eventId = args.getString(0);
+			Apptentive.queryCanShowInteraction(eventId, new BooleanCallback() {
+				@Override
+				public void onFinish(boolean canShowInteraction) {
+					PluginResult result = new PluginResult(PluginResult.Status.OK, canShowInteraction);
+					callbackContext.sendPluginResult(result);
+				}
+			});
 			return true;
 
 		} else if (action.equals(ACTION_ENGAGE)) {
-			String eventId = args.getString(0);
-			boolean shown = false;
+			final String eventId = args.getString(0);
+			BooleanCallback callback = new BooleanCallback() {
+				@Override
+				public void onFinish(boolean shown) {
+					PluginResult result = new PluginResult(PluginResult.Status.OK, shown);
+					callbackContext.sendPluginResult(result);
+				}
+			};
+
 			if (args.length() > 1) {
-				Map customData = JsonHelper.toMap(args.getJSONObject(1));
-				shown = Apptentive.engage(cordova.getActivity(), eventId, customData);
+				Map<String, Object> customData = JsonHelper.toMap(args.getJSONObject(1));
+				Apptentive.engage(cordova.getActivity(), eventId, callback, customData);
 			} else {
-				shown = Apptentive.engage(cordova.getActivity(), eventId);
+				Apptentive.engage(cordova.getActivity(), eventId, callback);
 			}
-			PluginResult result = new PluginResult(PluginResult.Status.OK, shown);
-			callbackContext.sendPluginResult(result);
 			return true;
 
 		} else if (action.equals(ACTION_GET_UNREAD_MESSAGE_COUNT)) {
