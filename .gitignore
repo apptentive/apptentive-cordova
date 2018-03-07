@@ -9,5 +9,8 @@ npm-debug.log
 /platforms
 /plugins
 
+# Idea
+/.idea
+
 # res
 resources/signing
