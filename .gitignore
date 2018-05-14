@@ -1,7 +1,16 @@
-# Created by .ignore support plugin (hsz.mobi)
-*.iws
+# Mac
 .DS_Store
 
-.idea/
+# Node
+npm-debug.log
+/node_modules
 
-node_modules
+# Cordova
+/platforms
+/plugins
+
+# Idea
+/.idea
+
+# res
+resources/signing
