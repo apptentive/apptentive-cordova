@@ -1,6 +1,7 @@
 package com.apptentive.cordova;
 
 import android.app.Activity;
+import android.app.Application;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.apptentive.android.sdk.Apptentive.BooleanCallback;
@@ -16,6 +17,7 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 
 public class ApptentiveBridge extends CordovaPlugin {
@@ -62,9 +64,14 @@ public class ApptentiveBridge extends CordovaPlugin {
                     @Override
                     public void run() {
                         Apptentive.register(currentActivity.getApplication());
-                        ApptentiveInternal.getInstance().getRegisteredLifecycleCallbacks().onActivityCreated(currentActivity, null);
-                        ApptentiveInternal.getInstance().getRegisteredLifecycleCallbacks().onActivityStarted(currentActivity);
-                        ApptentiveInternal.getInstance().getRegisteredLifecycleCallbacks().onActivityResumed(currentActivity);
+                        Application.ActivityLifecycleCallbacks callbacks = getActivityLifecycleCallbacks();
+                        if (callbacks != null) {
+                            callbacks.onActivityCreated(currentActivity, null);
+                            callbacks.onActivityStarted(currentActivity);
+                            callbacks.onActivityResumed(currentActivity);
+                        } else {
+                            ApptentiveLog.e("Unable to properly initialize Apptentive");
+                        }
                     }
                 });
             }
@@ -277,5 +284,17 @@ public class ApptentiveBridge extends CordovaPlugin {
 
         callbackContext.error("Unhandled action in ApptentiveBridge: " + action);
         return false;
+    }
+
+    private static Application.ActivityLifecycleCallbacks getActivityLifecycleCallbacks()  {
+        try {
+            Class<?> holderClass = Class.forName("com.apptentive.android.sdk.lifecycle.ApptentiveActivityLifecycleCallbacks$Holder");
+            Field instance = holderClass.getDeclaredField("INSTANCE");
+            instance.setAccessible(true);
+            return (Application.ActivityLifecycleCallbacks) instance.get(null);
+        } catch (Exception e) {
+            ApptentiveLog.e(e, "Exception while resolving ApptentiveLifecycleCallbacks");
+        }
+        return null;
     }
 }
