@@ -3,7 +3,7 @@
   "version": "5.1.1",
   "description": "Apptentive Plugin For Cordova",
   "cordova": {
-    "id": "com.apptentive.cordova",
+    "id": "apptentive-cordova",
     "platforms": [
       "android",
       "ios"
@@ -35,4 +35,3 @@
     "xcode": ">=0.9.3"
   }
 }
-
