@@ -20,7 +20,7 @@ FOUNDATION_EXPORT double ApptentiveVersionNumber;
 FOUNDATION_EXPORT const unsigned char ApptentiveVersionString[];
 
 /** The version number of the Apptentive SDK. */
-#define kApptentiveVersionString @"5.1.1"
+#define kApptentiveVersionString @"5.2.1"
 
 /** The version number of the Apptentive API platform. */
 #define kApptentiveAPIVersionString @"9"
@@ -60,6 +60,9 @@ typedef NS_ENUM(NSInteger, ApptentiveAuthenticationFailureReason) {
 
 /** A block used to notify your app that an authenticated request failed to authenticate. */
 typedef void (^ApptentiveAuthenticationFailureCallback)(ApptentiveAuthenticationFailureReason reason, NSString *errorMessage);
+
+/** A block used to interact with the default engagement flow. */
+typedef BOOL (^ApptentiveInteractionCallback)(NSString *eventName, NSDictionary * _Nullable customData);
 
 @protocol ApptentiveDelegate
 , ApptentiveStyle;
@@ -781,6 +784,20 @@ typedef NS_ENUM(NSUInteger, ApptentiveLogLevel) {
  A block that is called when a logged-in conversation's request fails due to a problem with the user's JWT.
  */
 @property (copy, nonatomic) ApptentiveAuthenticationFailureCallback authenticationFailureCallback;
+
+/**
+ A block that is called right before engaging an interaction. Return `NO` to cancel
+ the engagement.
+ */
+@property (copy, nonatomic) ApptentiveInteractionCallback preInteractionCallback;
+
+/**
+ Updates the login token with the provided one. Used to refresh a token that has expired or may expire soon.
+
+ @param token The new authorization token.
+ @param completion handler indicating success or failure.
+ */
+- (void)updateToken:(NSString *)token completion:(nullable void(^)(BOOL))completion;
 
 ///---------------------------------
 /// @name Logging System
