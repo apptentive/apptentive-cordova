@@ -7,6 +7,7 @@ import com.apptentive.android.sdk.Apptentive;
 import com.apptentive.android.sdk.Apptentive.BooleanCallback;
 import com.apptentive.android.sdk.ApptentiveInternal;
 import com.apptentive.android.sdk.ApptentiveLog;
+import com.apptentive.android.sdk.lifecycle.ApptentiveActivityLifecycleCallbacks;
 import com.apptentive.android.sdk.module.messagecenter.UnreadMessagesListener;
 import com.apptentive.android.sdk.module.rating.impl.AmazonAppstoreRatingProvider;
 import com.apptentive.android.sdk.module.survey.OnSurveyFinishedListener;
@@ -17,7 +18,6 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 
 public class ApptentiveBridge extends CordovaPlugin {
@@ -64,7 +64,7 @@ public class ApptentiveBridge extends CordovaPlugin {
                     @Override
                     public void run() {
                         Apptentive.register(currentActivity.getApplication());
-                        Application.ActivityLifecycleCallbacks callbacks = getActivityLifecycleCallbacks();
+                        Application.ActivityLifecycleCallbacks callbacks = ApptentiveActivityLifecycleCallbacks.getInstance();
                         if (callbacks != null) {
                             callbacks.onActivityCreated(currentActivity, null);
                             callbacks.onActivityStarted(currentActivity);
@@ -284,17 +284,5 @@ public class ApptentiveBridge extends CordovaPlugin {
 
         callbackContext.error("Unhandled action in ApptentiveBridge: " + action);
         return false;
-    }
-
-    private static Application.ActivityLifecycleCallbacks getActivityLifecycleCallbacks()  {
-        try {
-            Class<?> holderClass = Class.forName("com.apptentive.android.sdk.lifecycle.ApptentiveActivityLifecycleCallbacks$Holder");
-            Field instance = holderClass.getDeclaredField("INSTANCE");
-            instance.setAccessible(true);
-            return (Application.ActivityLifecycleCallbacks) instance.get(null);
-        } catch (Exception e) {
-            ApptentiveLog.e(e, "Exception while resolving ApptentiveLifecycleCallbacks");
-        }
-        return null;
     }
 }
