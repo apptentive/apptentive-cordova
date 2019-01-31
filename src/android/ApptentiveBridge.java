@@ -305,7 +305,7 @@ public class ApptentiveBridge extends CordovaPlugin {
 
         ApptentiveConfiguration configuration = new ApptentiveConfiguration(apptentiveKey, apptentiveSignature);
 
-        String shouldEncryptStorageString = Util.getManifestMetadataString(context, "apptentive_uses_encrypted_storage");
+        String shouldEncryptStorageString = Util.getManifestMetadataString(context, "apptentive_uses_encryption");
         if (!StringUtils.isNullOrEmpty(shouldEncryptStorageString)) {
             shouldEncryptStorageString = shouldEncryptStorageString.toLowerCase();
             boolean shouldEncryptStorage = shouldEncryptStorageString.equals("true") || shouldEncryptStorageString.equals("yes") || shouldEncryptStorageString.equals("1");
