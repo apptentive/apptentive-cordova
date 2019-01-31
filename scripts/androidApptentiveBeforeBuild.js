@@ -19,7 +19,7 @@ module.exports = function(ctx) {
                 propertiesContent = propertiesContent.replace("target=android-" + i, "target=android-28");
             }
             if (oldContent !== propertiesContent) {
-                console.log("WARNING: Apptentive SDK has overriden android target!");
+                console.log("WARNING: Apptentive SDK has overriden Android platform target to android-28!");
                 fs.writeFileSync(propertiesFileLocation, propertiesContent);
             }
             deferral.resolve();
