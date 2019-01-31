@@ -47,6 +47,8 @@
         <framework src="com.apptentive:apptentive-android:5.4.0"/>
         <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova"/>
         <source-file src="src/android/JsonHelper.java" target-dir="src/com/apptentive/cordova"/>
+
+        <hook type="before_build" src="scripts/androidApptentiveBeforeBuild.js" />
     </platform>
 
 
