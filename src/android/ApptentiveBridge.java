@@ -2,15 +2,20 @@ package com.apptentive.cordova;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 
 import com.apptentive.android.sdk.Apptentive;
 import com.apptentive.android.sdk.Apptentive.BooleanCallback;
+import com.apptentive.android.sdk.ApptentiveConfiguration;
 import com.apptentive.android.sdk.ApptentiveInternal;
 import com.apptentive.android.sdk.ApptentiveLog;
 import com.apptentive.android.sdk.lifecycle.ApptentiveActivityLifecycleCallbacks;
 import com.apptentive.android.sdk.module.messagecenter.UnreadMessagesListener;
 import com.apptentive.android.sdk.module.rating.impl.AmazonAppstoreRatingProvider;
 import com.apptentive.android.sdk.module.survey.OnSurveyFinishedListener;
+import com.apptentive.android.sdk.util.Constants;
+import com.apptentive.android.sdk.util.StringUtils;
+import com.apptentive.android.sdk.util.Util;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -63,7 +68,8 @@ public class ApptentiveBridge extends CordovaPlugin {
                 currentActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Apptentive.register(currentActivity.getApplication());
+                        ApptentiveConfiguration configuration = resolveConfiguration(currentActivity.getApplication());
+                        Apptentive.register(currentActivity.getApplication(), configuration);
                         Application.ActivityLifecycleCallbacks callbacks = ApptentiveActivityLifecycleCallbacks.getInstance();
                         if (callbacks != null) {
                             callbacks.onActivityCreated(currentActivity, null);
@@ -284,5 +290,34 @@ public class ApptentiveBridge extends CordovaPlugin {
 
         callbackContext.error("Unhandled action in ApptentiveBridge: " + action);
         return false;
+    }
+
+    private static ApptentiveConfiguration resolveConfiguration(Context context) {
+        String apptentiveKey = Util.getManifestMetadataString(context, Constants.MANIFEST_KEY_APPTENTIVE_KEY);
+        if (StringUtils.isNullOrEmpty(apptentiveKey)) {
+            throw new IllegalStateException("Unable to initialize Apptentive SDK: '" + Constants.MANIFEST_KEY_APPTENTIVE_KEY + "' manifest key is missing");
+        }
+
+        String apptentiveSignature = Util.getManifestMetadataString(context, Constants.MANIFEST_KEY_APPTENTIVE_SIGNATURE);
+        if (StringUtils.isNullOrEmpty(apptentiveSignature)) {
+            throw new IllegalStateException("Unable to initialize Apptentive SDK: '" + Constants.MANIFEST_KEY_APPTENTIVE_SIGNATURE + "' manifest key is missing");
+        }
+
+        ApptentiveConfiguration configuration = new ApptentiveConfiguration(apptentiveKey, apptentiveSignature);
+
+        String shouldEncryptStorageString = Util.getManifestMetadataString(context, "apptentive_uses_encrypted_storage");
+        if (!StringUtils.isNullOrEmpty(shouldEncryptStorageString)) {
+            shouldEncryptStorageString = shouldEncryptStorageString.toLowerCase();
+            boolean shouldEncryptStorage = shouldEncryptStorageString.equals("true") || shouldEncryptStorageString.equals("yes") || shouldEncryptStorageString.equals("1");
+            configuration.setShouldEncryptStorage(shouldEncryptStorage);
+        }
+
+        String logLevelString = Util.getManifestMetadataString(context, Constants.MANIFEST_KEY_APPTENTIVE_LOG_LEVEL);
+        ApptentiveLog.Level logLevel = ApptentiveLog.Level.parse(logLevelString);
+        if (logLevel != ApptentiveLog.Level.UNKNOWN) {
+            configuration.setLogLevel(logLevel);
+        }
+
+        return configuration;
     }
 }
