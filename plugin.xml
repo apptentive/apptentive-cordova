@@ -13,7 +13,7 @@
         <!-- Require API key -->
         <preference name="ANDROID_APP_KEY"/>
         <preference name="ANDROID_APP_SIGNATURE"/>
-        <preference name="ANDROID_USES_DEVICE_ENCRYPTION" default="false" />
+        <preference name="ANDROID_USES_DEVICE_ENCRYPTION" default="false"/>
 
         <!-- Define namespace for javascript reference -->
         <js-module src="www/ApptentiveAndroid.js" name="Apptentive">
