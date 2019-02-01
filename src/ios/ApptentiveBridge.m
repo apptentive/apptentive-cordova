@@ -4,7 +4,7 @@
 
 
 @implementation ApptentiveBridge {
-	BOOL apptentiveInitted;
+	BOOL apptentiveInitialized;
 	BOOL registeredForMessageNotifications;
 	NSString *messageNotificationCallback;
 }
@@ -23,7 +23,7 @@
 		[self initAPIKey:callbackId];
 		return;
 	}
-	if (!apptentiveInitted) {
+	if (!apptentiveInitialized) {
 		[self sendFailureMessage:@"Apptentive API key is not set" callbackId:callbackId];
 		return;
 	}
@@ -121,12 +121,21 @@
 		[self sendFailureMessage:@"Insufficient arguments - no API key." callbackId:callbackId];
 		return;
 	}
-	ApptentiveConfiguration *configuration = [ApptentiveConfiguration configurationWithApptentiveKey:apptentiveKey apptentiveSignature:apptentiveSignature];
-	configuration.distributionName = @"Cordova";
-	configuration.distributionVersion = pluginVersion;
+	if (Apptentive.shared.apptentiveKey.length > 0 && Apptentive.shared.apptentiveSignature.length > 0) {
+		if (![Apptentive.shared.apptentiveKey isEqualToString:apptentiveKey] || ![Apptentive.shared.apptentiveSignature isEqualToString:apptentiveSignature]) {
+			NSLog(@"Apptentive key or signature mismatch. The SDK is not initialized.");
+			return;
+		}
+		
+		NSLog(@"WARNING: Apptentive instance is already initialized!");
+	} else {
+		ApptentiveConfiguration *configuration = [ApptentiveConfiguration configurationWithApptentiveKey:apptentiveKey apptentiveSignature:apptentiveSignature];
+		configuration.distributionName = @"Cordova";
+		configuration.distributionVersion = pluginVersion;
 
-	[Apptentive registerWithConfiguration:configuration];
-	apptentiveInitted = YES;
+		[Apptentive registerWithConfiguration:configuration];
+	}
+	apptentiveInitialized = YES;
 
 	NSURL *styleSheetURL = [[NSBundle mainBundle] URLForResource:@"ApptentiveStyles" withExtension:@"plist"];
 	if (styleSheetURL != nil) {
