@@ -83,8 +83,6 @@
         <source-file src="src/ios/ApptentiveBridge.m" target-dir="Apptentive"/>
 
         <!-- Apptentive SDK -->
-        <source-file src="src/ios/apptentive_ios_sdk/libapptentive-ios.a" framework="true" target-dir="apptentive_ios_sdk"/>
-        <resource-file src="src/ios/apptentive_ios_sdk/ApptentiveResources.bundle" target-dir="apptentive_ios_sdk"/>
         <header-file src="src/ios/apptentive_ios_sdk/include/Apptentive.h" target-dir="apptentive_ios_sdk"/>
         <header-file src="src/ios/apptentive_ios_sdk/include/ApptentiveStyleSheet.h" target-dir="apptentive_ios_sdk"/>
         <resource-file src="src/ios/ApptentiveStyles.plist"/>
@@ -99,6 +97,7 @@
         <framework src="Storekit.framework" weak="true"/>
         <framework src="SystemConfiguration.framework" weak="true"/>
         <framework src="UIKit.framework" weak="true"/>
+        <framework src="src/ios/Apptentive.xcframework" custom="true"/>
     </platform>
 
 </plugin>
