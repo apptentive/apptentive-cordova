@@ -113,6 +113,9 @@
 	NSString *apptentiveKey = [infoPlist objectForKey:@"ApptentiveKey"];
 	NSString *apptentiveSignature = [infoPlist objectForKey:@"ApptentiveSignature"];
 	NSString *pluginVersion = [infoPlist objectForKey:@"ApptentivePluginVersion"];
+	NSString *loglevel = [infoPlist objectForKey:@"ApptentiveLogLevel"];
+
+	NSLog(@"APPTENTIVE TEST: Log level is: %@", loglevel);
 
 	// FIXME: Do we really want to be logging this?
 	NSLog(@"Initializing Apptentive Apptentive App Key: %@, Apptentive App Signature: %@", apptentiveKey, apptentiveSignature);
@@ -126,7 +129,7 @@
 			NSLog(@"Apptentive key or signature mismatch. The SDK is not initialized.");
 			return;
 		}
-		
+
 		NSLog(@"WARNING: Apptentive instance is already initialized!");
 	} else {
 		ApptentiveConfiguration *configuration = [ApptentiveConfiguration configurationWithApptentiveKey:apptentiveKey apptentiveSignature:apptentiveSignature];

@@ -78,6 +78,10 @@
             <string>5.8.3</string>
         </config-file>
 
+        <config-file target="*-Info.plist" parent="ApptentiveLogLevel">
+            <string>info</string>
+        </config-file>
+
         <!-- ApptentiveBridge -->
         <header-file src="src/ios/ApptentiveBridge.h" target-dir="Apptentive"/>
         <source-file src="src/ios/ApptentiveBridge.m" target-dir="Apptentive"/>
