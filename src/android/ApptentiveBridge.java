@@ -69,6 +69,16 @@ public class ApptentiveBridge extends CordovaPlugin {
                     @Override
                     public void run() {
                         ApptentiveConfiguration configuration = resolveConfiguration(currentActivity.getApplication());
+
+                        // Parse log level, info by default
+                        String newLogLevel;
+                        try {
+                          newLogLevel = args.getString(0);
+                        } catch (JSONException e) {
+                          newLogLevel = "info";
+                        }
+                        configuration.setLogLevel(parseLogLevel(newLogLevel));
+
                         Apptentive.register(currentActivity.getApplication(), configuration);
                         Application.ActivityLifecycleCallbacks callbacks = ApptentiveActivityLifecycleCallbacks.getInstance();
                         if (callbacks != null) {
@@ -290,6 +300,16 @@ public class ApptentiveBridge extends CordovaPlugin {
 
         callbackContext.error("Unhandled action in ApptentiveBridge: " + action);
         return false;
+    }
+
+    private static ApptentiveLog.Level parseLogLevel(String logLevel) {
+      if (logLevel.equals("verbose")) { return ApptentiveLog.Level.VERBOSE; }
+      if (logLevel.equals("debug")) { return ApptentiveLog.Level.DEBUG; }
+      if (logLevel.equals("info")) { return ApptentiveLog.Level.INFO; }
+      if (logLevel.equals("warn")) { return ApptentiveLog.Level.WARN; }
+      if (logLevel.equals("error")) { return ApptentiveLog.Level.ERROR; }
+      if (logLevel.equals("assert")) { return ApptentiveLog.Level.ASSERT; }
+      return ApptentiveLog.Level.UNKNOWN;
     }
 
     private static ApptentiveConfiguration resolveConfiguration(Context context) {

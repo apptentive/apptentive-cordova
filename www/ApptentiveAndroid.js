@@ -12,6 +12,11 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "deviceReady", []);
     },
 
+    registerWithLogs: function (successCallback, errorCallback, loglevel) {
+        console.log("Apptentive.registerWithLogs()");
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "deviceReady", [loglevel]);
+    },
+
     engage: function (successCallback, errorCallback, eventName, customData) {
         if (customData && typeof customData === 'object') {
             cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "engage", [eventName, customData]);
