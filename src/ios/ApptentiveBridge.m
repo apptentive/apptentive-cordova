@@ -131,10 +131,12 @@
 	if (Apptentive.shared.apptentiveKey.length > 0 && Apptentive.shared.apptentiveSignature.length > 0) {
 		if (![Apptentive.shared.apptentiveKey isEqualToString:apptentiveKey] || ![Apptentive.shared.apptentiveSignature isEqualToString:apptentiveSignature]) {
 			NSLog(@"Apptentive key or signature mismatch. The SDK is not initialized.");
+			[self sendFailureMessage:@"Apptentive key or signature mismatch. The SDK is not initialized." callbackId:callbackId];
 			return;
 		}
-
 		NSLog(@"WARNING: Apptentive instance is already initialized!");
+		[self sendFailureMessage:@"Apptentive instance is already initialized." callbackId:callbackId];
+		return;
 	} else {
 		ApptentiveConfiguration *configuration = [ApptentiveConfiguration configurationWithApptentiveKey:apptentiveKey apptentiveSignature:apptentiveSignature];
 		configuration.distributionName = @"Cordova";
@@ -149,6 +151,8 @@
 	if (styleSheetURL != nil) {
 		Apptentive.shared.styleSheet = [[ApptentiveStyleSheet alloc] initWithContentsOfURL:styleSheetURL];
 	}
+
+	[self sendSuccessMessage:@"Apptentive initialized" callbackId:callbackId];
 }
 
 - (ApptentiveLogLevel)parseLogLevel:(NSString *) logLevel {
