@@ -20,7 +20,12 @@
 
 	//initialization
 	if ([functionCall isEqualToString:@"deviceReady"]) {
-		[self initAPIKey:callbackId];
+		// Set log level if present, info level by default
+		if ([command arguments].count == 2) {
+      [self initAPIKey:callbackId withLogLevel:[command argumentAtIndex:1]];
+		} else {
+			[self initAPIKey:callbackId withLogLevel:@"info"];
+		}
 		return;
 	}
 	if (!apptentiveInitialized) {
@@ -107,15 +112,17 @@
 }
 
 #pragma mark Initialization and Events
-- (void)initAPIKey:(NSString *)callbackId {
+- (void)initAPIKey:(NSString *)callbackId withLogLevel:(NSString *)logLevel {
 	// Access Info.plist for ApptentiveAPIKey
 	NSDictionary *infoPlist = [[NSBundle mainBundle] infoDictionary];
 	NSString *apptentiveKey = [infoPlist objectForKey:@"ApptentiveKey"];
 	NSString *apptentiveSignature = [infoPlist objectForKey:@"ApptentiveSignature"];
 	NSString *pluginVersion = [infoPlist objectForKey:@"ApptentivePluginVersion"];
 
-	// FIXME: Do we really want to be logging this?
-	NSLog(@"Initializing Apptentive Apptentive App Key: %@, Apptentive App Signature: %@", apptentiveKey, apptentiveSignature);
+	// Log key and signature with verbose logs
+	if ([logLevel isEqualToString:@"verbose"]) {
+		NSLog(@"Initializing Apptentive Apptentive App Key: %@, Apptentive App Signature: %@", apptentiveKey, apptentiveSignature);
+	}
 
 	if (apptentiveKey.length == 0 || apptentiveSignature.length == 0) {
 		[self sendFailureMessage:@"Insufficient arguments - no API key." callbackId:callbackId];
@@ -124,14 +131,17 @@
 	if (Apptentive.shared.apptentiveKey.length > 0 && Apptentive.shared.apptentiveSignature.length > 0) {
 		if (![Apptentive.shared.apptentiveKey isEqualToString:apptentiveKey] || ![Apptentive.shared.apptentiveSignature isEqualToString:apptentiveSignature]) {
 			NSLog(@"Apptentive key or signature mismatch. The SDK is not initialized.");
+			[self sendFailureMessage:@"Apptentive key or signature mismatch. The SDK is not initialized." callbackId:callbackId];
 			return;
 		}
-		
 		NSLog(@"WARNING: Apptentive instance is already initialized!");
+		[self sendFailureMessage:@"Apptentive instance is already initialized." callbackId:callbackId];
+		return;
 	} else {
 		ApptentiveConfiguration *configuration = [ApptentiveConfiguration configurationWithApptentiveKey:apptentiveKey apptentiveSignature:apptentiveSignature];
 		configuration.distributionName = @"Cordova";
 		configuration.distributionVersion = pluginVersion;
+		configuration.logLevel = [self parseLogLevel:logLevel];
 
 		[Apptentive registerWithConfiguration:configuration];
 	}
@@ -141,6 +151,18 @@
 	if (styleSheetURL != nil) {
 		Apptentive.shared.styleSheet = [[ApptentiveStyleSheet alloc] initWithContentsOfURL:styleSheetURL];
 	}
+
+	[self sendSuccessMessage:@"Apptentive initialized" callbackId:callbackId];
+}
+
+- (ApptentiveLogLevel)parseLogLevel:(NSString *) logLevel {
+	if ([logLevel isEqualToString:@"verbose"]) { return ApptentiveLogLevelVerbose; }
+	if ([logLevel isEqualToString:@"debug"]) { return ApptentiveLogLevelDebug; }
+	if ([logLevel isEqualToString:@"info"]) { return ApptentiveLogLevelInfo; }
+	if ([logLevel isEqualToString:@"warn"]) { return ApptentiveLogLevelWarn; }
+	if ([logLevel isEqualToString:@"error"]) { return ApptentiveLogLevelError; }
+	if ([logLevel isEqualToString:@"critical"]) { return ApptentiveLogLevelCrit; }
+	return ApptentiveLogLevelUndefined;
 }
 
 - (void)registerForMessageNotifications:(NSArray *)arguments callBackString:(NSString *)callbackId {

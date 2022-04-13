@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="apptentive-cordova" version="5.8.3">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="apptentive-cordova" version="5.8.4">
 
     <name>Apptentive</name>
     <description>Apptentive Plugin For Cordova</description>
@@ -42,7 +42,7 @@
         </config-file>
         <config-file target="./res/values/strings.xml" parent="/resources">
             <string name="apptentive_distribution">Cordova</string>
-            <string name="apptentive_distribution_version">5.8.3</string>
+            <string name="apptentive_distribution_version">5.8.4</string>
         </config-file>
         <framework src="com.apptentive:apptentive-android:5.8.3"/>
         <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova"/>
@@ -75,7 +75,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
-            <string>5.8.3</string>
+            <string>5.8.4</string>
         </config-file>
 
         <!-- ApptentiveBridge -->

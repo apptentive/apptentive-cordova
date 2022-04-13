@@ -5,6 +5,15 @@ This document lets you know what has changed in the Cordova plugin. For changes 
 - [Android Changelog](https://github.com/apptentive/apptentive-android/blob/master/CHANGELOG.md)
 - [iOS Changelog](https://github.com/apptentive/apptentive-ios/blob/master/CHANGELOG.md)
 
+# 2022-04-13 - v5.8.4
+
+**Fixes**
+- Add registerWithLogs() to set Apptentive log level
+- Add missing callback calls to iOS registration function
+
+- Apptentive Android SDK: 5.8.3
+- Apptentive iOS SDK: 5.3.4
+
 # 2022-03-23 - v5.8.3
 
 - Apptentive Android SDK: 5.8.3
