@@ -1,4 +1,4 @@
-@import Apptentive;
+@import ApptentiveKit;
 
 #import "ApptentiveBridge.h"
 
