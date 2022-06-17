@@ -1,5 +1,5 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.6 (swiftlang-5.6.0.323.62 clang-1316.0.20.8)
+// swift-compiler-version: Apple Swift version 5.6.1 (swiftlang-5.6.0.323.66 clang-1316.0.20.12)
 // swift-module-flags: -target arm64-apple-ios11.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name ApptentiveKit
 import CoreTelephony
 import Foundation
@@ -117,6 +117,12 @@ extension ApptentiveKit.MessageCenterViewModel {
       public static func == (a: ApptentiveKit.MessageCenterViewModel.Message.Sender, b: ApptentiveKit.MessageCenterViewModel.Message.Sender) -> Swift.Bool
     }
     @objc @_hasMissingDesignatedInitializers public class Attachment : ObjectiveC.NSObject, QuickLook.QLPreviewItem {
+      final public let fileExtension: Swift.String?
+      public var thumbnail: UIKit.UIImage? {
+        get
+      }
+      public var downloadProgress: Swift.Float
+      public var localURL: Foundation.URL?
       public var displayName: Swift.String {
         get
       }
@@ -221,7 +227,10 @@ public enum LogLevel : Swift.Int, Swift.Comparable {
 }
 @objc @_hasMissingDesignatedInitializers public class Apptentive : ObjectiveC.NSObject {
   @objc public static let shared: ApptentiveKit.Apptentive
-  public var interactionPresenter: ApptentiveKit.InteractionPresenter
+  public var interactionPresenter: ApptentiveKit.InteractionPresenter {
+    get
+    set
+  }
   public var theme: ApptentiveKit.Apptentive.UITheme
   @objc public var personName: Swift.String? {
     @objc get
@@ -263,6 +272,8 @@ public enum LogLevel : Swift.Int, Swift.Comparable {
   }
   public func register(with credentials: ApptentiveKit.Apptentive.AppCredentials, completion: ((Swift.Result<Swift.Void, Swift.Error>) -> Swift.Void)? = nil)
   public struct AppCredentials : Swift.Codable, Swift.Equatable {
+    public let key: Swift.String
+    public let signature: Swift.String
     public init(key: Swift.String, signature: Swift.String)
     public static func == (a: ApptentiveKit.Apptentive.AppCredentials, b: ApptentiveKit.Apptentive.AppCredentials) -> Swift.Bool
     public func encode(to encoder: Swift.Encoder) throws
@@ -274,7 +285,7 @@ public enum LogLevel : Swift.Int, Swift.Comparable {
   public func presentMessageCenter(from viewController: UIKit.UIViewController?, with customData: ApptentiveKit.CustomData?, completion: ((Swift.Result<Swift.Bool, Swift.Error>) -> Swift.Void)? = nil)
   @objc(sendAttachmentText:) public func sendAttachment(_ text: Swift.String)
   @objc(sendAttachmentImage:) public func sendAttachment(_ image: UIKit.UIImage)
-  @objc(sendAttachmentData:mimeType:) public func sendAttachment(_ fileData: Foundation.Data, mediaType: Swift.String)
+  @objc(sendAttachmentFile:withMimeType:) public func sendAttachment(_ fileData: Foundation.Data, mediaType: Swift.String)
   public func canShowInteraction(event: ApptentiveKit.Event, completion: ((Swift.Result<Swift.Bool, Swift.Error>) -> Swift.Void)? = nil)
   convenience public init(apiBaseURL: Foundation.URL)
   @objc deinit
@@ -329,7 +340,7 @@ public protocol MessageCenterViewModelDelegate : AnyObject {
 }
 @_hasMissingDesignatedInitializers public class MessageCenterViewModel {
   final public let headingTitle: Swift.String
-  final public let branding: Swift.String
+  final public let branding: Swift.String?
   final public let composerTitle: Swift.String
   final public let composerSendButtonTitle: Swift.String
   final public let composerAttachButtonTitle: Swift.String
@@ -391,7 +402,10 @@ public protocol MessageCenterViewModelDelegate : AnyObject {
       get
     }
   }
-  public var oldestUnreadMessage: Foundation.IndexPath? {
+  public var oldestUnreadMessageIndexPath: Foundation.IndexPath? {
+    get
+  }
+  public var newestMessageIndexPath: Foundation.IndexPath? {
     get
   }
   public func commitProfileEdits()
@@ -442,6 +456,7 @@ public enum MessageCenterViewModelError : Swift.Error {
 }
 extension ApptentiveKit.Apptentive {
   public func presentInteraction(_ interaction: ApptentiveKit.Interaction, from presentingViewController: UIKit.UIViewController) throws
+  public func loadEngagementManifest(at url: Foundation.URL?)
 }
 extension ApptentiveKit.SurveyViewModel {
   @_hasMissingDesignatedInitializers public class Question {
@@ -581,6 +596,7 @@ extension ApptentiveKit.Apptentive {
   @objc(extendedDataCommerceItemWithItemID:name:category:price:quantity:currency:) dynamic public class func extendedData(itemID: Swift.String?, name: Swift.String?, category: Swift.String?, price: Foundation.NSNumber?, quantity: Foundation.NSNumber?, currency: Swift.String?) -> [Swift.AnyHashable : Any]
   @available(*, deprecated, message: "This feature is not implemented and will always result in false.")
   @objc dynamic public func queryCanShowMessageCenter(completion: @escaping (Swift.Bool) -> Swift.Void)
+  @objc(presentMessageCenterFromViewController:) dynamic public func presentMessageCenterCompat(from viewController: UIKit.UIViewController?)
   @available(swift, deprecated: 1.0, message: "Use the method whose completion handler takes a Result<Bool, Error> parameter.")
   @objc(presentMessageCenterFromViewController:completion:) dynamic public func presentMessageCenterCompat(from viewController: UIKit.UIViewController?, completion: ((Swift.Bool) -> Swift.Void)? = nil)
   @objc(presentMessageCenterFromViewController:withCustomData:) dynamic public func presentMessageCenterCompat(from viewController: UIKit.UIViewController?, withCustomData customData: [Swift.AnyHashable : Any]?)
@@ -647,6 +663,29 @@ extension ApptentiveKit.Apptentive {
   @objc dynamic public func updateToken(_ token: Swift.String, completion: ((Swift.Bool) -> Swift.Void)? = nil)
   @available(swift, deprecated: 1.0, message: "Set the 'logLevel' property on 'ApptentiveLogger' or one of it's static log properties.")
   @objc dynamic public var logLevel: ApptentiveKit.ApptentiveLogLevel {
+    @objc get
+    @objc set
+  }
+}
+extension UIKit.UIButton {
+  @available(swift, deprecated: 1.0, message: "Set the 'apptentiveStyle' property to 'ApptentiveButtonStyle.pill'.")
+  @objc @_Concurrency.MainActor(unsafe) public static let apptentivePillRadius: CoreGraphics.CGFloat
+  @available(swift, deprecated: 1.0, message: "Use the 'apptentiveStyle' property.")
+  @objc @_Concurrency.MainActor(unsafe) public static var apptentiveCornerRadius: CoreGraphics.CGFloat {
+    @objc get
+    @objc set
+  }
+}
+extension UIKit.UITableView {
+  @available(swift, deprecated: 1.0, message: "Use the 'apptentive' property on 'UITableView.Style'.")
+  @objc @_Concurrency.MainActor(unsafe) public static var apptentiveStyle: Swift.Int {
+    @objc get
+    @objc set
+  }
+}
+extension UIKit.UIViewController {
+  @available(swift, deprecated: 1.0, message: "Use the 'apptentive' property on 'UIModalPresentationStyle'.")
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var apptentiveModalPresentationStyle: UIKit.UIModalPresentationStyle {
     @objc get
     @objc set
   }
@@ -726,7 +765,8 @@ public class ApptentiveConfiguration : ObjectiveC.NSObject {
     get
   }
 }
-@objc public class TermsAndConditions : ObjectiveC.NSObject {
+@objc @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+public class TermsAndConditions : ObjectiveC.NSObject {
   @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
   public init(bodyText: Swift.String?, linkText: Swift.String?, linkURL: Foundation.URL?)
   final public let bodyText: Swift.String?
@@ -874,8 +914,8 @@ extension UIKit.UIModalPresentationStyle {
   public static var apptentive: UIKit.UIModalPresentationStyle
 }
 extension UIKit.UIBarButtonItem {
-  @_Concurrency.MainActor(unsafe) public static var apptentiveClose: UIKit.UIBarButtonItem
-  @_Concurrency.MainActor(unsafe) public static var apptentiveProfileEdit: UIKit.UIBarButtonItem
+  @objc @_Concurrency.MainActor(unsafe) public static var apptentiveClose: UIKit.UIBarButtonItem
+  @objc @_Concurrency.MainActor(unsafe) public static var apptentiveProfileEdit: UIKit.UIBarButtonItem
 }
 extension UIKit.UIButton {
   public enum ApptentiveButtonStyle {
@@ -885,84 +925,89 @@ extension UIKit.UIButton {
   @_Concurrency.MainActor(unsafe) public static var apptentiveStyle: UIKit.UIButton.ApptentiveButtonStyle
 }
 extension UIKit.UIImage {
-  public static var apptentiveMessageAttachmentButton: UIKit.UIImage?
-  public static var apptentiveMessageSendButton: UIKit.UIImage?
-  public static var apptentiveSentMessageBubble: UIKit.UIImage?
-  public static var apptentiveReceivedMessageBubble: UIKit.UIImage?
-  public static var apptentiveAttachmentPlaceholder: UIKit.UIImage?
-  public static var apptentiveAttachmentRemoveButton: UIKit.UIImage?
-  public static var apptentiveHeaderLogo: UIKit.UIImage?
-  public static var apptentiveRadioButton: UIKit.UIImage?
-  public static var apptentiveCheckbox: UIKit.UIImage?
-  public static var apptentiveRadioButtonSelected: UIKit.UIImage?
-  public static var apptentiveCheckboxSelected: UIKit.UIImage?
+  @objc public static var apptentiveMessageAttachmentButton: UIKit.UIImage?
+  @objc public static var apptentiveMessageSendButton: UIKit.UIImage?
+  @objc public static var apptentiveSentMessageBubble: UIKit.UIImage?
+  @objc public static var apptentiveReceivedMessageBubble: UIKit.UIImage?
+  @objc public static var apptentiveAttachmentPlaceholder: UIKit.UIImage?
+  @objc public static var apptentiveAttachmentRemoveButton: UIKit.UIImage?
+  @objc public static var apptentiveHeaderLogo: UIKit.UIImage?
+  @objc public static var apptentiveRadioButton: UIKit.UIImage?
+  @objc public static var apptentiveCheckbox: UIKit.UIImage?
+  @objc public static var apptentiveRadioButtonSelected: UIKit.UIImage?
+  @objc public static var apptentiveCheckboxSelected: UIKit.UIImage?
 }
 extension UIKit.UIColor {
-  public static var apptentiveMessageCenterTextViewBorder: UIKit.UIColor
-  public static var apptentiveMessageCenterAttachmentButton: UIKit.UIColor
-  public static var apptentiveMessageTextViewPlaceholder: UIKit.UIColor
-  public static var apptentiveMessageTextViewBorder: UIKit.UIColor
-  public static var apptentiveMessageCenterStatus: UIKit.UIColor
-  public static var apptentiveMessageCenterGreetingBody: UIKit.UIColor
-  public static var apptentiveMessageCenterGreetingTitle: UIKit.UIColor
-  public static var apptentiveMessageBubbleInbound: UIKit.UIColor
-  public static var apptentiveMessageBubbleOutbound: UIKit.UIColor
-  public static var apptentiveMessageLabelInbound: UIKit.UIColor
-  public static var apptentiveMessageLabelOutbound: UIKit.UIColor
-  public static var apptentiveQuestionLabel: UIKit.UIColor
-  public static var apptentiveInstructionsLabel: UIKit.UIColor
-  public static var apptentiveChoiceLabel: UIKit.UIColor
-  public static var apptentiveError: UIKit.UIColor
-  public static var apptentiveSecondaryLabel: UIKit.UIColor
-  public static var apptentiveRangeControlBorder: UIKit.UIColor
-  public static var apptentiveSurveyIntroduction: UIKit.UIColor
-  public static var apptentiveTextInputBorder: UIKit.UIColor
-  public static var apptentiveTextInputBackground: UIKit.UIColor
-  public static var apptentiveTextInput: UIKit.UIColor
-  public static var apptentiveTextInputPlaceholder: UIKit.UIColor
-  public static var apptentiveMinMaxLabel: UIKit.UIColor
-  public static var apptentiveGroupedBackground: UIKit.UIColor
-  public static var apptentiveSecondaryGroupedBackground: UIKit.UIColor
-  public static var apptentiveSeparator: UIKit.UIColor
-  public static var apptentiveImageSelected: UIKit.UIColor
-  public static var apptentiveImageNotSelected: UIKit.UIColor
-  public static var apptentiveSubmitButton: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterTextViewBorder: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterAttachmentButton: UIKit.UIColor
+  @objc public static var apptentiveMessageTextViewPlaceholder: UIKit.UIColor
+  @objc public static var apptentiveMessageTextViewBorder: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterStatus: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterGreetingBody: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterGreetingTitle: UIKit.UIColor
+  @objc public static var apptentiveMessageBubbleInbound: UIKit.UIColor
+  @objc public static var apptentiveMessageBubbleOutbound: UIKit.UIColor
+  @objc public static var apptentiveMessageLabelInbound: UIKit.UIColor
+  @objc public static var apptentiveMessageLabelOutbound: UIKit.UIColor
+  @objc public static var apptentiveQuestionLabel: UIKit.UIColor
+  @objc public static var apptentiveInstructionsLabel: UIKit.UIColor
+  @objc public static var apptentiveChoiceLabel: UIKit.UIColor
+  @objc public static var apptentiveError: UIKit.UIColor
+  @objc public static var apptentiveSecondaryLabel: UIKit.UIColor
+  @objc public static var apptentiveRangeControlBorder: UIKit.UIColor
+  @objc public static var apptentiveSurveyIntroduction: UIKit.UIColor
+  @objc public static var apptentiveTextInputBorder: UIKit.UIColor
+  @objc public static var apptentiveTextInputBackground: UIKit.UIColor
+  @objc public static var apptentiveTextInput: UIKit.UIColor
+  @objc public static var apptentiveTextInputPlaceholder: UIKit.UIColor
+  @objc public static var apptentiveMinMaxLabel: UIKit.UIColor
+  @objc public static var apptentiveGroupedBackground: UIKit.UIColor
+  @objc public static var apptentiveSecondaryGroupedBackground: UIKit.UIColor
+  @objc public static var apptentiveSeparator: UIKit.UIColor
+  @objc public static var apptentiveImageSelected: UIKit.UIColor
+  @objc public static var apptentiveImageNotSelected: UIKit.UIColor
+  @objc public static var apptentiveSubmitButton: UIKit.UIColor
+  @available(*, deprecated, message: "This property has been renamed to 'apptentiveSubmitStatusLabel'.")
   public static var apptentiveSubmitLabel: UIKit.UIColor
-  public static var apptentiveTermsOfServiceLabel: UIKit.UIColor
-  public static var apptentiveSubmitButtonTitle: UIKit.UIColor
+  @objc public static var apptentiveSubmitStatusLabel: UIKit.UIColor
+  @objc public static var apptentiveTermsOfServiceLabel: UIKit.UIColor
+  @objc public static var apptentiveSubmitButtonTitle: UIKit.UIColor
+  public static var apptentiveSubmitButtonBorder: UIKit.UIColor
 }
 extension UIKit.UIFont {
-  public static var messageCenterGreetingProfileInputText: UIKit.UIFont
-  public static var apptentiveProfileSuggesstionLabel: UIKit.UIFont
-  public static var apptentiveMessageCenterGreetingSendMessageButton: UIKit.UIFont
-  public static var apptentiveMessageCenterStatus: UIKit.UIFont
-  public static var apptentiveMessageCenterGreetingTitle: UIKit.UIFont
-  public static var apptentiveMessageCenterGreetingBody: UIKit.UIFont
-  public static var apptentiveMessageCenterAttachmentLabel: UIKit.UIFont
-  public static var apptentiveQuestionLabel: UIKit.UIFont
-  public static var apptentiveTermsOfServiceLabel: UIKit.UIFont
-  public static var apptentiveChoiceLabel: UIKit.UIFont
-  public static var apptentiveMessageLabel: UIKit.UIFont
-  public static var apptentiveMinMaxLabel: UIKit.UIFont
-  public static var apptentiveSenderLabel: UIKit.UIFont
-  public static var apptentiveMessageDateLabel: UIKit.UIFont
-  public static var apptentiveInstructionsLabel: UIKit.UIFont
-  public static var apptentiveSurveyIntroductionLabel: UIKit.UIFont
+  @objc public static var apptentiveMessageCenterStatus: UIKit.UIFont
+  @objc public static var apptentiveMessageCenterGreetingTitle: UIKit.UIFont
+  @objc public static var apptentiveMessageCenterGreetingBody: UIKit.UIFont
+  @objc public static var apptentiveMessageCenterAttachmentLabel: UIKit.UIFont
+  @objc public static var apptentiveQuestionLabel: UIKit.UIFont
+  @objc public static var apptentiveTermsOfServiceLabel: UIKit.UIFont
+  @objc public static var apptentiveChoiceLabel: UIKit.UIFont
+  @objc public static var apptentiveMessageLabel: UIKit.UIFont
+  @objc public static var apptentiveMinMaxLabel: UIKit.UIFont
+  @objc public static var apptentiveSenderLabel: UIKit.UIFont
+  @objc public static var apptentiveMessageDateLabel: UIKit.UIFont
+  @objc public static var apptentiveInstructionsLabel: UIKit.UIFont
+  @objc public static var apptentiveSurveyIntroductionLabel: UIKit.UIFont
+  @available(*, deprecated, message: "This property has been renamed to 'apptentiveSubmitStatusLabel'.")
   public static var apptentiveSubmitLabel: UIKit.UIFont
-  public static var apptentiveSubmitButtonTitle: UIKit.UIFont
-  public static var apptentiveTextInput: UIKit.UIFont
+  @objc public static var apptentiveSubmitStatusLabel: UIKit.UIFont
+  @objc public static var apptentiveSubmitButtonTitle: UIKit.UIFont
+  @objc public static var apptentiveTextInput: UIKit.UIFont
 }
 extension UIKit.UIToolbar {
-  public enum ToolbarMode {
+  @objc public enum ToolbarMode : Swift.Int {
     case alwaysShown
     case hiddenWhenEmpty
-    public static func == (a: UIKit.UIToolbar.ToolbarMode, b: UIKit.UIToolbar.ToolbarMode) -> Swift.Bool
-    public func hash(into hasher: inout Swift.Hasher)
-    public var hashValue: Swift.Int {
+    public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
+    public var rawValue: Swift.Int {
       get
     }
   }
-  @_Concurrency.MainActor(unsafe) public static var apptentiveMode: UIKit.UIToolbar.ToolbarMode
+  @objc @_Concurrency.MainActor(unsafe) public static var apptentiveMode: UIKit.UIToolbar.ToolbarMode
+}
+extension CoreGraphics.CGFloat {
+  public static var apptentiveButtonBorderWidth: CoreGraphics.CGFloat
 }
 extension ApptentiveKit.MessageCenterViewModel.Message.SentStatus : Swift.Hashable {}
 extension ApptentiveKit.SurveyViewModel.ChoiceQuestion.SelectionStyle : Swift.Equatable {}
@@ -999,3 +1044,4 @@ extension ApptentiveKit.ApptentiveStyleIdentifier : Swift.Equatable {}
 extension ApptentiveKit.ApptentiveStyleIdentifier : Swift.Hashable {}
 extension UIKit.UIToolbar.ToolbarMode : Swift.Equatable {}
 extension UIKit.UIToolbar.ToolbarMode : Swift.Hashable {}
+extension UIKit.UIToolbar.ToolbarMode : Swift.RawRepresentable {}
