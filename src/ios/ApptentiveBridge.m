@@ -286,8 +286,7 @@
 		NSDictionary *customData = [self parseDictionaryFromString:[arguments objectAtIndex:1]];
 		[Apptentive.shared presentMessageCenterFromViewController:self.viewController withCustomData:customData];
 	} else {
-		[Apptentive.shared presentMessageCenterFromViewController:self.viewController completion:nil];
-		// [Apptentive.shared presentMessageCenterFromViewController:self.viewController];
+		[Apptentive.shared presentMessageCenterFromViewController:self.viewController];
 	}
 }
 
@@ -308,8 +307,7 @@
 - (void)sendAttachmentFileWithMimeType:(NSArray *)arguments callBackString:(NSString *)callbackId {
 	NSData *data = [[arguments objectAtIndex:1] dataUsingEncoding:NSUTF8StringEncoding];
 	NSString *mimeType = [arguments objectAtIndex:2];
-	[Apptentive.shared sendAttachmentData:data mimeType:mimeType];
-	// [Apptentive.shared sendAttachmentFile:data withMimeType:mimeType];
+	[Apptentive.shared sendAttachmentFile:data withMimeType:mimeType];
 }
 
 - (void)sendAttachmentImage:(NSArray *)arguments callBackString:(NSString *)callbackId {
