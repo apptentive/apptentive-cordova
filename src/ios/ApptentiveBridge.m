@@ -102,8 +102,6 @@
 	NSString *apptentiveSignature = [infoPlist objectForKey:@"ApptentiveSignature"];
 	NSString *pluginVersion = [infoPlist objectForKey:@"ApptentivePluginVersion"];
 
-	//NSString *pluginVersion = [CDVPlugin]
-
 	// Log key and signature with verbose logs
 	if ([arguments[1] isEqualToString:@"verbose"]) {
 		NSLog(@"Initializing Apptentive Apptentive App Key: %@, Apptentive App Signature: %@", apptentiveKey, apptentiveSignature);
