@@ -1,4 +1,4 @@
-@import Apptentive;
+@import ApptentiveKit;
 
 #import "ApptentiveBridge.h"
 
@@ -20,21 +20,8 @@
 
 	//initialization
 	if ([functionCall isEqualToString:@"deviceReady"]) {
-		// Set log level if present, info level by default
-		if ([command arguments].count == 2) {
-      [self initAPIKey:callbackId withLogLevel:[command argumentAtIndex:1]];
-		} else {
-			[self initAPIKey:callbackId withLogLevel:@"info"];
-		}
-		return;
-	}
-	if (!apptentiveInitialized) {
-		[self sendFailureMessage:@"Apptentive API key is not set" callbackId:callbackId];
-		return;
-	}
-
-	//all other functions
-	if ([functionCall isEqualToString:@"addCustomDeviceData"]) {
+		[self registerWithArguments:command.arguments callbackId:callbackId];
+	} else if ([functionCall isEqualToString:@"addCustomDeviceData"]) {
 		[self addCustomDeviceData:[command arguments] callBackString:callbackId];
 	} else if ([functionCall isEqualToString:@"addCustomPersonData"]) {
 		[self addCustomPersonData:[command arguments] callBackString:callbackId];
@@ -68,10 +55,6 @@
 		[self canShowInteraction:[command arguments] callBackString:callbackId];
 	} else if ([functionCall isEqualToString:@"canShowMessageCenter"]) {
 		[self canShowMessageCenter:callbackId];
-	} else if ([functionCall isEqualToString:@"login"]) {
-		[self login:[command arguments] callBackString:callbackId];
-	} else if ([functionCall isEqualToString:@"logout"]) {
-		[self logoutWithCallBackString:callbackId];
 	} else {
 		//command not recognized
 		[self sendFailureMessage:@"Command not recognized" callbackId:callbackId];
@@ -112,7 +95,7 @@
 }
 
 #pragma mark Initialization and Events
-- (void)initAPIKey:(NSString *)callbackId withLogLevel:(NSString *)logLevel {
+- (void)registerWithArguments:(NSArray *)arguments callbackId:(NSString *)callbackId {
 	// Access Info.plist for ApptentiveAPIKey
 	NSDictionary *infoPlist = [[NSBundle mainBundle] infoDictionary];
 	NSString *apptentiveKey = [infoPlist objectForKey:@"ApptentiveKey"];
@@ -120,39 +103,32 @@
 	NSString *pluginVersion = [infoPlist objectForKey:@"ApptentivePluginVersion"];
 
 	// Log key and signature with verbose logs
-	if ([logLevel isEqualToString:@"verbose"]) {
+	if ([arguments[1] isEqualToString:@"verbose"]) {
 		NSLog(@"Initializing Apptentive Apptentive App Key: %@, Apptentive App Signature: %@", apptentiveKey, apptentiveSignature);
 	}
 
 	if (apptentiveKey.length == 0 || apptentiveSignature.length == 0) {
-		[self sendFailureMessage:@"Insufficient arguments - no API key." callbackId:callbackId];
+		[self sendFailureMessage:@"App credentials missing from Info.plist." callbackId:callbackId];
 		return;
 	}
-	if (Apptentive.shared.apptentiveKey.length > 0 && Apptentive.shared.apptentiveSignature.length > 0) {
-		if (![Apptentive.shared.apptentiveKey isEqualToString:apptentiveKey] || ![Apptentive.shared.apptentiveSignature isEqualToString:apptentiveSignature]) {
-			NSLog(@"Apptentive key or signature mismatch. The SDK is not initialized.");
-			[self sendFailureMessage:@"Apptentive key or signature mismatch. The SDK is not initialized." callbackId:callbackId];
-			return;
-		}
-		NSLog(@"WARNING: Apptentive instance is already initialized!");
-		[self sendFailureMessage:@"Apptentive instance is already initialized." callbackId:callbackId];
-		return;
-	} else {
-		ApptentiveConfiguration *configuration = [ApptentiveConfiguration configurationWithApptentiveKey:apptentiveKey apptentiveSignature:apptentiveSignature];
-		configuration.distributionName = @"Cordova";
-		configuration.distributionVersion = pluginVersion;
-		configuration.logLevel = [self parseLogLevel:logLevel];
 
-		[Apptentive registerWithConfiguration:configuration];
-	}
-	apptentiveInitialized = YES;
+	ApptentiveConfiguration *configuration = [ApptentiveConfiguration configurationWithApptentiveKey:apptentiveKey apptentiveSignature:apptentiveSignature];
+	configuration.distributionName = @"Cordova";
+	configuration.distributionVersion = pluginVersion;
+	configuration.logLevel = [self parseLogLevel:arguments[1]];
 
-	NSURL *styleSheetURL = [[NSBundle mainBundle] URLForResource:@"ApptentiveStyles" withExtension:@"plist"];
-	if (styleSheetURL != nil) {
-		Apptentive.shared.styleSheet = [[ApptentiveStyleSheet alloc] initWithContentsOfURL:styleSheetURL];
-	}
+	// Initialize Apptentive on main queue
+	Apptentive *apptentive = Apptentive.shared;
 
-	[self sendSuccessMessage:@"Apptentive initialized" callbackId:callbackId];
+	[self.commandDelegate runInBackground:^{
+		[apptentive registerWithConfiguration:configuration completion:^(BOOL success) {
+			if (success) {
+				[self sendSuccessMessage:@"Apptentive registration succeeded." callbackId:callbackId];
+			} else {
+				[self sendFailureMessage:@"Apptentive registration failed." callbackId:callbackId];
+			}
+		}];
+	}];
 }
 
 - (ApptentiveLogLevel)parseLogLevel:(NSString *) logLevel {
@@ -166,25 +142,21 @@
 }
 
 - (void)registerForMessageNotifications:(NSArray *)arguments callBackString:(NSString *)callbackId {
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(unreadMessageCountChanged:) name:ApptentiveMessageCenterUnreadCountChangedNotification object:nil];
+	[Apptentive.shared addObserver:self forKeyPath:@"unreadMessageCount" options:NSKeyValueObservingOptionNew context:nil];
 	registeredForMessageNotifications = YES;
 	messageNotificationCallback = callbackId;
 }
 
 - (void)unregisterForNotifications {
 	if (registeredForMessageNotifications) {
-		[[NSNotificationCenter defaultCenter] removeObserver:self name:ApptentiveMessageCenterUnreadCountChangedNotification object:nil];
-		registeredForMessageNotifications = NO;
-		messageNotificationCallback = nil;
+		[Apptentive.shared removeObserver:self forKeyPath:@"unreadMessageCount"];
 	}
 }
 
+#pragma mark Observations
 
-#pragma mark Notifications
-
-- (void)unreadMessageCountChanged:(NSNotification *)notification {
-	// Unread message count is contained in the notification's userInfo dictionary.
-	NSNumber *unreadMessageCount = [notification.userInfo objectForKey:@"count"];
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+	NSNumber *unreadMessageCount = @(Apptentive.shared.unreadMessageCount);
 	CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:[unreadMessageCount intValue]];
 	[result setKeepCallback:[NSNumber numberWithBool:YES]];
 	[self.commandDelegate sendPluginResult:result callbackId:messageNotificationCallback];
@@ -199,12 +171,10 @@
 	}
 	NSString *property_id = [arguments objectAtIndex:1];
 	NSString *value = [arguments objectAtIndex:2];
-	if ([property_id isEqualToString:@"appID"]) {
-		[Apptentive sharedConnection].appID = value;
-	} else if ([property_id isEqualToString:@"personName"]) {
-		[Apptentive sharedConnection].personName = value;
+	if ([property_id isEqualToString:@"personName"]) {
+		Apptentive.shared.personName = value;
 	} else if ([property_id isEqualToString:@"personEmailAddress"]) {
-		[Apptentive sharedConnection].personEmailAddress = value;
+		Apptentive.shared.personEmailAddress = value;
 	} else {
 		[self sendFailureMessage:@"Property name not recognized" callbackId:callbackId];
 	}
@@ -217,12 +187,10 @@
 	}
 	NSString *property_id = [arguments objectAtIndex:1];
 	NSString *value = nil;
-	if ([property_id isEqualToString:@"appID"]) {
-		value = [Apptentive sharedConnection].appID;
-	} else if ([property_id isEqualToString:@"personName"]) {
-		value = [Apptentive sharedConnection].personName;
+	if ([property_id isEqualToString:@"personName"]) {
+		value = Apptentive.shared.personName;
 	} else if ([property_id isEqualToString:@"personEmailAddress"]) {
-		value = [Apptentive sharedConnection].personEmailAddress;
+		value = Apptentive.shared.personEmailAddress;
 	} else {
 		[self sendFailureMessage:@"Property name not recognized" callbackId:callbackId];
 		return;
@@ -238,14 +206,14 @@
 	id value = [arguments objectAtIndex:2];
 	if ([value isKindOfClass:[NSString class]]) {
 		NSString *stringData = value;
-		[[Apptentive sharedConnection] addCustomDeviceDataString:stringData withKey:key];
+		[Apptentive.shared addCustomDeviceDataString:stringData withKey:key];
 	} else if ([value isKindOfClass:[NSNumber class]]) {
 		if (value == [NSNumber numberWithBool:YES] || value == [NSNumber numberWithBool:NO]) {
 			NSNumber *boolData = value;
-			[[Apptentive sharedConnection] addCustomDeviceDataBool:boolData.boolValue withKey:key];
+			[Apptentive.shared addCustomDeviceDataBool:boolData.boolValue withKey:key];
 		} else {
 			NSNumber *numberData = value;
-			[[Apptentive sharedConnection] addCustomDeviceDataNumber:numberData withKey:key];
+			[Apptentive.shared addCustomDeviceDataNumber:numberData withKey:key];
 		}
 	} else {
 		[self sendFailureMessage:@"Custom Device data type not recognized" callbackId:callbackId];
@@ -260,14 +228,14 @@
 	id value = [arguments objectAtIndex:2];
 	if ([value isKindOfClass:[NSString class]]) {
 		NSString *stringData = value;
-		[[Apptentive sharedConnection] addCustomPersonDataString:stringData withKey:key];
+		[Apptentive.shared addCustomPersonDataString:stringData withKey:key];
 	} else if ([value isKindOfClass:[NSNumber class]]) {
 		if (value == [NSNumber numberWithBool:YES] || value == [NSNumber numberWithBool:NO]) {
 			NSNumber *boolData = value;
-			[[Apptentive sharedConnection] addCustomPersonDataBool:boolData.boolValue withKey:key];
+			[Apptentive.shared addCustomPersonDataBool:boolData.boolValue withKey:key];
 		} else {
 			NSNumber *numberData = value;
-			[[Apptentive sharedConnection] addCustomPersonDataNumber:numberData withKey:key];
+			[Apptentive.shared addCustomPersonDataNumber:numberData withKey:key];
 		}
 	} else {
 		[self sendFailureMessage:@"Custom Person data type not recognized" callbackId:callbackId];
@@ -308,28 +276,28 @@
 }
 
 - (void)openAppStore {
-	[[Apptentive sharedConnection] openAppStore];
+	NSLog(@"Open App Store is not implemented in the new iOS SDK");
 }
 
 - (void)showMessageCenter:(NSArray *)arguments callBackString:(NSString *)callbackId {
 	if (arguments.count == 2) {
 		NSDictionary *customData = [self parseDictionaryFromString:[arguments objectAtIndex:1]];
-		[[Apptentive sharedConnection] presentMessageCenterFromViewController:self.viewController withCustomData:customData];
+		[Apptentive.shared presentMessageCenterFromViewController:self.viewController withCustomData:customData];
 	} else {
-		[[Apptentive sharedConnection] presentMessageCenterFromViewController:self.viewController];
+		[Apptentive.shared presentMessageCenterFromViewController:self.viewController];
 	}
 }
 
 - (void)removeCustomDeviceData:(NSArray *)arguments callBackString:(NSString *)callbackId {
 	NSString *key = [arguments objectAtIndex:1];
-	[[Apptentive sharedConnection] removeCustomDeviceDataWithKey:key];
+	[Apptentive.shared removeCustomDeviceDataWithKey:key];
 	CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
 	[self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
 - (void)removeCustomPersonData:(NSArray *)arguments callBackString:(NSString *)callbackId {
 	NSString *key = [arguments objectAtIndex:1];
-	[[Apptentive sharedConnection] removeCustomPersonDataWithKey:key];
+	[Apptentive.shared removeCustomPersonDataWithKey:key];
 	CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
 	[self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
@@ -337,7 +305,7 @@
 - (void)sendAttachmentFileWithMimeType:(NSArray *)arguments callBackString:(NSString *)callbackId {
 	NSData *data = [[arguments objectAtIndex:1] dataUsingEncoding:NSUTF8StringEncoding];
 	NSString *mimeType = [arguments objectAtIndex:2];
-	[[Apptentive sharedConnection] sendAttachmentFile:data withMimeType:mimeType];
+	[Apptentive.shared sendAttachmentFile:data withMimeType:mimeType];
 }
 
 - (void)sendAttachmentImage:(NSArray *)arguments callBackString:(NSString *)callbackId {
@@ -348,16 +316,16 @@
 	if (attachmentImage == nil) {
 		[self sendFailureMessage:@"Image could not be constructed from the passed data" callbackId:callbackId];
 	}
-	[[Apptentive sharedConnection] sendAttachmentImage:attachmentImage];
+	[Apptentive.shared sendAttachmentImage:attachmentImage];
 }
 
 - (void)sendAttachmentText:(NSArray *)arguments callBackString:(NSString *)callbackId {
 	NSString *text = [arguments objectAtIndex:1];
-	[[Apptentive sharedConnection] sendAttachmentText:text];
+	[Apptentive.shared sendAttachmentText:text];
 }
 
 - (void)unreadMessageCount:(NSString *)callbackId {
-	NSUInteger unreadMessageCount = [[Apptentive sharedConnection] unreadMessageCount];
+	NSUInteger unreadMessageCount = [Apptentive.shared unreadMessageCount];
 	CDVPluginResult *result = [CDVPluginResult
 		resultWithStatus:CDVCommandStatus_OK
 			messageAsInt:(int)unreadMessageCount];
@@ -377,32 +345,8 @@
 }
 
 - (void)canShowMessageCenter:(NSString *)callbackId {
-	[Apptentive.shared queryCanShowMessageCenterWithCompletion:^(BOOL canShow) {
-	  CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:canShow];
-	  [self.commandDelegate sendPluginResult:result callbackId:callbackId];
-	}];
-}
-
-- (void)login:(NSArray *)arguments callBackString:(NSString *)callbackId {
-	NSString *token = [arguments objectAtIndex:1];
-	if ([token isEqual:[NSNull null]]) {
-		[self sendFailureMessage:@"Insufficient arguments to call login - token is nil" callbackId:callbackId];
-		return;
-	}
-	[[Apptentive shared] logInWithToken:token completion:^(BOOL success, NSError *_Nonnull error) {
-		CDVPluginResult *result;
-		if (success) {
-			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-		} else {
-			result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
-		}
-		[self.commandDelegate sendPluginResult:result callbackId:callbackId];
-	}];
-}
-
-- (void)logoutWithCallBackString:(NSString *)callbackId {
-	[[Apptentive shared] logOut];
-	CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+	// ApptentiveKit Message Center will always show either a "not available" note or succeed.
+	CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:YES];
 	[self.commandDelegate sendPluginResult:result callbackId:callbackId];
 }
 
