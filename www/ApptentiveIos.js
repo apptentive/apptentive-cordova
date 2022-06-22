@@ -12,7 +12,13 @@ var Apptentive = {
     deviceReady: function (successCallback, errorCallback) {
         console.log("Apptentive.deviceReady()");
         Apptentive.initialized = true;
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["deviceReady"]);
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["deviceReady", "info"]);
+    },
+
+    registerWithLogs: function (successCallback, errorCallback, loglevel) {
+        console.log("Apptentive.registerWithLogs()");
+        Apptentive.initialized = true;
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["deviceReady", loglevel]);
     },
 
     registerWithLogs: function (successCallback, errorCallback, loglevel) {

@@ -1,0 +1,1047 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.6.1 (swiftlang-5.6.0.323.66 clang-1316.0.20.12)
+// swift-module-flags: -target arm64-apple-ios11.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name ApptentiveKit
+import CoreTelephony
+import Foundation
+import MobileCoreServices
+import OSLog
+import PhotosUI
+import QuickLook
+import QuickLookThumbnailing
+import StoreKit
+import Swift
+import UIKit
+import _Concurrency
+extension ApptentiveKit.SurveyViewModel {
+  @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class RangeQuestion : ApptentiveKit.SurveyViewModel.Question {
+    final public let minValue: Swift.Int
+    final public let maxValue: Swift.Int
+    final public let minText: Swift.String?
+    final public let maxText: Swift.String?
+    public var selectedValueIndex: Swift.Int? {
+      get
+    }
+    public var value: Swift.Int? {
+      get
+    }
+    public var choiceLabels: [Swift.String] {
+      get
+    }
+    public func selectValue(at index: Swift.Int)
+    public var accessibilityHintForSegment: Swift.String {
+      get
+    }
+    @objc deinit
+  }
+}
+public protocol SurveyViewModelDelegate : AnyObject {
+  func surveyViewModelDidSubmit(_ viewModel: ApptentiveKit.SurveyViewModel)
+  func surveyViewModelValidationDidChange(_ viewModel: ApptentiveKit.SurveyViewModel)
+  func surveyViewModelSelectionDidChange(_ viewModel: ApptentiveKit.SurveyViewModel)
+}
+@_hasMissingDesignatedInitializers public class SurveyViewModel {
+  final public let name: Swift.String?
+  final public let submitButtonText: Swift.String
+  final public let validationErrorMessage: Swift.String
+  final public let introduction: Swift.String?
+  final public let thankYouMessage: Swift.String?
+  final public let isRequired: Swift.Bool
+  final public let questions: [ApptentiveKit.SurveyViewModel.Question]
+  final public let closeConfirmationAlertTitle: Swift.String
+  final public let closeConfirmationAlertMessage: Swift.String
+  final public let closeConfirmationBackButtonLabel: Swift.String
+  final public let closeConfirmationCloseButtonLabel: Swift.String
+  weak public var delegate: ApptentiveKit.SurveyViewModelDelegate?
+  public var termsAndConditionsLabel: Swift.String?
+  public var isValid: Swift.Bool {
+    get
+  }
+  public var hasAnswer: Swift.Bool {
+    get
+  }
+  public var isMarkedAsInvalid: Swift.Bool {
+    get
+  }
+  public var invalidQuestionIndexes: Foundation.IndexSet {
+    get
+  }
+  public func submit()
+  public func validateQuestion(_ question: ApptentiveKit.SurveyViewModel.Question)
+  public func launch()
+  public func cancel(partial: Swift.Bool = false)
+  public func continuePartial()
+  public func openTermsAndConditions()
+  @objc deinit
+}
+extension ApptentiveKit.MessageCenterViewModel {
+  @_hasMissingDesignatedInitializers public class Message : Swift.Equatable {
+    final public let nonce: Swift.String
+    final public let direction: ApptentiveKit.MessageCenterViewModel.Message.Direction
+    final public let isAutomated: Swift.Bool
+    final public let attachments: [ApptentiveKit.MessageCenterViewModel.Message.Attachment]
+    final public let sender: ApptentiveKit.MessageCenterViewModel.Message.Sender?
+    final public let body: Swift.String?
+    final public let sentDate: Foundation.Date
+    final public let accessibilityLabel: Swift.String?
+    final public let accessibilityHint: Swift.String?
+    final public let statusText: Swift.String
+    public static func == (lhs: ApptentiveKit.MessageCenterViewModel.Message, rhs: ApptentiveKit.MessageCenterViewModel.Message) -> Swift.Bool
+    public enum Direction : Swift.Equatable {
+      case sentFromDashboard(ApptentiveKit.MessageCenterViewModel.Message.ReadStatus)
+      case sentFromDevice(ApptentiveKit.MessageCenterViewModel.Message.SentStatus)
+      case automated
+      public static func == (a: ApptentiveKit.MessageCenterViewModel.Message.Direction, b: ApptentiveKit.MessageCenterViewModel.Message.Direction) -> Swift.Bool
+    }
+    public enum SentStatus : Swift.Codable, Swift.Equatable {
+      case draft
+      case queued
+      case sending
+      case sent
+      case failed
+      public func hash(into hasher: inout Swift.Hasher)
+      public static func == (a: ApptentiveKit.MessageCenterViewModel.Message.SentStatus, b: ApptentiveKit.MessageCenterViewModel.Message.SentStatus) -> Swift.Bool
+      public func encode(to encoder: Swift.Encoder) throws
+      public var hashValue: Swift.Int {
+        get
+      }
+      public init(from decoder: Swift.Decoder) throws
+    }
+    public enum ReadStatus : Swift.Codable, Swift.Equatable {
+      case read
+      case unread(messageID: Swift.String?)
+      public static func == (a: ApptentiveKit.MessageCenterViewModel.Message.ReadStatus, b: ApptentiveKit.MessageCenterViewModel.Message.ReadStatus) -> Swift.Bool
+      public func encode(to encoder: Swift.Encoder) throws
+      public init(from decoder: Swift.Decoder) throws
+    }
+    public struct Sender : Swift.Equatable {
+      public static func == (a: ApptentiveKit.MessageCenterViewModel.Message.Sender, b: ApptentiveKit.MessageCenterViewModel.Message.Sender) -> Swift.Bool
+    }
+    @objc @_hasMissingDesignatedInitializers public class Attachment : ObjectiveC.NSObject, QuickLook.QLPreviewItem {
+      final public let fileExtension: Swift.String?
+      public var thumbnail: UIKit.UIImage? {
+        get
+      }
+      public var downloadProgress: Swift.Float
+      public var localURL: Foundation.URL?
+      public var displayName: Swift.String {
+        get
+      }
+      @objc public var previewItemURL: Foundation.URL? {
+        @objc get
+      }
+      @objc public var previewItemTitle: Swift.String? {
+        @objc get
+      }
+      @objc override dynamic public var accessibilityLabel: Swift.String? {
+        @objc get
+        @objc set
+      }
+      public var removeButtonAccessibilityLabel: Swift.String {
+        get
+      }
+      public var viewButtonAccessibilityLabel: Swift.String {
+        get
+      }
+      @objc deinit
+    }
+    @objc deinit
+  }
+}
+extension ApptentiveKit.Apptentive : UserNotifications.UNUserNotificationCenterDelegate {
+  @objc dynamic public func setRemoteNotificationDeviceToken(_ tokenData: Foundation.Data)
+  @available(*, deprecated, message: "Use the (correctly-spelled) 'setRemoteNotificationDeviceToken(_:)' method instead.")
+  @objc dynamic public func setRemoteNotifcationDeviceToken(_ tokenData: Foundation.Data)
+  @objc dynamic public func didReceiveRemoteNotification(_ userInfo: [Swift.AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIKit.UIBackgroundFetchResult) -> Swift.Void) -> Swift.Bool
+  @objc dynamic public func didReceveUserNotificationResponse(_ response: UserNotifications.UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Swift.Void) -> Swift.Bool
+  @objc dynamic public func willPresent(_ notification: UserNotifications.UNNotification, withCompletionHandler completionHandler: @escaping (UserNotifications.UNNotificationPresentationOptions) -> Swift.Void) -> Swift.Bool
+  @objc dynamic public func userNotificationCenter(_ center: UserNotifications.UNUserNotificationCenter, willPresent notification: UserNotifications.UNNotification, withCompletionHandler completionHandler: @escaping (UserNotifications.UNNotificationPresentationOptions) -> Swift.Void)
+  @objc dynamic public func userNotificationCenter(_ center: UserNotifications.UNUserNotificationCenter, didReceive response: UserNotifications.UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Swift.Void)
+}
+extension ApptentiveKit.SurveyViewModel {
+  @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class ChoiceQuestion : ApptentiveKit.SurveyViewModel.Question {
+    final public let choices: [ApptentiveKit.SurveyViewModel.ChoiceQuestion.Choice]
+    public func toggleChoice(at index: Swift.Int)
+    public var selectionStyle: ApptentiveKit.SurveyViewModel.ChoiceQuestion.SelectionStyle {
+      get
+    }
+    public enum SelectionStyle {
+      case checkbox
+      case radioButton
+      public static func == (a: ApptentiveKit.SurveyViewModel.ChoiceQuestion.SelectionStyle, b: ApptentiveKit.SurveyViewModel.ChoiceQuestion.SelectionStyle) -> Swift.Bool
+      public func hash(into hasher: inout Swift.Hasher)
+      public var hashValue: Swift.Int {
+        get
+      }
+    }
+    @_hasMissingDesignatedInitializers public class Choice {
+      final public let label: Swift.String
+      final public let placeholderText: Swift.String?
+      final public let supportsOther: Swift.Bool
+      public var isSelected: Swift.Bool {
+        get
+      }
+      public var isMarkedAsInvalid: Swift.Bool {
+        get
+      }
+      public var value: Swift.String? {
+        get
+        set
+      }
+      @objc deinit
+    }
+    @objc deinit
+  }
+}
+public struct ApptentiveLogger {
+  public static var shouldHideSensitiveLogs: Swift.Bool
+  public var logLevel: ApptentiveKit.LogLevel
+}
+extension ApptentiveKit.ApptentiveLogger {
+  public static var `default`: ApptentiveKit.ApptentiveLogger
+  public static var engagement: ApptentiveKit.ApptentiveLogger
+  public static var interaction: ApptentiveKit.ApptentiveLogger
+  public static var network: ApptentiveKit.ApptentiveLogger
+  public static var payload: ApptentiveKit.ApptentiveLogger
+  public static var targeting: ApptentiveKit.ApptentiveLogger
+  public static var messages: ApptentiveKit.ApptentiveLogger
+  public static var attachments: ApptentiveKit.ApptentiveLogger
+  public static var logLevel: ApptentiveKit.LogLevel {
+    get
+    set
+  }
+}
+public enum LogLevel : Swift.Int, Swift.Comparable {
+  case debug
+  case info
+  case notice
+  case warning
+  case error
+  case critical
+  case fault
+  public static func < (lhs: ApptentiveKit.LogLevel, rhs: ApptentiveKit.LogLevel) -> Swift.Bool
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc @_hasMissingDesignatedInitializers public class Apptentive : ObjectiveC.NSObject {
+  @objc public static let shared: ApptentiveKit.Apptentive
+  public var interactionPresenter: ApptentiveKit.InteractionPresenter {
+    get
+    set
+  }
+  public var theme: ApptentiveKit.Apptentive.UITheme
+  @objc public var personName: Swift.String? {
+    @objc get
+    @objc set
+  }
+  @objc public var personEmailAddress: Swift.String? {
+    @objc get
+    @objc set
+  }
+  @objc public var mParticleID: Swift.String? {
+    @objc get
+    @objc set
+  }
+  public var personCustomData: ApptentiveKit.CustomData {
+    get
+    set
+  }
+  public var deviceCustomData: ApptentiveKit.CustomData {
+    get
+    set
+  }
+  @objc dynamic public var unreadMessageCount: Swift.Int
+  @objc public var distributionName: Swift.String? {
+    @objc get
+    @objc set
+  }
+  @objc public var distributionVersion: Swift.String? {
+    @objc get
+    @objc set
+  }
+  public enum UITheme {
+    case apptentive
+    case none
+    public static func == (a: ApptentiveKit.Apptentive.UITheme, b: ApptentiveKit.Apptentive.UITheme) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public func register(with credentials: ApptentiveKit.Apptentive.AppCredentials, completion: ((Swift.Result<Swift.Void, Swift.Error>) -> Swift.Void)? = nil)
+  public struct AppCredentials : Swift.Codable, Swift.Equatable {
+    public let key: Swift.String
+    public let signature: Swift.String
+    public init(key: Swift.String, signature: Swift.String)
+    public static func == (a: ApptentiveKit.Apptentive.AppCredentials, b: ApptentiveKit.Apptentive.AppCredentials) -> Swift.Bool
+    public func encode(to encoder: Swift.Encoder) throws
+    public init(from decoder: Swift.Decoder) throws
+  }
+  public func engage(event: ApptentiveKit.Event, from viewController: UIKit.UIViewController? = nil, completion: ((Swift.Result<Swift.Bool, Swift.Error>) -> Swift.Void)? = nil)
+  public func dismissAllInteractions(animated: Swift.Bool)
+  public func presentMessageCenter(from viewController: UIKit.UIViewController?, completion: ((Swift.Result<Swift.Bool, Swift.Error>) -> Swift.Void)? = nil)
+  public func presentMessageCenter(from viewController: UIKit.UIViewController?, with customData: ApptentiveKit.CustomData?, completion: ((Swift.Result<Swift.Bool, Swift.Error>) -> Swift.Void)? = nil)
+  @objc(sendAttachmentText:) public func sendAttachment(_ text: Swift.String)
+  @objc(sendAttachmentImage:) public func sendAttachment(_ image: UIKit.UIImage)
+  @objc(sendAttachmentFile:withMimeType:) public func sendAttachment(_ fileData: Foundation.Data, mediaType: Swift.String)
+  public func canShowInteraction(event: ApptentiveKit.Event, completion: ((Swift.Result<Swift.Bool, Swift.Error>) -> Swift.Void)? = nil)
+  convenience public init(apiBaseURL: Foundation.URL)
+  @objc deinit
+}
+public enum ApptentiveError : Swift.Error {
+  case internalInconsistency
+  case invalidCustomDataType(Any?)
+  case fileExistsAtContainerDirectoryPath
+  case mismatchedCredentials
+}
+public protocol CustomDataCompatible {
+}
+extension Swift.String : ApptentiveKit.CustomDataCompatible {
+}
+extension Swift.Double : ApptentiveKit.CustomDataCompatible {
+}
+extension Swift.Float : ApptentiveKit.CustomDataCompatible {
+}
+extension Swift.Int : ApptentiveKit.CustomDataCompatible {
+}
+extension Swift.Bool : ApptentiveKit.CustomDataCompatible {
+}
+public struct CustomData : Swift.Equatable, Swift.Codable {
+  public init()
+  public subscript(key: Swift.String) -> ApptentiveKit.CustomDataCompatible? {
+    get
+    set
+  }
+  public var keys: Swift.Dictionary<Swift.String, ApptentiveKit.CustomDataCompatible>.Keys {
+    get
+  }
+  public func encode(to encoder: Swift.Encoder) throws
+  public init(from decoder: Swift.Decoder) throws
+  public static func == (lhs: ApptentiveKit.CustomData, rhs: ApptentiveKit.CustomData) -> Swift.Bool
+}
+public protocol MessageCenterViewModelDelegate : AnyObject {
+  func messageCenterViewModelDidBeginUpdates(_: ApptentiveKit.MessageCenterViewModel)
+  func messageCenterViewModel(_: ApptentiveKit.MessageCenterViewModel, didInsertSectionsWith sectionIndexes: Foundation.IndexSet)
+  func messageCenterViewModel(_: ApptentiveKit.MessageCenterViewModel, didDeleteSectionsWith sectionIndexes: Foundation.IndexSet)
+  func messageCenterViewModel(_: ApptentiveKit.MessageCenterViewModel, didDeleteRowsAt indexPaths: [Foundation.IndexPath])
+  func messageCenterViewModel(_: ApptentiveKit.MessageCenterViewModel, didUpdateRowsAt indexPaths: [Foundation.IndexPath])
+  func messageCenterViewModel(_: ApptentiveKit.MessageCenterViewModel, didInsertRowsAt indexPaths: [Foundation.IndexPath])
+  func messageCenterViewModel(_: ApptentiveKit.MessageCenterViewModel, didMoveRowsAt indexPathMoves: [(Foundation.IndexPath, Foundation.IndexPath)])
+  func messageCenterViewModelDidEndUpdates(_: ApptentiveKit.MessageCenterViewModel)
+  func messageCenterViewModelMessageListDidLoad(_: ApptentiveKit.MessageCenterViewModel)
+  func messageCenterViewModelDraftMessageDidUpdate(_: ApptentiveKit.MessageCenterViewModel)
+  func messageCenterViewModel(_: ApptentiveKit.MessageCenterViewModel, didFailToRemoveAttachmentAt index: Swift.Int, with error: Swift.Error)
+  func messageCenterViewModel(_: ApptentiveKit.MessageCenterViewModel, didFailToAddAttachmentWith error: Swift.Error)
+  func messageCenterViewModel(_: ApptentiveKit.MessageCenterViewModel, didFailToSendMessageWith error: Swift.Error)
+  func messageCenterViewModel(_: ApptentiveKit.MessageCenterViewModel, attachmentDownloadDidFinishAt index: Swift.Int, inMessageAt indexPath: Foundation.IndexPath)
+  func messageCenterViewModel(_: ApptentiveKit.MessageCenterViewModel, attachmentDownloadDidFailAt index: Swift.Int, inMessageAt indexPath: Foundation.IndexPath, with error: Swift.Error)
+}
+@_hasMissingDesignatedInitializers public class MessageCenterViewModel {
+  final public let headingTitle: Swift.String
+  final public let branding: Swift.String?
+  final public let composerTitle: Swift.String
+  final public let composerSendButtonTitle: Swift.String
+  final public let composerAttachButtonTitle: Swift.String
+  final public let composerPlaceholderText: Swift.String
+  final public let composerCloseConfirmBody: Swift.String
+  final public let composerCloseDiscardButtonTitle: Swift.String
+  final public let composerCloseCancelButtonTitle: Swift.String
+  final public let greetingTitle: Swift.String
+  final public let greetingBody: Swift.String
+  final public let greetingImageURL: Foundation.URL
+  final public let statusBody: Swift.String
+  public var groupedMessages: [[ApptentiveKit.MessageCenterViewModel.Message]]
+  public var hasLoadedMessages: Swift.Bool
+  public var thumbnailSize: CoreGraphics.CGSize {
+    get
+    set
+  }
+  final public let profileNamePlaceholder: Swift.String
+  final public let profileEmailPlaceholder: Swift.String
+  final public let profileCancelButtonText: Swift.String
+  final public let profileSaveButtonText: Swift.String
+  final public let editProfileViewTitle: Swift.String
+  final public let editProfileNamePlaceholder: Swift.String
+  final public let editProfileEmailPlaceholder: Swift.String
+  final public let editProfileCancelButtonText: Swift.String
+  final public let editProfileSaveButtonText: Swift.String
+  final public let profileMode: ApptentiveKit.MessageCenterViewModel.ProfileMode
+  final public let closeButtonAccessibilityLabel: Swift.String
+  final public let closeButtonAccessibilityHint: Swift.String
+  final public let profileButtonAccessibilityLabel: Swift.String
+  final public let profileButtonAccessibilityHint: Swift.String
+  final public let sendButtonAccessibilityLabel: Swift.String
+  final public let sendButtonAccessibilityHint: Swift.String
+  final public let attachButtonAccessibilityLabel: Swift.String
+  final public let attachButtonAccessibilityHint: Swift.String
+  final public let attachmentOptionsTitle: Swift.String
+  final public let attachmentOptionsImagesButton: Swift.String
+  final public let attachmentOptionsFilesButton: Swift.String
+  final public let attachmentOptionsCancelButton: Swift.String
+  final public let showAttachmentButtonAccessibilityHint: Swift.String
+  final public let downloadAttachmentButtonAccessibilityHint: Swift.String
+  public var emailAddress: Swift.String? {
+    get
+    set
+  }
+  public var name: Swift.String? {
+    get
+    set
+  }
+  public var profileIsValid: Swift.Bool
+  public var shouldRequestProfile: Swift.Bool
+  public enum ProfileMode {
+    case optionalEmail
+    case requiredEmail
+    case hidden
+    public static func == (a: ApptentiveKit.MessageCenterViewModel.ProfileMode, b: ApptentiveKit.MessageCenterViewModel.ProfileMode) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public var oldestUnreadMessageIndexPath: Foundation.IndexPath? {
+    get
+  }
+  public var newestMessageIndexPath: Foundation.IndexPath? {
+    get
+  }
+  public func commitProfileEdits()
+  public func cancelProfileEdits()
+  public func launch()
+  public func cancel()
+  public var numberOfMessageGroups: Swift.Int {
+    get
+  }
+  public func markMessageAsRead(at indexPath: Foundation.IndexPath)
+  public func numberOfMessagesInGroup(at index: Swift.Int) -> Swift.Int
+  public func dateStringForMessagesInGroup(at index: Swift.Int) -> Swift.String?
+  public func message(at indexPath: Foundation.IndexPath) -> ApptentiveKit.MessageCenterViewModel.Message
+  public func downloadAttachment(at index: Swift.Int, inMessageAt indexPath: Foundation.IndexPath)
+  public var draftMessage: ApptentiveKit.MessageCenterViewModel.Message {
+    get
+  }
+  public var draftMessageBody: Swift.String? {
+    get
+    set
+  }
+  public var draftAttachments: [ApptentiveKit.MessageCenterViewModel.Message.Attachment] {
+    get
+  }
+  public func addImageAttachment(_ image: UIKit.UIImage, name: Swift.String?)
+  public func addFileAttachment(at sourceURL: Foundation.URL)
+  public func removeAttachment(at index: Swift.Int)
+  public var remainingAttachmentSlots: Swift.Int {
+    get
+  }
+  public var canAddAttachment: Swift.Bool {
+    get
+  }
+  public var canSendMessage: Swift.Bool {
+    get
+  }
+  public func sendMessage()
+  @objc deinit
+}
+public enum MessageCenterViewModelError : Swift.Error {
+  case attachmentCountGreaterThanMax
+  case unableToGetImageData
+  public static func == (a: ApptentiveKit.MessageCenterViewModelError, b: ApptentiveKit.MessageCenterViewModelError) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+extension ApptentiveKit.Apptentive {
+  public func presentInteraction(_ interaction: ApptentiveKit.Interaction, from presentingViewController: UIKit.UIViewController) throws
+  public func loadEngagementManifest(at url: Foundation.URL?)
+}
+extension ApptentiveKit.SurveyViewModel {
+  @_hasMissingDesignatedInitializers public class Question {
+    final public let text: Swift.String
+    final public let isRequired: Swift.Bool
+    final public let requiredText: Swift.String?
+    final public let errorMessage: Swift.String
+    final public let instructions: Swift.String?
+    public var isMarkedAsInvalid: Swift.Bool {
+      get
+      set
+    }
+    public var accessibilityLabel: Swift.String {
+      get
+    }
+    public var accessibilityHint: Swift.String? {
+      get
+    }
+    @objc deinit
+  }
+}
+public struct Event : Swift.ExpressibleByStringLiteral, Swift.CustomDebugStringConvertible {
+  public var customData: ApptentiveKit.CustomData
+  public init(name: Swift.String)
+  public init(stringLiteral value: Swift.String)
+  public var debugDescription: Swift.String {
+    get
+  }
+  public typealias ExtendedGraphemeClusterLiteralType = Swift.String
+  public typealias StringLiteralType = Swift.String
+  public typealias UnicodeScalarLiteralType = Swift.String
+}
+open class InteractionPresenter {
+  public init()
+  open func presentEnjoymentDialog(with viewModel: ApptentiveKit.EnjoymentDialogViewModel) throws
+  open func presentMessageCenter(with viewModel: ApptentiveKit.MessageCenterViewModel) throws
+  open func presentSurvey(with viewModel: ApptentiveKit.SurveyViewModel) throws
+  open func presentTextModal(with viewModel: ApptentiveKit.TextModalViewModel) throws
+  open func presentViewController(_ viewControllerToPresent: UIKit.UIViewController, completion: (() -> Swift.Void)? = {}) throws
+  public var validatedPresentingViewController: UIKit.UIViewController? {
+    get
+  }
+  open func dismissPresentedViewController(animated: Swift.Bool)
+  @objc deinit
+}
+public enum InteractionPresenterError : Swift.Error {
+  case notImplemented(Swift.String, Swift.String)
+  case decodingFailed(Swift.String, Swift.String)
+  case noPresentingViewController
+}
+@_hasMissingDesignatedInitializers public class EnjoymentDialogViewModel : ApptentiveKit.AlertViewModel {
+  final public let title: Swift.String?
+  final public let message: Swift.String?
+  final public let buttons: [ApptentiveKit.AlertButtonModel]
+  public func launch()
+  public func cancel()
+  @objc deinit
+}
+public protocol AlertViewModel {
+  var title: Swift.String? { get }
+  var message: Swift.String? { get }
+  var buttons: [ApptentiveKit.AlertButtonModel] { get }
+}
+public struct AlertButtonModel {
+}
+extension Foundation.NSNotification.Name {
+  public static let apptentiveEventEngaged: Foundation.Notification.Name
+}
+@_hasMissingDesignatedInitializers public class TextModalViewModel : ApptentiveKit.AlertViewModel {
+  final public let title: Swift.String?
+  final public let message: Swift.String?
+  final public let buttons: [ApptentiveKit.AlertButtonModel]
+  public func launch()
+  public func cancel()
+  @objc deinit
+}
+extension ApptentiveKit.SurveyViewModel {
+  @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class FreeformQuestion : ApptentiveKit.SurveyViewModel.Question {
+    final public let placeholderText: Swift.String?
+    final public let allowMultipleLines: Swift.Bool
+    public var value: Swift.String? {
+      get
+      set
+    }
+    @objc deinit
+  }
+}
+extension ApptentiveKit.Apptentive {
+  @available(*, deprecated, message: "Use the 'register(with:completion:)' method on the 'shared' instance instead.")
+  @objc(registerWithConfiguration:) dynamic public class func register(with configuration: ApptentiveKit.ApptentiveConfiguration)
+  @available(swift, deprecated: 1.0, message: "Use the 'register(with:completion:) method that takes an 'AppCredentials' argument.")
+  @objc(registerWithConfiguration:completion:) dynamic public func register(with configuration: ApptentiveKit.ApptentiveConfiguration, completion: ((Swift.Bool) -> Swift.Void)? = nil)
+  @available(*, deprecated, message: "Use the 'shared' static property instead.")
+  @objc dynamic public class func sharedConnection() -> ApptentiveKit.Apptentive
+  @available(*, deprecated, message: "This property is ignored. SKStoreReviewController will be used for all ratings.")
+  @objc dynamic public var appID: Swift.String? {
+    @objc get
+    @objc set
+  }
+  @available(*, deprecated, message: "This property is ignored. The info button no longer exists.")
+  @objc dynamic public var showInfoButton: Swift.Bool {
+    @objc get
+    @objc set
+  }
+  @available(*, deprecated, message: "This feature is not implemented.")
+  @objc dynamic public var surveyTermsAndConditions: ApptentiveKit.TermsAndConditions? {
+    @objc get
+    @objc set
+  }
+  @available(*, deprecated, message: "This property is not available for reading.")
+  @objc dynamic public var apptentiveKey: Swift.String {
+    @objc get
+  }
+  @available(*, deprecated, message: "This property is not available for reading.")
+  @objc dynamic public var apptentiveSignature: Swift.String {
+    @objc get
+  }
+  @objc(engage:fromViewController:) dynamic public func engage(_ event: Swift.String, fromViewController viewController: UIKit.UIViewController?)
+  @objc(engage:fromViewController:completion:) dynamic public func engage(_ event: Swift.String, fromViewController viewController: UIKit.UIViewController?, completion: ((Swift.Bool) -> Swift.Void)? = nil)
+  @available(swift, deprecated: 1.0, message: "Create an 'Event' object and subscript its 'customData' property.")
+  @objc(engage:withCustomData:fromViewController:) dynamic public func engage(event: Swift.String, withCustomData customData: [Swift.AnyHashable : Any]?, from viewController: UIKit.UIViewController?)
+  @available(swift, deprecated: 1.0, message: "Create an 'Event' object and subscript its 'customData' property.")
+  @objc(engage:withCustomData:fromViewController:completion:) dynamic public func engage(event: Swift.String, withCustomData customData: [Swift.AnyHashable : Any]?, from viewController: UIKit.UIViewController?, completion: ((Swift.Bool) -> Swift.Void)? = nil)
+  @available(*, deprecated, message: "Event extended data are no longer supported. Event will be engaged without extended data.")
+  @objc(engage:withCustomData:withExtendedData:fromViewController:) dynamic public func engage(event: Swift.String, withCustomData customData: [Swift.AnyHashable : Any]?, withExtendedData extendedData: [[Swift.AnyHashable : Any]]?, from viewController: UIKit.UIViewController?)
+  @available(*, deprecated, message: "Event extended data are no longer supported. Event will be engaged without extended data.")
+  @objc(engage:withCustomData:withExtendedData:fromViewController:completion:) dynamic public func engage(event: Swift.String, withCustomData customData: [Swift.AnyHashable : Any]?, withExtendedData extendedData: [[Swift.AnyHashable : Any]]?, from viewController: UIKit.UIViewController?, completion: ((Swift.Bool) -> Swift.Void)? = nil)
+  @available(swift, deprecated: 1.0, message: "Use the 'canShowInteraction(event:completion:)' method instead.")
+  @objc dynamic public func queryCanShowInteraction(forEvent event: Swift.String, completion: @escaping (Swift.Bool) -> Swift.Void)
+  @available(*, deprecated, message: "Extended event data are no longer supported.")
+  @objc(extendedDataDate:) dynamic public class func extendedData(date: Foundation.Date) -> [Swift.AnyHashable : Any]
+  @available(*, deprecated, message: "Extended event data are no longer supported.")
+  @objc(extendedDataLocationForLatitude:longitude:) dynamic public class func extendedData(latitude: Swift.Double, longitude: Swift.Double) -> [Swift.AnyHashable : Any]
+  @available(*, deprecated, message: "Extended event data are no longer supported.")
+  @objc(extendedDataCommerceWithTransactionID:affiliation:revenue:shipping:tax:currency:commerceItems:) dynamic public class func extendedData(transactionID: Swift.String?, affiliation: Swift.String?, revenue: Foundation.NSNumber?, shipping: Foundation.NSNumber?, tax: Foundation.NSNumber?, currency: Swift.String?, commerceItems: [[Swift.AnyHashable : Any]]?) -> [Swift.AnyHashable : Any]
+  @available(*, deprecated, message: "Extended event data are no longer supported.")
+  @objc(extendedDataCommerceItemWithItemID:name:category:price:quantity:currency:) dynamic public class func extendedData(itemID: Swift.String?, name: Swift.String?, category: Swift.String?, price: Foundation.NSNumber?, quantity: Foundation.NSNumber?, currency: Swift.String?) -> [Swift.AnyHashable : Any]
+  @available(*, deprecated, message: "This feature is not implemented and will always result in false.")
+  @objc dynamic public func queryCanShowMessageCenter(completion: @escaping (Swift.Bool) -> Swift.Void)
+  @objc(presentMessageCenterFromViewController:) dynamic public func presentMessageCenterCompat(from viewController: UIKit.UIViewController?)
+  @available(swift, deprecated: 1.0, message: "Use the method whose completion handler takes a Result<Bool, Error> parameter.")
+  @objc(presentMessageCenterFromViewController:completion:) dynamic public func presentMessageCenterCompat(from viewController: UIKit.UIViewController?, completion: ((Swift.Bool) -> Swift.Void)? = nil)
+  @objc(presentMessageCenterFromViewController:withCustomData:) dynamic public func presentMessageCenterCompat(from viewController: UIKit.UIViewController?, withCustomData customData: [Swift.AnyHashable : Any]?)
+  @available(swift, deprecated: 1.0, message: "Use the method whose completion handler takes a Result<Bool, Error> parameter.")
+  @objc(presentMessageCenterFromViewController:withCustomData:completion:) dynamic public func presentMessageCenterCompat(from viewController: UIKit.UIViewController?, withCustomData customData: [Swift.AnyHashable : Any]?, completion: ((Swift.Bool) -> Swift.Void)? = nil)
+  @available(*, deprecated, message: "This feature is not implemented and this method will always result in false.")
+  @objc dynamic public func dismissMessageCenter(animated: Swift.Bool, completion: (() -> Swift.Void)? = nil)
+  @available(*, deprecated, message: "This feature is not implemented and this property will return an empty view.")
+  @objc dynamic public func unreadMessageCountAccessoryView(apptentiveHeart: Swift.Bool) -> UIKit.UIView
+  @available(*, deprecated, message: "This method is no longer implemented and will trigger an assertion failure.")
+  @objc dynamic public func openAppStore()
+  @available(*, deprecated, message: "Use the 'setRemoteNotificationToken()' method instead.")
+  @objc dynamic public func setPushProvider(_ pushProvider: ApptentiveKit.ApptentivePushProvider, deviceToken: Foundation.Data)
+  @available(*, deprecated, message: "This method is deprecated in favor of didReceveUserNotificationResponse(_:from:withCompletionHandler:).")
+  @objc dynamic public func didReceveUserNotificationResponse(_ response: UserNotifications.UNNotificationResponse, from _: UIKit.UIViewController?, withCompletionHandler completionHandler: @escaping () -> Swift.Void) -> Swift.Bool
+  @available(*, deprecated, message: "Advertising identifier collection is not implemented.")
+  @objc dynamic public var advertisingIdentifier: Foundation.UUID? {
+    @objc get
+    @objc set
+  }
+  @available(*, deprecated, message: "mParticleId has been renamed to mParticleID.")
+  @objc dynamic public var mParticleId: Swift.String? {
+    @objc get
+    @objc set
+  }
+  @available(swift, deprecated: 1.0, message: "Subscript the 'personCustomData' property instead.")
+  @objc dynamic public func removeCustomPersonData(withKey key: Swift.String)
+  @available(swift, deprecated: 1.0, message: "Subscript the 'deviceCustomData' property instead.")
+  @objc dynamic public func removeCustomDeviceData(withKey key: Swift.String)
+  @available(swift, deprecated: 1.0, message: "Subscript the 'deviceCustomData' property instead.")
+  @objc(addCustomDeviceDataString:withKey:) dynamic public func addCustomDeviceData(_ string: Swift.String, withKey key: Swift.String)
+  @available(swift, deprecated: 1.0, message: "Subscript the 'deviceCustomData' property instead.")
+  @objc(addCustomDeviceDataNumber:withKey:) dynamic public func addCustomDeviceData(_ number: Foundation.NSNumber, withKey key: Swift.String)
+  @available(swift, deprecated: 1.0, message: "Subscript the 'deviceCustomData' property instead.")
+  @objc(addCustomDeviceDataBool:withKey:) dynamic public func addCustomDeviceData(_ boolValue: Swift.Bool, withKey key: Swift.String)
+  @available(swift, deprecated: 1.0, message: "Subscript the 'personCustomData' property instead.")
+  @objc(addCustomPersonDataString:withKey:) dynamic public func addCustomPersonData(_ string: Swift.String, withKey key: Swift.String)
+  @available(swift, deprecated: 1.0, message: "Subscript the 'personCustomData' property instead.")
+  @objc(addCustomPersonDataNumber:withKey:) dynamic public func addCustomPersonData(_ number: Foundation.NSNumber, withKey key: Swift.String)
+  @available(swift, deprecated: 1.0, message: "Subscript the 'personCustomData' property instead.")
+  @objc(addCustomPersonDataBool:withKey:) dynamic public func addCustomPersonData(_ boolValue: Swift.Bool, withKey key: Swift.String)
+  @available(*, deprecated, message: "Set style overrides defined in UIKit+Apptentive.swift extensions.")
+  @objc dynamic public var styleSheet: Any? {
+    @objc get
+    @objc set
+  }
+  @available(*, deprecated, message: "This method is not currently implemented and will trigger an assertion failure.")
+  @objc dynamic public func checkSDKConfiguration()
+  @available(*, deprecated, message: "This method is not currently implemented and will trigger an assertion failure.")
+  @objc dynamic public func logIn(withToken token: Swift.String, completion: @escaping (Swift.Bool, Swift.Error) -> Swift.Void)
+  @available(*, deprecated, message: "This method is not currently implemented and will trigger an assertion failure.")
+  @objc dynamic public func logOut()
+  @available(*, deprecated, message: "Multiple users on the same device is not currently supported.")
+  @objc dynamic public var authenticationFailureCallback: ApptentiveKit.ApptentiveAuthenticationFailureCallback? {
+    @objc get
+    @objc set
+  }
+  @available(*, deprecated, message: "This feature is no longer supported.")
+  @objc dynamic public var preInteractionCallback: ApptentiveKit.ApptentiveInteractionCallback? {
+    @objc get
+    @objc set
+  }
+  @available(*, deprecated, message: "This method is not currently implemented and will trigger an assertion failure.")
+  @objc dynamic public func updateToken(_ token: Swift.String, completion: ((Swift.Bool) -> Swift.Void)? = nil)
+  @available(swift, deprecated: 1.0, message: "Set the 'logLevel' property on 'ApptentiveLogger' or one of it's static log properties.")
+  @objc dynamic public var logLevel: ApptentiveKit.ApptentiveLogLevel {
+    @objc get
+    @objc set
+  }
+}
+extension UIKit.UIButton {
+  @available(swift, deprecated: 1.0, message: "Set the 'apptentiveStyle' property to 'ApptentiveButtonStyle.pill'.")
+  @objc @_Concurrency.MainActor(unsafe) public static let apptentivePillRadius: CoreGraphics.CGFloat
+  @available(swift, deprecated: 1.0, message: "Use the 'apptentiveStyle' property.")
+  @objc @_Concurrency.MainActor(unsafe) public static var apptentiveCornerRadius: CoreGraphics.CGFloat {
+    @objc get
+    @objc set
+  }
+}
+extension UIKit.UITableView {
+  @available(swift, deprecated: 1.0, message: "Use the 'apptentive' property on 'UITableView.Style'.")
+  @objc @_Concurrency.MainActor(unsafe) public static var apptentiveStyle: Swift.Int {
+    @objc get
+    @objc set
+  }
+}
+extension UIKit.UIViewController {
+  @available(swift, deprecated: 1.0, message: "Use the 'apptentive' property on 'UIModalPresentationStyle'.")
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var apptentiveModalPresentationStyle: UIKit.UIModalPresentationStyle {
+    @objc get
+    @objc set
+  }
+}
+@available(*, deprecated, message: "Multiple users on the same device is not currently supported.")
+public typealias ApptentiveAuthenticationFailureCallback = (ApptentiveKit.ApptentiveAuthenticationFailureReason, Swift.String) -> Swift.Void
+@available(*, deprecated, message: "This feature is no longer supported.")
+public typealias ApptentiveInteractionCallback = (Swift.String, [Swift.AnyHashable : Any]?) -> Swift.Bool
+@available(*, deprecated, message: "Multiple users on the same device is not currently supported.")
+@objc public enum ApptentiveAuthenticationFailureReason : Swift.Int {
+  case unknown = 0
+  case invalidAlgorithm = 1
+  case malformedToken = 2
+  case invalidToken = 3
+  case missingSubClaim = 4
+  case mismatchedSubClaim = 5
+  case invalidSubClaim = 6
+  case expiredToken = 7
+  case revokedToken = 8
+  case missingAppKey = 9
+  case missingAppSignature = 10
+  case invalidKeySignaturePair = 11
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@objc @available(swift, deprecated: 1.0, message: "Set the properties from this class on the 'Apptentive' object directly.")
+public class ApptentiveConfiguration : ObjectiveC.NSObject {
+  @objc final public let apptentiveKey: Swift.String
+  @objc final public let apptentiveSignature: Swift.String
+  @available(swift, deprecated: 1.0, message: "Set the 'logLevel' property on 'ApptentiveLogger' or one of its static log properties.")
+  @objc public var logLevel: ApptentiveKit.ApptentiveLogLevel
+  @available(swift, deprecated: 1.0, message: "Set the 'shouldHideSensitiveLogs' property on 'ApptentiveLogger' or one of its static log properties.")
+  @objc public var shouldSanitizeLogMessages: Swift.Bool
+  @available(*, deprecated, message: "This property is ignored. Use the designated initializer for 'Apptentive' to set this.")
+  @objc public var baseURL: Foundation.URL?
+  @available(swift, deprecated: 1.0, message: "Set the 'distributionName' property on 'Apptentive' directly before calling 'register(with:completion)'.")
+  @objc public var distributionName: Swift.String?
+  @available(swift, deprecated: 1.0, message: "Set the 'distributionVersion' property on 'Apptentive' directly before calling 'register(with:completion)'.")
+  @objc public var distributionVersion: Swift.String?
+  @available(*, deprecated, message: "This property is ignored. An 'SKStoreReviewController' will be used for all ratings.")
+  @objc public var appID: Swift.String?
+  @available(*, deprecated, message: "This property is ignored. The info button no longer exists.")
+  @objc public var showInfoButton: Swift.Bool
+  @available(*, deprecated, message: "This property is ignored. Configure survey terms and conditions in the Apptentive Dashboard.")
+  @objc public var surveyTermsAndConditions: ApptentiveKit.TermsAndConditions?
+  @objc(initWithApptentiveKey:apptentiveSignature:) required public init?(apptentiveKey: Swift.String, apptentiveSignature: Swift.String)
+  @objc public static func configuration(apptentiveKey key: Swift.String, apptentiveSignature signature: Swift.String) -> ApptentiveKit.ApptentiveConfiguration
+  @objc deinit
+}
+@available(*, deprecated, message: "Selecting a push notification provider is no longer supported.")
+@objc public enum ApptentivePushProvider : Swift.Int {
+  case apptentive = 0
+  case urbanAirship = 1
+  case amazonSNS = 2
+  case parse = 3
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@available(*, deprecated, message: "Use the 'LogLevel' enumeration to set the 'logLevel' property on 'ApptentiveLogger' or one of it's static log properties.")
+@objc public enum ApptentiveLogLevel : Swift.UInt {
+  case undefined = 0
+  case crit = 1
+  case error = 2
+  case warn = 3
+  case info = 4
+  case debug = 5
+  case verbose = 6
+  public init?(rawValue: Swift.UInt)
+  public typealias RawValue = Swift.UInt
+  public var rawValue: Swift.UInt {
+    get
+  }
+}
+@objc @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+public class TermsAndConditions : ObjectiveC.NSObject {
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public init(bodyText: Swift.String?, linkText: Swift.String?, linkURL: Foundation.URL?)
+  final public let bodyText: Swift.String?
+  final public let linkText: Swift.String?
+  final public let linkURL: Foundation.URL?
+  @objc deinit
+}
+@available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+public protocol ApptentiveStyle {
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  func font(for textStyle: ApptentiveKit.ApptentiveStyleIdentifier) -> UIKit.UIFont
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  func color(for style: ApptentiveKit.ApptentiveStyleIdentifier) -> UIKit.UIColor
+}
+@available(*, deprecated, message: "This enumeration is provided for compatibility but this feature is not implemented.")
+public enum ApptentiveStyleIdentifier {
+  case body
+  case headerTitle
+  case headerMessage
+  case messageDate
+  case messageSender
+  case messageStatus
+  case messageCenterStatus
+  case surveyInstructions
+  case doneButton
+  case button
+  case submitButton
+  case textInput
+  case headerBackground
+  case footerBackground
+  case failure
+  case separator
+  case background
+  case collectionBackground
+  case textInputBackground
+  case textInputPlaceholder
+  case messageBackground
+  case replyBackground
+  case contextBackground
+  public static func == (a: ApptentiveKit.ApptentiveStyleIdentifier, b: ApptentiveKit.ApptentiveStyleIdentifier) -> Swift.Bool
+  public func hash(into hasher: inout Swift.Hasher)
+  public var hashValue: Swift.Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+public class ApptentiveStyleSheet : ApptentiveKit.ApptentiveStyle {
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public func font(for textStyle: ApptentiveKit.ApptentiveStyleIdentifier) -> UIKit.UIFont
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public func color(for style: ApptentiveKit.ApptentiveStyleIdentifier) -> UIKit.UIColor
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  convenience public init?(contentsOf stylePropertyListURL: Foundation.URL)
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public var fontFamily: Swift.String
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public var lightFaceAttribute: Swift.String?
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public var regularFaceAttribute: Swift.String?
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public var mediumFaceAttribute: Swift.String?
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public var boldFaceAttribute: Swift.String?
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public var primaryColor: UIKit.UIColor
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public var secondaryColor: UIKit.UIColor
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public var failureColor: UIKit.UIColor
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public var backgroundColor: UIKit.UIColor
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public var separatorColor: UIKit.UIColor
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public var collectionBackgroundColor: UIKit.UIColor
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public var placeholderColor: UIKit.UIColor
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public var sizeAdjustment: CoreGraphics.CGFloat
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public func setFontDescriptor(_ fontDescriptor: UIKit.UIFontDescriptor, forStyle style: Swift.String)
+  @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
+  public func setColor(_ color: UIKit.UIColor, forStyle style: Swift.String)
+  @objc deinit
+}
+public struct Sysctl {
+  public enum Error : Swift.Error {
+    case unknown
+    case malformedUTF8
+    case invalidSize
+    case posixError(Darwin.POSIXErrorCode)
+  }
+  public static func data(for keys: [Swift.Int32]) throws -> [Swift.Int8]
+  public static func keys(for name: Swift.String) throws -> [Swift.Int32]
+  public static func value<T>(ofType: T.Type, forKeys keys: [Swift.Int32]) throws -> T
+  public static func value<T>(ofType type: T.Type, forKeys keys: Swift.Int32...) throws -> T
+  public static func value<T>(ofType type: T.Type, forName name: Swift.String) throws -> T
+  public static func string(for keys: [Swift.Int32]) throws -> Swift.String
+  public static func string(for keys: Swift.Int32...) throws -> Swift.String
+  public static func string(for name: Swift.String) throws -> Swift.String
+  public static var hostName: Swift.String {
+    get
+  }
+  public static var machine: Swift.String {
+    get
+  }
+  public static var model: Swift.String {
+    get
+  }
+  public static var activeCPUs: Swift.Int32 {
+    get
+  }
+  public static var osRelease: Swift.String {
+    get
+  }
+  public static var osType: Swift.String {
+    get
+  }
+  public static var osVersion: Swift.String {
+    get
+  }
+  public static var version: Swift.String {
+    get
+  }
+}
+public struct Interaction : Swift.Decodable {
+  public let typeName: Swift.String
+  public init(from decoder: Swift.Decoder) throws
+}
+@objc @_inheritsConvenienceInitializers @_Concurrency.MainActor(unsafe) public class ApptentiveNavigationController : UIKit.UINavigationController {
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public var preferredStatusBarStyle: UIKit.UIStatusBarStyle {
+    @_Concurrency.MainActor(unsafe) @objc get
+  }
+  @available(iOS 5.0, *)
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public init(navigationBarClass: Swift.AnyClass?, toolbarClass: Swift.AnyClass?)
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public init(rootViewController: UIKit.UIViewController)
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
+  @_Concurrency.MainActor(unsafe) @objc required dynamic public init?(coder aDecoder: Foundation.NSCoder)
+  @objc deinit
+}
+extension UIKit.UITableView.Style {
+  public static var apptentive: UIKit.UITableView.Style
+}
+extension UIKit.UIModalPresentationStyle {
+  public static var apptentive: UIKit.UIModalPresentationStyle
+}
+extension UIKit.UIBarButtonItem {
+  @objc @_Concurrency.MainActor(unsafe) public static var apptentiveClose: UIKit.UIBarButtonItem
+  @objc @_Concurrency.MainActor(unsafe) public static var apptentiveProfileEdit: UIKit.UIBarButtonItem
+}
+extension UIKit.UIButton {
+  public enum ApptentiveButtonStyle {
+    case pill
+    case radius(CoreGraphics.CGFloat)
+  }
+  @_Concurrency.MainActor(unsafe) public static var apptentiveStyle: UIKit.UIButton.ApptentiveButtonStyle
+}
+extension UIKit.UIImage {
+  @objc public static var apptentiveMessageAttachmentButton: UIKit.UIImage?
+  @objc public static var apptentiveMessageSendButton: UIKit.UIImage?
+  @objc public static var apptentiveSentMessageBubble: UIKit.UIImage?
+  @objc public static var apptentiveReceivedMessageBubble: UIKit.UIImage?
+  @objc public static var apptentiveAttachmentPlaceholder: UIKit.UIImage?
+  @objc public static var apptentiveAttachmentRemoveButton: UIKit.UIImage?
+  @objc public static var apptentiveHeaderLogo: UIKit.UIImage?
+  @objc public static var apptentiveRadioButton: UIKit.UIImage?
+  @objc public static var apptentiveCheckbox: UIKit.UIImage?
+  @objc public static var apptentiveRadioButtonSelected: UIKit.UIImage?
+  @objc public static var apptentiveCheckboxSelected: UIKit.UIImage?
+}
+extension UIKit.UIColor {
+  @objc public static var apptentiveMessageCenterTextViewBorder: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterAttachmentButton: UIKit.UIColor
+  @objc public static var apptentiveMessageTextViewPlaceholder: UIKit.UIColor
+  @objc public static var apptentiveMessageTextViewBorder: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterStatus: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterGreetingBody: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterGreetingTitle: UIKit.UIColor
+  @objc public static var apptentiveMessageBubbleInbound: UIKit.UIColor
+  @objc public static var apptentiveMessageBubbleOutbound: UIKit.UIColor
+  @objc public static var apptentiveMessageLabelInbound: UIKit.UIColor
+  @objc public static var apptentiveMessageLabelOutbound: UIKit.UIColor
+  @objc public static var apptentiveQuestionLabel: UIKit.UIColor
+  @objc public static var apptentiveInstructionsLabel: UIKit.UIColor
+  @objc public static var apptentiveChoiceLabel: UIKit.UIColor
+  @objc public static var apptentiveError: UIKit.UIColor
+  @objc public static var apptentiveSecondaryLabel: UIKit.UIColor
+  @objc public static var apptentiveRangeControlBorder: UIKit.UIColor
+  @objc public static var apptentiveSurveyIntroduction: UIKit.UIColor
+  @objc public static var apptentiveTextInputBorder: UIKit.UIColor
+  @objc public static var apptentiveTextInputBackground: UIKit.UIColor
+  @objc public static var apptentiveTextInput: UIKit.UIColor
+  @objc public static var apptentiveTextInputPlaceholder: UIKit.UIColor
+  @objc public static var apptentiveMinMaxLabel: UIKit.UIColor
+  @objc public static var apptentiveGroupedBackground: UIKit.UIColor
+  @objc public static var apptentiveSecondaryGroupedBackground: UIKit.UIColor
+  @objc public static var apptentiveSeparator: UIKit.UIColor
+  @objc public static var apptentiveImageSelected: UIKit.UIColor
+  @objc public static var apptentiveImageNotSelected: UIKit.UIColor
+  @objc public static var apptentiveSubmitButton: UIKit.UIColor
+  @available(*, deprecated, message: "This property has been renamed to 'apptentiveSubmitStatusLabel'.")
+  public static var apptentiveSubmitLabel: UIKit.UIColor
+  @objc public static var apptentiveSubmitStatusLabel: UIKit.UIColor
+  @objc public static var apptentiveTermsOfServiceLabel: UIKit.UIColor
+  @objc public static var apptentiveSubmitButtonTitle: UIKit.UIColor
+  public static var apptentiveSubmitButtonBorder: UIKit.UIColor
+}
+extension UIKit.UIFont {
+  @objc public static var apptentiveMessageCenterStatus: UIKit.UIFont
+  @objc public static var apptentiveMessageCenterGreetingTitle: UIKit.UIFont
+  @objc public static var apptentiveMessageCenterGreetingBody: UIKit.UIFont
+  @objc public static var apptentiveMessageCenterAttachmentLabel: UIKit.UIFont
+  @objc public static var apptentiveQuestionLabel: UIKit.UIFont
+  @objc public static var apptentiveTermsOfServiceLabel: UIKit.UIFont
+  @objc public static var apptentiveChoiceLabel: UIKit.UIFont
+  @objc public static var apptentiveMessageLabel: UIKit.UIFont
+  @objc public static var apptentiveMinMaxLabel: UIKit.UIFont
+  @objc public static var apptentiveSenderLabel: UIKit.UIFont
+  @objc public static var apptentiveMessageDateLabel: UIKit.UIFont
+  @objc public static var apptentiveInstructionsLabel: UIKit.UIFont
+  @objc public static var apptentiveSurveyIntroductionLabel: UIKit.UIFont
+  @available(*, deprecated, message: "This property has been renamed to 'apptentiveSubmitStatusLabel'.")
+  public static var apptentiveSubmitLabel: UIKit.UIFont
+  @objc public static var apptentiveSubmitStatusLabel: UIKit.UIFont
+  @objc public static var apptentiveSubmitButtonTitle: UIKit.UIFont
+  @objc public static var apptentiveTextInput: UIKit.UIFont
+}
+extension UIKit.UIToolbar {
+  @objc public enum ToolbarMode : Swift.Int {
+    case alwaysShown
+    case hiddenWhenEmpty
+    public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
+    public var rawValue: Swift.Int {
+      get
+    }
+  }
+  @objc @_Concurrency.MainActor(unsafe) public static var apptentiveMode: UIKit.UIToolbar.ToolbarMode
+}
+extension CoreGraphics.CGFloat {
+  public static var apptentiveButtonBorderWidth: CoreGraphics.CGFloat
+}
+extension ApptentiveKit.MessageCenterViewModel.Message.SentStatus : Swift.Hashable {}
+extension ApptentiveKit.SurveyViewModel.ChoiceQuestion.SelectionStyle : Swift.Equatable {}
+extension ApptentiveKit.SurveyViewModel.ChoiceQuestion.SelectionStyle : Swift.Hashable {}
+extension ApptentiveKit.LogLevel : Swift.Hashable {}
+extension ApptentiveKit.LogLevel : Swift.RawRepresentable {}
+extension ApptentiveKit.Apptentive.UITheme : Swift.Equatable {}
+extension ApptentiveKit.Apptentive.UITheme : Swift.Hashable {}
+extension ApptentiveKit.MessageCenterViewModel.ProfileMode : Swift.Equatable {}
+extension ApptentiveKit.MessageCenterViewModel.ProfileMode : Swift.Hashable {}
+extension ApptentiveKit.MessageCenterViewModelError : Swift.Equatable {}
+extension ApptentiveKit.MessageCenterViewModelError : Swift.Hashable {}
+@available(*, deprecated, message: "Multiple users on the same device is not currently supported.")
+extension ApptentiveKit.ApptentiveAuthenticationFailureReason : Swift.Equatable {}
+@available(*, deprecated, message: "Multiple users on the same device is not currently supported.")
+extension ApptentiveKit.ApptentiveAuthenticationFailureReason : Swift.Hashable {}
+@available(*, deprecated, message: "Multiple users on the same device is not currently supported.")
+extension ApptentiveKit.ApptentiveAuthenticationFailureReason : Swift.RawRepresentable {}
+@available(*, deprecated, message: "Selecting a push notification provider is no longer supported.")
+extension ApptentiveKit.ApptentivePushProvider : Swift.Equatable {}
+@available(*, deprecated, message: "Selecting a push notification provider is no longer supported.")
+extension ApptentiveKit.ApptentivePushProvider : Swift.Hashable {}
+@available(*, deprecated, message: "Selecting a push notification provider is no longer supported.")
+extension ApptentiveKit.ApptentivePushProvider : Swift.RawRepresentable {}
+@available(*, deprecated, message: "Use the 'LogLevel' enumeration to set the 'logLevel' property on 'ApptentiveLogger' or one of it's static log properties.")
+extension ApptentiveKit.ApptentiveLogLevel : Swift.Equatable {}
+@available(*, deprecated, message: "Use the 'LogLevel' enumeration to set the 'logLevel' property on 'ApptentiveLogger' or one of it's static log properties.")
+extension ApptentiveKit.ApptentiveLogLevel : Swift.Hashable {}
+@available(*, deprecated, message: "Use the 'LogLevel' enumeration to set the 'logLevel' property on 'ApptentiveLogger' or one of it's static log properties.")
+extension ApptentiveKit.ApptentiveLogLevel : Swift.RawRepresentable {}
+@available(*, deprecated, message: "This enumeration is provided for compatibility but this feature is not implemented.")
+extension ApptentiveKit.ApptentiveStyleIdentifier : Swift.Equatable {}
+@available(*, deprecated, message: "This enumeration is provided for compatibility but this feature is not implemented.")
+extension ApptentiveKit.ApptentiveStyleIdentifier : Swift.Hashable {}
+extension UIKit.UIToolbar.ToolbarMode : Swift.Equatable {}
+extension UIKit.UIToolbar.ToolbarMode : Swift.Hashable {}
+extension UIKit.UIToolbar.ToolbarMode : Swift.RawRepresentable {}
