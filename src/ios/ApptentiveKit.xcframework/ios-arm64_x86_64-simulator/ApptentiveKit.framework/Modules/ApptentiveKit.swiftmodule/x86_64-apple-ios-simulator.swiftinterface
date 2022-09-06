@@ -52,7 +52,8 @@ public protocol SurveyViewModelDelegate : AnyObject {
   final public let closeConfirmationBackButtonLabel: Swift.String
   final public let closeConfirmationCloseButtonLabel: Swift.String
   weak public var delegate: ApptentiveKit.SurveyViewModelDelegate?
-  public var termsAndConditionsLabel: Swift.String?
+  public var termsAndConditionsLinkText: Swift.String?
+  public var rangeChoiceLabelNumberFormatter: Foundation.NumberFormatter
   public var isValid: Swift.Bool {
     get
   }
@@ -231,7 +232,7 @@ public enum LogLevel : Swift.Int, Swift.Comparable {
     get
     set
   }
-  public var theme: ApptentiveKit.Apptentive.UITheme
+  @objc public var theme: ApptentiveKit.Apptentive.UITheme
   @objc public var personName: Swift.String? {
     @objc get
     @objc set
@@ -261,12 +262,12 @@ public enum LogLevel : Swift.Int, Swift.Comparable {
     @objc get
     @objc set
   }
-  public enum UITheme {
-    case apptentive
-    case none
-    public static func == (a: ApptentiveKit.Apptentive.UITheme, b: ApptentiveKit.Apptentive.UITheme) -> Swift.Bool
-    public func hash(into hasher: inout Swift.Hasher)
-    public var hashValue: Swift.Int {
+  @objc public enum UITheme : Swift.Int {
+    case apptentive = 0
+    case none = 1
+    public init?(rawValue: Swift.Int)
+    public typealias RawValue = Swift.Int
+    public var rawValue: Swift.Int {
       get
     }
   }
@@ -296,6 +297,7 @@ public enum ApptentiveError : Swift.Error {
   case fileExistsAtContainerDirectoryPath
   case mismatchedCredentials
 }
+public var apptentiveAssertionHandler: (@autoclosure () -> Swift.String, Swift.StaticString, Swift.UInt) -> ()
 public protocol CustomDataCompatible {
 }
 extension Swift.String : ApptentiveKit.CustomDataCompatible {
@@ -351,7 +353,7 @@ public protocol MessageCenterViewModelDelegate : AnyObject {
   final public let greetingTitle: Swift.String
   final public let greetingBody: Swift.String
   final public let greetingImageURL: Foundation.URL
-  final public let statusBody: Swift.String
+  final public let statusBody: Swift.String?
   public var groupedMessages: [[ApptentiveKit.MessageCenterViewModel.Message]]
   public var hasLoadedMessages: Swift.Bool
   public var thumbnailSize: CoreGraphics.CGSize {
@@ -455,8 +457,19 @@ public enum MessageCenterViewModelError : Swift.Error {
   }
 }
 extension ApptentiveKit.Apptentive {
-  public func presentInteraction(_ interaction: ApptentiveKit.Interaction, from presentingViewController: UIKit.UIViewController) throws
-  public func loadEngagementManifest(at url: Foundation.URL?)
+  public var engagementManifestURL: Foundation.URL? {
+    get
+  }
+  public func loadEngagementManifest(at url: Foundation.URL?, completion: @escaping (Swift.Result<Swift.Void, Swift.Error>) -> Swift.Void)
+  public func getInteractionList(_ completion: @escaping ([ApptentiveKit.Apptentive.InteractionListItem]) -> Swift.Void)
+  public func presentInteraction(with id: Swift.String, completion: @escaping (Swift.Result<Swift.Void, Swift.Error>) -> Swift.Void)
+  public func presentInteraction(at url: Foundation.URL, completion: @escaping (Swift.Result<Swift.Void, Swift.Error>) -> Swift.Void)
+  public struct InteractionListItem {
+    public let id: Swift.String
+    public let displayName: Swift.String
+    public let typeName: Swift.String
+  }
+  public func getEventList(_ completion: @escaping ([Swift.String]) -> Swift.Void)
 }
 extension ApptentiveKit.SurveyViewModel {
   @_hasMissingDesignatedInitializers public class Question {
@@ -470,9 +483,6 @@ extension ApptentiveKit.SurveyViewModel {
       set
     }
     public var accessibilityLabel: Swift.String {
-      get
-    }
-    public var accessibilityHint: Swift.String? {
       get
     }
     @objc deinit
@@ -892,10 +902,6 @@ public struct Sysctl {
     get
   }
 }
-public struct Interaction : Swift.Decodable {
-  public let typeName: Swift.String
-  public init(from decoder: Swift.Decoder) throws
-}
 @objc @_inheritsConvenienceInitializers @_Concurrency.MainActor(unsafe) public class ApptentiveNavigationController : UIKit.UINavigationController {
   @_Concurrency.MainActor(unsafe) @objc override dynamic public var preferredStatusBarStyle: UIKit.UIStatusBarStyle {
     @_Concurrency.MainActor(unsafe) @objc get
@@ -906,6 +912,9 @@ public struct Interaction : Swift.Decodable {
   @_Concurrency.MainActor(unsafe) @objc override dynamic public init(nibName nibNameOrNil: Swift.String?, bundle nibBundleOrNil: Foundation.Bundle?)
   @_Concurrency.MainActor(unsafe) @objc required dynamic public init?(coder aDecoder: Foundation.NSCoder)
   @objc deinit
+}
+extension UIKit.UITableView {
+  @_Concurrency.MainActor(unsafe) public static var apptentiveQuestionSeparatorHeight: CoreGraphics.CGFloat
 }
 extension UIKit.UITableView.Style {
   public static var apptentive: UIKit.UITableView.Style
@@ -938,10 +947,13 @@ extension UIKit.UIImage {
   @objc public static var apptentiveCheckboxSelected: UIKit.UIImage?
 }
 extension UIKit.UIColor {
-  @objc public static var apptentiveMessageCenterTextViewBorder: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterTextInputBackground: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterTextInputPlaceholder: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterTextInput: UIKit.UIColor
+  @objc public static var apptentivetextInputTint: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterTextInputBorder: UIKit.UIColor
   @objc public static var apptentiveMessageCenterAttachmentButton: UIKit.UIColor
-  @objc public static var apptentiveMessageTextViewPlaceholder: UIKit.UIColor
-  @objc public static var apptentiveMessageTextViewBorder: UIKit.UIColor
+  @objc public static var apptentiveMessageTextInputPlaceholder: UIKit.UIColor
   @objc public static var apptentiveMessageCenterStatus: UIKit.UIColor
   @objc public static var apptentiveMessageCenterGreetingBody: UIKit.UIColor
   @objc public static var apptentiveMessageCenterGreetingTitle: UIKit.UIColor
@@ -973,8 +985,12 @@ extension UIKit.UIColor {
   @objc public static var apptentiveTermsOfServiceLabel: UIKit.UIColor
   @objc public static var apptentiveSubmitButtonTitle: UIKit.UIColor
   public static var apptentiveSubmitButtonBorder: UIKit.UIColor
+  public static var apptentiveQuestionSeparator: UIKit.UIColor
 }
 extension UIKit.UIFont {
+  @objc public static var apptentiveMessageCenterTextInputPlaceholder: UIKit.UIFont
+  @objc public static var apptentiveMessageCenterTextInput: UIKit.UIFont
+  @objc public static var apptentiveTextInputPlaceholder: UIKit.UIFont
   @objc public static var apptentiveMessageCenterStatus: UIKit.UIFont
   @objc public static var apptentiveMessageCenterGreetingTitle: UIKit.UIFont
   @objc public static var apptentiveMessageCenterGreetingBody: UIKit.UIFont
@@ -1016,6 +1032,7 @@ extension ApptentiveKit.LogLevel : Swift.Hashable {}
 extension ApptentiveKit.LogLevel : Swift.RawRepresentable {}
 extension ApptentiveKit.Apptentive.UITheme : Swift.Equatable {}
 extension ApptentiveKit.Apptentive.UITheme : Swift.Hashable {}
+extension ApptentiveKit.Apptentive.UITheme : Swift.RawRepresentable {}
 extension ApptentiveKit.MessageCenterViewModel.ProfileMode : Swift.Equatable {}
 extension ApptentiveKit.MessageCenterViewModel.ProfileMode : Swift.Hashable {}
 extension ApptentiveKit.MessageCenterViewModelError : Swift.Equatable {}

@@ -219,6 +219,7 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 # pragma pop_macro("any")
 #endif
 
+enum UITheme : NSInteger;
 @class NSString;
 @class UIImage;
 @class NSData;
@@ -230,6 +231,9 @@ SWIFT_CLASS("_TtC13ApptentiveKit10Apptentive")
 /// This object is created lazily upon access.
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) Apptentive * _Nonnull shared;)
 + (Apptentive * _Nonnull)shared SWIFT_WARN_UNUSED_RESULT;
+/// The theme to apply to Apptentive UI.
+/// This property must be set before calling <code>register(credentials:)</code>.
+@property (nonatomic) enum UITheme theme;
 /// The name of the person using the app, if available.
 @property (nonatomic, copy) NSString * _Nullable personName;
 /// The email address of the person using the app, if available.
@@ -268,6 +272,14 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) Apptentive *
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
+
+/// Indicates a theme that will be applied to Apptentive UI.
+typedef SWIFT_ENUM(NSInteger, UITheme, open) {
+/// Apptentive cross-platform look and feel.
+  UIThemeApptentive = 0,
+/// iOS default look and feel.
+  UIThemeNone = 1,
+};
 
 
 
@@ -539,22 +551,34 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class) CGFloat apptentiveCornerRadius
 
 
 @interface UIColor (SWIFT_EXTENSION(ApptentiveKit))
+/// The color to use for the background in text inputs for message center.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterTextInputBackground;)
++ (UIColor * _Nonnull)apptentiveMessageCenterTextInputBackground SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageCenterTextInputBackground:(UIColor * _Nonnull)value;
+/// The placeholder color to use for text inputs for message center.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterTextInputPlaceholder;)
++ (UIColor * _Nonnull)apptentiveMessageCenterTextInputPlaceholder SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageCenterTextInputPlaceholder:(UIColor * _Nonnull)value;
+/// The text color to use for all text inputs in message center.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterTextInput;)
++ (UIColor * _Nonnull)apptentiveMessageCenterTextInput SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageCenterTextInput:(UIColor * _Nonnull)value;
+/// The tint color for text inputs for surveys.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentivetextInputTint;)
++ (UIColor * _Nonnull)apptentivetextInputTint SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentivetextInputTint:(UIColor * _Nonnull)value;
 /// The border color to use for the message text view.
-SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterTextViewBorder;)
-+ (UIColor * _Nonnull)apptentiveMessageCenterTextViewBorder SWIFT_WARN_UNUSED_RESULT;
-+ (void)setApptentiveMessageCenterTextViewBorder:(UIColor * _Nonnull)value;
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterTextInputBorder;)
++ (UIColor * _Nonnull)apptentiveMessageCenterTextInputBorder SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageCenterTextInputBorder:(UIColor * _Nonnull)value;
 /// The color to use for the attachment button for the compose view for message center.
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterAttachmentButton;)
 + (UIColor * _Nonnull)apptentiveMessageCenterAttachmentButton SWIFT_WARN_UNUSED_RESULT;
 + (void)setApptentiveMessageCenterAttachmentButton:(UIColor * _Nonnull)value;
 /// The color to use for the text view placeholder for the compose view for message center.
-SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageTextViewPlaceholder;)
-+ (UIColor * _Nonnull)apptentiveMessageTextViewPlaceholder SWIFT_WARN_UNUSED_RESULT;
-+ (void)setApptentiveMessageTextViewPlaceholder:(UIColor * _Nonnull)value;
-/// The color to use for the text view border for the compose view for message center.
-SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageTextViewBorder;)
-+ (UIColor * _Nonnull)apptentiveMessageTextViewBorder SWIFT_WARN_UNUSED_RESULT;
-+ (void)setApptentiveMessageTextViewBorder:(UIColor * _Nonnull)value;
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageTextInputPlaceholder;)
++ (UIColor * _Nonnull)apptentiveMessageTextInputPlaceholder SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageTextInputPlaceholder:(UIColor * _Nonnull)value;
 /// The color to use for the status message in message center.
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterStatus;)
 + (UIColor * _Nonnull)apptentiveMessageCenterStatus SWIFT_WARN_UNUSED_RESULT;
@@ -671,6 +695,18 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull app
 
 
 @interface UIFont (SWIFT_EXTENSION(ApptentiveKit))
+/// The font to use for placeholder for text inputs in message center.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIFont * _Nonnull apptentiveMessageCenterTextInputPlaceholder;)
++ (UIFont * _Nonnull)apptentiveMessageCenterTextInputPlaceholder SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageCenterTextInputPlaceholder:(UIFont * _Nonnull)value;
+/// The font to use for text inputs in message menter.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIFont * _Nonnull apptentiveMessageCenterTextInput;)
++ (UIFont * _Nonnull)apptentiveMessageCenterTextInput SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageCenterTextInput:(UIFont * _Nonnull)value;
+/// The font to use for placeholder text for text inputs in surveys.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIFont * _Nonnull apptentiveTextInputPlaceholder;)
++ (UIFont * _Nonnull)apptentiveTextInputPlaceholder SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveTextInputPlaceholder:(UIFont * _Nonnull)value;
 /// The font to use for the greeting title for message center.
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIFont * _Nonnull apptentiveMessageCenterStatus;)
 + (UIFont * _Nonnull)apptentiveMessageCenterStatus SWIFT_WARN_UNUSED_RESULT;
@@ -791,6 +827,7 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class) NSInteger apptentiveStyle;)
 + (NSInteger)apptentiveStyle SWIFT_WARN_UNUSED_RESULT;
 + (void)setApptentiveStyle:(NSInteger)newValue;
 @end
+
 
 enum ToolbarMode : NSInteger;
 
@@ -1042,6 +1079,7 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 # pragma pop_macro("any")
 #endif
 
+enum UITheme : NSInteger;
 @class NSString;
 @class UIImage;
 @class NSData;
@@ -1053,6 +1091,9 @@ SWIFT_CLASS("_TtC13ApptentiveKit10Apptentive")
 /// This object is created lazily upon access.
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) Apptentive * _Nonnull shared;)
 + (Apptentive * _Nonnull)shared SWIFT_WARN_UNUSED_RESULT;
+/// The theme to apply to Apptentive UI.
+/// This property must be set before calling <code>register(credentials:)</code>.
+@property (nonatomic) enum UITheme theme;
 /// The name of the person using the app, if available.
 @property (nonatomic, copy) NSString * _Nullable personName;
 /// The email address of the person using the app, if available.
@@ -1091,6 +1132,14 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, readonly, strong) Apptentive *
 - (nonnull instancetype)init SWIFT_UNAVAILABLE;
 + (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
+
+/// Indicates a theme that will be applied to Apptentive UI.
+typedef SWIFT_ENUM(NSInteger, UITheme, open) {
+/// Apptentive cross-platform look and feel.
+  UIThemeApptentive = 0,
+/// iOS default look and feel.
+  UIThemeNone = 1,
+};
 
 
 
@@ -1362,22 +1411,34 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class) CGFloat apptentiveCornerRadius
 
 
 @interface UIColor (SWIFT_EXTENSION(ApptentiveKit))
+/// The color to use for the background in text inputs for message center.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterTextInputBackground;)
++ (UIColor * _Nonnull)apptentiveMessageCenterTextInputBackground SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageCenterTextInputBackground:(UIColor * _Nonnull)value;
+/// The placeholder color to use for text inputs for message center.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterTextInputPlaceholder;)
++ (UIColor * _Nonnull)apptentiveMessageCenterTextInputPlaceholder SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageCenterTextInputPlaceholder:(UIColor * _Nonnull)value;
+/// The text color to use for all text inputs in message center.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterTextInput;)
++ (UIColor * _Nonnull)apptentiveMessageCenterTextInput SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageCenterTextInput:(UIColor * _Nonnull)value;
+/// The tint color for text inputs for surveys.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentivetextInputTint;)
++ (UIColor * _Nonnull)apptentivetextInputTint SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentivetextInputTint:(UIColor * _Nonnull)value;
 /// The border color to use for the message text view.
-SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterTextViewBorder;)
-+ (UIColor * _Nonnull)apptentiveMessageCenterTextViewBorder SWIFT_WARN_UNUSED_RESULT;
-+ (void)setApptentiveMessageCenterTextViewBorder:(UIColor * _Nonnull)value;
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterTextInputBorder;)
++ (UIColor * _Nonnull)apptentiveMessageCenterTextInputBorder SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageCenterTextInputBorder:(UIColor * _Nonnull)value;
 /// The color to use for the attachment button for the compose view for message center.
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterAttachmentButton;)
 + (UIColor * _Nonnull)apptentiveMessageCenterAttachmentButton SWIFT_WARN_UNUSED_RESULT;
 + (void)setApptentiveMessageCenterAttachmentButton:(UIColor * _Nonnull)value;
 /// The color to use for the text view placeholder for the compose view for message center.
-SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageTextViewPlaceholder;)
-+ (UIColor * _Nonnull)apptentiveMessageTextViewPlaceholder SWIFT_WARN_UNUSED_RESULT;
-+ (void)setApptentiveMessageTextViewPlaceholder:(UIColor * _Nonnull)value;
-/// The color to use for the text view border for the compose view for message center.
-SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageTextViewBorder;)
-+ (UIColor * _Nonnull)apptentiveMessageTextViewBorder SWIFT_WARN_UNUSED_RESULT;
-+ (void)setApptentiveMessageTextViewBorder:(UIColor * _Nonnull)value;
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageTextInputPlaceholder;)
++ (UIColor * _Nonnull)apptentiveMessageTextInputPlaceholder SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageTextInputPlaceholder:(UIColor * _Nonnull)value;
 /// The color to use for the status message in message center.
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull apptentiveMessageCenterStatus;)
 + (UIColor * _Nonnull)apptentiveMessageCenterStatus SWIFT_WARN_UNUSED_RESULT;
@@ -1494,6 +1555,18 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIColor * _Nonnull app
 
 
 @interface UIFont (SWIFT_EXTENSION(ApptentiveKit))
+/// The font to use for placeholder for text inputs in message center.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIFont * _Nonnull apptentiveMessageCenterTextInputPlaceholder;)
++ (UIFont * _Nonnull)apptentiveMessageCenterTextInputPlaceholder SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageCenterTextInputPlaceholder:(UIFont * _Nonnull)value;
+/// The font to use for text inputs in message menter.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIFont * _Nonnull apptentiveMessageCenterTextInput;)
++ (UIFont * _Nonnull)apptentiveMessageCenterTextInput SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveMessageCenterTextInput:(UIFont * _Nonnull)value;
+/// The font to use for placeholder text for text inputs in surveys.
+SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIFont * _Nonnull apptentiveTextInputPlaceholder;)
++ (UIFont * _Nonnull)apptentiveTextInputPlaceholder SWIFT_WARN_UNUSED_RESULT;
++ (void)setApptentiveTextInputPlaceholder:(UIFont * _Nonnull)value;
 /// The font to use for the greeting title for message center.
 SWIFT_CLASS_PROPERTY(@property (nonatomic, class, strong) UIFont * _Nonnull apptentiveMessageCenterStatus;)
 + (UIFont * _Nonnull)apptentiveMessageCenterStatus SWIFT_WARN_UNUSED_RESULT;
@@ -1614,6 +1687,7 @@ SWIFT_CLASS_PROPERTY(@property (nonatomic, class) NSInteger apptentiveStyle;)
 + (NSInteger)apptentiveStyle SWIFT_WARN_UNUSED_RESULT;
 + (void)setApptentiveStyle:(NSInteger)newValue;
 @end
+
 
 enum ToolbarMode : NSInteger;
 
