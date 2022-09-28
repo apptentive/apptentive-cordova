@@ -8,7 +8,7 @@ This document lets you know what has changed in the Cordova plugin. For changes 
 # 2022-09-28 - v6.0.1
 
 - Apptentive Android SDK: 5.8.4
-- Apptentive iOS SDK: 6.0.0
+- Apptentive iOS SDK: 6.0.4
 
 # 2022-06-21 - v6.0.0
 
