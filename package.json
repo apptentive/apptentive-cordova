@@ -1,6 +1,6 @@
 {
   "name": "apptentive-cordova",
-  "version": "6.0.1",
+  "version": "6.1.0",
   "description": "Apptentive Plugin For Cordova",
   "cordova": {
     "id": "apptentive-cordova",
@@ -32,6 +32,6 @@
   },
   "homepage": "https://github.com/apptentive/apptentive-cordova#readme",
   "dependencies": {
-    "xcode": ">=0.9.3"
+    "xcode": ">=3.0.1"
   }
 }
