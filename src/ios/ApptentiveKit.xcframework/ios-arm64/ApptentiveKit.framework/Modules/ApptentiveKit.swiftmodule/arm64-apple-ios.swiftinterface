@@ -1,6 +1,7 @@
 // swift-interface-format-version: 1.0
-// swift-compiler-version: Apple Swift version 5.6.1 (swiftlang-5.6.0.323.66 clang-1316.0.20.12)
+// swift-compiler-version: Apple Swift version 5.7.2 (swiftlang-5.7.2.135.5 clang-1400.0.29.51)
 // swift-module-flags: -target arm64-apple-ios11.0 -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name ApptentiveKit
+// swift-module-flags-ignorable: -enable-bare-slash-regex
 import CoreTelephony
 import Foundation
 import MobileCoreServices
@@ -12,6 +13,32 @@ import StoreKit
 import Swift
 import UIKit
 import _Concurrency
+import _StringProcessing
+@objc @_hasMissingDesignatedInitializers @_Concurrency.MainActor(unsafe) public class DialogViewController : UIKit.UIViewController, ApptentiveKit.DialogViewModelDelegate {
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public func viewDidLoad()
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public func viewDidAppear(_ animated: Swift.Bool)
+  @_Concurrency.MainActor(unsafe) public func dismiss()
+  @objc deinit
+}
+extension ApptentiveKit.DialogViewModel {
+  @_hasMissingDesignatedInitializers public class Action {
+    final public let label: Swift.String
+    final public let actionType: ApptentiveKit.DialogViewModel.Action.ActionType
+    final public let buttonTapped: () -> Swift.Void
+    public enum ActionType : Swift.String {
+      case dismiss
+      case interaction
+      case yes
+      case no
+      public init?(rawValue: Swift.String)
+      public typealias RawValue = Swift.String
+      public var rawValue: Swift.String {
+        get
+      }
+    }
+    @objc deinit
+  }
+}
 extension ApptentiveKit.SurveyViewModel {
   @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers public class RangeQuestion : ApptentiveKit.SurveyViewModel.Question {
     final public let minValue: Swift.Int
@@ -33,46 +60,6 @@ extension ApptentiveKit.SurveyViewModel {
     }
     @objc deinit
   }
-}
-public protocol SurveyViewModelDelegate : AnyObject {
-  func surveyViewModelDidSubmit(_ viewModel: ApptentiveKit.SurveyViewModel)
-  func surveyViewModelValidationDidChange(_ viewModel: ApptentiveKit.SurveyViewModel)
-  func surveyViewModelSelectionDidChange(_ viewModel: ApptentiveKit.SurveyViewModel)
-}
-@_hasMissingDesignatedInitializers public class SurveyViewModel {
-  final public let name: Swift.String?
-  final public let submitButtonText: Swift.String
-  final public let validationErrorMessage: Swift.String
-  final public let introduction: Swift.String?
-  final public let thankYouMessage: Swift.String?
-  final public let isRequired: Swift.Bool
-  final public let questions: [ApptentiveKit.SurveyViewModel.Question]
-  final public let closeConfirmationAlertTitle: Swift.String
-  final public let closeConfirmationAlertMessage: Swift.String
-  final public let closeConfirmationBackButtonLabel: Swift.String
-  final public let closeConfirmationCloseButtonLabel: Swift.String
-  weak public var delegate: ApptentiveKit.SurveyViewModelDelegate?
-  public var termsAndConditionsLinkText: Swift.String?
-  public var rangeChoiceLabelNumberFormatter: Foundation.NumberFormatter
-  public var isValid: Swift.Bool {
-    get
-  }
-  public var hasAnswer: Swift.Bool {
-    get
-  }
-  public var isMarkedAsInvalid: Swift.Bool {
-    get
-  }
-  public var invalidQuestionIndexes: Foundation.IndexSet {
-    get
-  }
-  public func submit()
-  public func validateQuestion(_ question: ApptentiveKit.SurveyViewModel.Question)
-  public func launch()
-  public func cancel(partial: Swift.Bool = false)
-  public func continuePartial()
-  public func openTermsAndConditions()
-  @objc deinit
 }
 extension ApptentiveKit.MessageCenterViewModel {
   @_hasMissingDesignatedInitializers public class Message : Swift.Equatable {
@@ -297,7 +284,7 @@ public enum ApptentiveError : Swift.Error {
   case fileExistsAtContainerDirectoryPath
   case mismatchedCredentials
 }
-public var apptentiveAssertionHandler: (@autoclosure () -> Swift.String, Swift.StaticString, Swift.UInt) -> ()
+public var apptentiveAssertionHandler: (_ message: @autoclosure () -> Swift.String, _ file: Swift.StaticString, _ line: Swift.UInt) -> ()
 public protocol CustomDataCompatible {
 }
 extension Swift.String : ApptentiveKit.CustomDataCompatible {
@@ -322,6 +309,89 @@ public struct CustomData : Swift.Equatable, Swift.Codable {
   public func encode(to encoder: Swift.Encoder) throws
   public init(from decoder: Swift.Decoder) throws
   public static func == (lhs: ApptentiveKit.CustomData, rhs: ApptentiveKit.CustomData) -> Swift.Bool
+}
+public protocol SurveyViewModelDelegate : AnyObject {
+  func surveyViewModelDidFinish(_ viewModel: ApptentiveKit.SurveyViewModel)
+  func surveyViewModelValidationDidChange(_ viewModel: ApptentiveKit.SurveyViewModel)
+  func surveyViewModelSelectionDidChange(_ viewModel: ApptentiveKit.SurveyViewModel)
+  func surveyViewModelPageWillChange(_ viewModel: ApptentiveKit.SurveyViewModel)
+  func surveyViewModelPageDidChange(_ viewModel: ApptentiveKit.SurveyViewModel)
+}
+@_hasMissingDesignatedInitializers public class SurveyViewModel {
+  final public let name: Swift.String?
+  final public let isRequired: Swift.Bool
+  final public let pageIndicatorSegmentCount: Swift.Int
+  final public let validationErrorMessage: Swift.String
+  final public let disclaimerText: Swift.String?
+  public struct TermsAndConditions {
+  }
+  final public let termsAndConditions: ApptentiveKit.SurveyViewModel.TermsAndConditions?
+  public struct CloseConfirmation {
+  }
+  final public let closeConfirmation: ApptentiveKit.SurveyViewModel.CloseConfirmation
+  weak public var delegate: ApptentiveKit.SurveyViewModelDelegate?
+  public var currentPage: ApptentiveKit.SurveyViewModel.Page {
+    get
+  }
+  public var questions: [ApptentiveKit.SurveyViewModel.Question] {
+    get
+  }
+  public var isMarkedAsInvalid: Swift.Bool {
+    get
+  }
+  public var thankYouMessage: Swift.String? {
+    get
+  }
+  public var introduction: Swift.String? {
+    get
+  }
+  public var advanceButtonText: Swift.String {
+    get
+  }
+  public var invalidQuestionIndexes: Foundation.IndexSet {
+    get
+  }
+  public var surveyDidSendResponse: Swift.Bool
+  public var highlightFirstQuestionSegment: Swift.Bool
+  public func setValue(_ value: Swift.String?, for indexPath: Foundation.IndexPath)
+  public func selectValueFromRange(at indexPath: Foundation.IndexPath)
+  public func openTermsAndConditions()
+  public func advance()
+  public var isValid: Swift.Bool {
+    get
+  }
+  public enum DisplayMode {
+    case list
+    case paged
+    public static func == (a: ApptentiveKit.SurveyViewModel.DisplayMode, b: ApptentiveKit.SurveyViewModel.DisplayMode) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  public var displayMode: ApptentiveKit.SurveyViewModel.DisplayMode {
+    get
+  }
+  public var shouldConfirmCancel: Swift.Bool {
+    get
+  }
+  public var currentSelectedSegmentIndex: Swift.Int? {
+    get
+  }
+  public func launch()
+  public func continuePartial()
+  public func cancel(partial: Swift.Bool)
+  @objc deinit
+}
+extension ApptentiveKit.SurveyViewModel {
+  @_hasMissingDesignatedInitializers public class Page {
+    final public let id: Swift.String
+    final public let description: Swift.String?
+    final public let questions: [ApptentiveKit.SurveyViewModel.Question]
+    final public let advanceButtonLabel: Swift.String
+    final public let pageIndicatorValue: Swift.Int?
+    @objc deinit
+  }
 }
 public protocol MessageCenterViewModelDelegate : AnyObject {
   func messageCenterViewModelDidBeginUpdates(_: ApptentiveKit.MessageCenterViewModel)
@@ -356,7 +426,7 @@ public protocol MessageCenterViewModelDelegate : AnyObject {
   final public let statusBody: Swift.String?
   public var groupedMessages: [[ApptentiveKit.MessageCenterViewModel.Message]]
   public var hasLoadedMessages: Swift.Bool
-  public var thumbnailSize: CoreGraphics.CGSize {
+  public var thumbnailSize: CoreFoundation.CGSize {
     get
     set
   }
@@ -501,10 +571,10 @@ public struct Event : Swift.ExpressibleByStringLiteral, Swift.CustomDebugStringC
 }
 open class InteractionPresenter {
   public init()
-  open func presentEnjoymentDialog(with viewModel: ApptentiveKit.EnjoymentDialogViewModel) throws
   open func presentMessageCenter(with viewModel: ApptentiveKit.MessageCenterViewModel) throws
   open func presentSurvey(with viewModel: ApptentiveKit.SurveyViewModel) throws
-  open func presentTextModal(with viewModel: ApptentiveKit.TextModalViewModel) throws
+  open func presentEnjoymentDialog(with viewModel: ApptentiveKit.DialogViewModel) throws
+  open func presentTextModal(with viewModel: ApptentiveKit.DialogViewModel) throws
   open func presentViewController(_ viewControllerToPresent: UIKit.UIViewController, completion: (() -> Swift.Void)? = {}) throws
   public var validatedPresentingViewController: UIKit.UIViewController? {
     get
@@ -517,30 +587,45 @@ public enum InteractionPresenterError : Swift.Error {
   case decodingFailed(Swift.String, Swift.String)
   case noPresentingViewController
 }
-@_hasMissingDesignatedInitializers public class EnjoymentDialogViewModel : ApptentiveKit.AlertViewModel {
-  final public let title: Swift.String?
-  final public let message: Swift.String?
-  final public let buttons: [ApptentiveKit.AlertButtonModel]
-  public func launch()
-  public func cancel()
-  @objc deinit
-}
-public protocol AlertViewModel {
-  var title: Swift.String? { get }
-  var message: Swift.String? { get }
-  var buttons: [ApptentiveKit.AlertButtonModel] { get }
-}
-public struct AlertButtonModel {
-}
 extension Foundation.NSNotification.Name {
   public static let apptentiveEventEngaged: Foundation.Notification.Name
 }
-@_hasMissingDesignatedInitializers public class TextModalViewModel : ApptentiveKit.AlertViewModel {
+public protocol DialogViewModelDelegate : AnyObject {
+  func dismiss()
+}
+@_hasMissingDesignatedInitializers public class DialogViewModel {
   final public let title: Swift.String?
   final public let message: Swift.String?
-  final public let buttons: [ApptentiveKit.AlertButtonModel]
+  final public let dialogType: ApptentiveKit.DialogViewModel.DialogType
+  final public let actions: [ApptentiveKit.DialogViewModel.Action]
+  weak public var delegate: ApptentiveKit.DialogViewModelDelegate?
+  public func buttonSelected(at position: Swift.Int)
   public func launch()
   public func cancel()
+  public enum DialogType {
+    case enjoymentDialog
+    case textModal
+    public static func == (a: ApptentiveKit.DialogViewModel.DialogType, b: ApptentiveKit.DialogViewModel.DialogType) -> Swift.Bool
+    public func hash(into hasher: inout Swift.Hasher)
+    public var hashValue: Swift.Int {
+      get
+    }
+  }
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @_Concurrency.MainActor(unsafe) public class DialogView : UIKit.UIView {
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var titleTextColor: UIKit.UIColor
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var messageTextColor: UIKit.UIColor
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var titleFont: UIKit.UIFont
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var messageFont: UIKit.UIFont
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var headerImage: UIKit.UIImage?
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var cornerRadius: CoreFoundation.CGFloat
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var buttonSpacing: CoreFoundation.CGFloat
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var buttonInset: UIKit.UIEdgeInsets
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var separatorsAreHidden: Swift.Bool
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var separatorColor: UIKit.UIColor
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public func didMoveToWindow()
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public func layoutSubviews()
   @objc deinit
 }
 extension ApptentiveKit.SurveyViewModel {
@@ -679,9 +764,9 @@ extension ApptentiveKit.Apptentive {
 }
 extension UIKit.UIButton {
   @available(swift, deprecated: 1.0, message: "Set the 'apptentiveStyle' property to 'ApptentiveButtonStyle.pill'.")
-  @objc @_Concurrency.MainActor(unsafe) public static let apptentivePillRadius: CoreGraphics.CGFloat
+  @objc @_Concurrency.MainActor(unsafe) public static let apptentivePillRadius: CoreFoundation.CGFloat
   @available(swift, deprecated: 1.0, message: "Use the 'apptentiveStyle' property.")
-  @objc @_Concurrency.MainActor(unsafe) public static var apptentiveCornerRadius: CoreGraphics.CGFloat {
+  @objc @_Concurrency.MainActor(unsafe) public static var apptentiveCornerRadius: CoreFoundation.CGFloat {
     @objc get
     @objc set
   }
@@ -855,11 +940,36 @@ public class ApptentiveStyleSheet : ApptentiveKit.ApptentiveStyle {
   @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
   public var placeholderColor: UIKit.UIColor
   @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
-  public var sizeAdjustment: CoreGraphics.CGFloat
+  public var sizeAdjustment: CoreFoundation.CGFloat
   @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
   public func setFontDescriptor(_ fontDescriptor: UIKit.UIFontDescriptor, forStyle style: Swift.String)
   @available(*, deprecated, message: "This class is provided for compatibility but this feature is not implemented.")
   public func setColor(_ color: UIKit.UIColor, forStyle style: Swift.String)
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @_Concurrency.MainActor(unsafe) public class DialogButton : UIKit.UIButton {
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var titleFont: UIKit.UIFont
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var cornerRadius: CoreFoundation.CGFloat
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var borderWidth: CoreFoundation.CGFloat
+  @objc @_Concurrency.MainActor(unsafe) dynamic public var borderColor: UIKit.UIColor
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public var intrinsicContentSize: CoreFoundation.CGSize {
+    @objc get
+  }
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public func layoutSubviews()
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public func tintColorDidChange()
+  @_Concurrency.MainActor(unsafe) @objc override dynamic public func didMoveToWindow()
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @_Concurrency.MainActor(unsafe) public class DismissButton : ApptentiveKit.DialogButton {
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @_Concurrency.MainActor(unsafe) public class InteractionButton : ApptentiveKit.DialogButton {
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @_Concurrency.MainActor(unsafe) public class YesButton : ApptentiveKit.DialogButton {
+  @objc deinit
+}
+@objc @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @_Concurrency.MainActor(unsafe) public class NoButton : ApptentiveKit.DialogButton {
   @objc deinit
 }
 public struct Sysctl {
@@ -904,8 +1014,9 @@ public struct Sysctl {
 }
 @objc @_inheritsConvenienceInitializers @_Concurrency.MainActor(unsafe) public class ApptentiveNavigationController : UIKit.UINavigationController {
   @_Concurrency.MainActor(unsafe) @objc override dynamic public var preferredStatusBarStyle: UIKit.UIStatusBarStyle {
-    @_Concurrency.MainActor(unsafe) @objc get
+    @objc get
   }
+  @objc @_Concurrency.MainActor(unsafe) public static var prefersLargeHeader: Swift.Bool
   @available(iOS 5.0, *)
   @_Concurrency.MainActor(unsafe) @objc override dynamic public init(navigationBarClass: Swift.AnyClass?, toolbarClass: Swift.AnyClass?)
   @_Concurrency.MainActor(unsafe) @objc override dynamic public init(rootViewController: UIKit.UIViewController)
@@ -914,7 +1025,7 @@ public struct Sysctl {
   @objc deinit
 }
 extension UIKit.UITableView {
-  @_Concurrency.MainActor(unsafe) public static var apptentiveQuestionSeparatorHeight: CoreGraphics.CGFloat
+  @_Concurrency.MainActor(unsafe) public static var apptentiveQuestionSeparatorHeight: CoreFoundation.CGFloat
 }
 extension UIKit.UITableView.Style {
   public static var apptentive: UIKit.UITableView.Style
@@ -927,9 +1038,10 @@ extension UIKit.UIBarButtonItem {
   @objc @_Concurrency.MainActor(unsafe) public static var apptentiveProfileEdit: UIKit.UIBarButtonItem
 }
 extension UIKit.UIButton {
+  @_Concurrency.MainActor(unsafe) public static var apptentiveClose: UIKit.UIButton?
   public enum ApptentiveButtonStyle {
     case pill
-    case radius(CoreGraphics.CGFloat)
+    case radius(CoreFoundation.CGFloat)
   }
   @_Concurrency.MainActor(unsafe) public static var apptentiveStyle: UIKit.UIButton.ApptentiveButtonStyle
 }
@@ -949,9 +1061,19 @@ extension UIKit.UIImage {
 extension UIKit.UIColor {
   @objc public static var apptentiveMessageCenterTextInputBackground: UIKit.UIColor
   @objc public static var apptentiveMessageCenterTextInputPlaceholder: UIKit.UIColor
+  @available(*, deprecated, message: "This property has been renamed to 'apptentiveMessageTextInputPlaceholder'.")
+  @objc public static var apptentiveMessageTextViewPlaceholder: UIKit.UIColor {
+    @objc get
+    @objc set
+  }
   @objc public static var apptentiveMessageCenterTextInput: UIKit.UIColor
   @objc public static var apptentivetextInputTint: UIKit.UIColor
   @objc public static var apptentiveMessageCenterTextInputBorder: UIKit.UIColor
+  @available(*, deprecated, message: "This property has been renamed to 'apptentiveMessageCenterTextInputBorder'.")
+  @objc public static var apptentiveMessageCenterTextViewBorder: UIKit.UIColor {
+    @objc get
+    @objc set
+  }
   @objc public static var apptentiveMessageCenterAttachmentButton: UIKit.UIColor
   @objc public static var apptentiveMessageTextInputPlaceholder: UIKit.UIColor
   @objc public static var apptentiveMessageCenterStatus: UIKit.UIColor
@@ -979,13 +1101,22 @@ extension UIKit.UIColor {
   @objc public static var apptentiveImageSelected: UIKit.UIColor
   @objc public static var apptentiveImageNotSelected: UIKit.UIColor
   @objc public static var apptentiveSubmitButton: UIKit.UIColor
+  @objc public static var apptentiveBranchedSurveyFooter: UIKit.UIColor
   @available(*, deprecated, message: "This property has been renamed to 'apptentiveSubmitStatusLabel'.")
   public static var apptentiveSubmitLabel: UIKit.UIColor
   @objc public static var apptentiveSubmitStatusLabel: UIKit.UIColor
   @objc public static var apptentiveTermsOfServiceLabel: UIKit.UIColor
   @objc public static var apptentiveSubmitButtonTitle: UIKit.UIColor
-  public static var apptentiveSubmitButtonBorder: UIKit.UIColor
-  public static var apptentiveQuestionSeparator: UIKit.UIColor
+  @objc public static var apptentiveSubmitButtonBorder: UIKit.UIColor
+  @objc public static var apptentiveQuestionSeparator: UIKit.UIColor
+  public static var apptentiveUnselectedSurveyIndicatorSegment: UIKit.UIColor
+  public static var apptentiveSelectedSurveyIndicatorSegment: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterBackground: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterAttachmentDeleteButton: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterComposeBoxBackground: UIKit.UIColor
+  @objc public static var apptentiveMessageCenterComposeBoxSeparator: UIKit.UIColor
+  @objc public static var apptentiveTextInputBorderSelected: UIKit.UIColor
+  @objc public static var apptentiveDisclaimerLabel: UIKit.UIColor
 }
 extension UIKit.UIFont {
   @objc public static var apptentiveMessageCenterTextInputPlaceholder: UIKit.UIFont
@@ -1007,6 +1138,7 @@ extension UIKit.UIFont {
   @available(*, deprecated, message: "This property has been renamed to 'apptentiveSubmitStatusLabel'.")
   public static var apptentiveSubmitLabel: UIKit.UIFont
   @objc public static var apptentiveSubmitStatusLabel: UIKit.UIFont
+  @objc public static var apptentiveDisclaimerLabel: UIKit.UIFont
   @objc public static var apptentiveSubmitButtonTitle: UIKit.UIFont
   @objc public static var apptentiveTextInput: UIKit.UIFont
 }
@@ -1022,9 +1154,12 @@ extension UIKit.UIToolbar {
   }
   @objc @_Concurrency.MainActor(unsafe) public static var apptentiveMode: UIKit.UIToolbar.ToolbarMode
 }
-extension CoreGraphics.CGFloat {
-  public static var apptentiveButtonBorderWidth: CoreGraphics.CGFloat
+extension CoreFoundation.CGFloat {
+  public static var apptentiveButtonBorderWidth: CoreFoundation.CGFloat
 }
+extension ApptentiveKit.DialogViewModel.Action.ActionType : Swift.Equatable {}
+extension ApptentiveKit.DialogViewModel.Action.ActionType : Swift.Hashable {}
+extension ApptentiveKit.DialogViewModel.Action.ActionType : Swift.RawRepresentable {}
 extension ApptentiveKit.MessageCenterViewModel.Message.SentStatus : Swift.Hashable {}
 extension ApptentiveKit.SurveyViewModel.ChoiceQuestion.SelectionStyle : Swift.Equatable {}
 extension ApptentiveKit.SurveyViewModel.ChoiceQuestion.SelectionStyle : Swift.Hashable {}
@@ -1032,10 +1167,14 @@ extension ApptentiveKit.LogLevel : Swift.Hashable {}
 extension ApptentiveKit.LogLevel : Swift.RawRepresentable {}
 extension ApptentiveKit.Apptentive.UITheme : Swift.Equatable {}
 extension ApptentiveKit.Apptentive.UITheme : Swift.Hashable {}
+extension ApptentiveKit.SurveyViewModel.DisplayMode : Swift.Equatable {}
+extension ApptentiveKit.SurveyViewModel.DisplayMode : Swift.Hashable {}
 extension ApptentiveKit.MessageCenterViewModel.ProfileMode : Swift.Equatable {}
 extension ApptentiveKit.MessageCenterViewModel.ProfileMode : Swift.Hashable {}
 extension ApptentiveKit.MessageCenterViewModelError : Swift.Equatable {}
 extension ApptentiveKit.MessageCenterViewModelError : Swift.Hashable {}
+extension ApptentiveKit.DialogViewModel.DialogType : Swift.Equatable {}
+extension ApptentiveKit.DialogViewModel.DialogType : Swift.Hashable {}
 @available(*, deprecated, message: "Multiple users on the same device is not currently supported.")
 extension ApptentiveKit.ApptentiveAuthenticationFailureReason : Swift.Equatable {}
 @available(*, deprecated, message: "Multiple users on the same device is not currently supported.")
