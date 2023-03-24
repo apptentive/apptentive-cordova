@@ -1,6 +1,6 @@
 {
   "name": "apptentive-cordova",
-  "version": "6.1.0",
+  "version": "6.1.1",
   "description": "Apptentive Plugin For Cordova",
   "cordova": {
     "id": "apptentive-cordova",
@@ -19,12 +19,10 @@
     "cordova-android",
     "cordova-ios"
   ],
-  "engines": [
-    {
-      "name": "cordova",
-      "version": ">=3.6.0"
-    }
-  ],
+  "engines": {
+    "cordova": ">=11.0.0",
+    "cordova-android": ">=10.1.1"
+  },
   "author": "Apptentive",
   "license": "BSD",
   "bugs": {
