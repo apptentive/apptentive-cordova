@@ -21,7 +21,7 @@
         <preference name="ANDROID_USES_DEVICE_ENCRYPTION" default="false"/>
         <preference name="ANDROID_SANITIZE_LOG_MESSAGES" default="true"/>
         <preference name="ANDROID_CUSTOM_APP_STORE_URL" default=" "/>
-        <preference name="ANDROID_RATING_INTERACTION_THROTTLE_LENGTH" default="604800000L"/>
+        <preference name="ANDROID_RATING_INTERACTION_THROTTLE_LENGTH" default="604800000"/>
 
         <!-- Define namespace for javascript reference -->
         <js-module src="www/ApptentiveAndroid.js" name="Apptentive">
