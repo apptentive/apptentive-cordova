@@ -33,9 +33,16 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
   override fun execute(action: String, args: JSONArray, callbackContext: CallbackContext): Boolean {
     android.util.Log.d("Apptentive", "[CORDOVA] Executing action: $action")
 
+    val currentActivity = cordova.getActivity()
+    if (currentActivity == null) {
+      android.util.Log.e("Apptentive", "[CORDOVA] Current activity is null. Cannot execute action: $action")
+      callbackContext.error("Current activity is null. Cannot execute action: $action")
+      return true
+    }
+
     when (action) {
       ACTION_DEVICE_READY -> {
-        val currentActivity = cordova.getActivity()
+        
         if (currentActivity != null && !Apptentive.registered) {
 
           // Parse log level
@@ -63,10 +70,9 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
           } ?: run {
             android.util.Log.e("Apptentive", "[CORDOVA] Register Apptentive: Fail")
             callbackContext.error("Register Apptentive: Fail")
-            return false
           }
         }
-        return isApptentiveRegistered
+        return true
       }
       ACTION_CAN_SHOW_MESSAGE_CENTER -> {
         Apptentive.canShowMessageCenter { canShowMessageCenter ->
@@ -92,7 +98,6 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
           is Boolean -> Apptentive.addCustomDeviceData(key, value)
           else -> {
             callbackContext.error("Custom Device Data Type not supported: ${value::class.java}")
-            return false
           }
         }
         callbackContext.success()
@@ -106,7 +111,6 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
           is Boolean -> Apptentive.addCustomPersonData(key, value)
           else -> {
             callbackContext.error("Custom Person Data Type not supported: ${value::class.java}")
-            return false
           }
         }
         callbackContext.success()
@@ -210,7 +214,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
         }
       }
       ACTION_SET_ON_SURVEY_FINISHED_LISTENER -> {
-        return if (isApptentiveRegistered) {
+        if (isApptentiveRegistered) {
           Log.d(CORDOVA_TAG, "Observing Survey finished notification")
           Apptentive.eventNotificationObservable.observe { notification ->
             if (notification?.interaction == "Survey" && notification.name == "submit") {
@@ -220,14 +224,13 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
               callbackContext.sendPluginResult(result)
             }
           }
-          true
         } else {
           android.util.Log.e("Apptentive", "[CORDOVA] Could not observe Survey finish " +
               "notification because Apptentive is not registered. Please register Apptentive with " +
               "the `deviceReady` or `registerWithLogs` function and then try again."
           )
-          false
         }
+        return true
       }
       else -> {
         android.util.Log.e("Apptentive", "[CORDOVA] Unhandled action in ApptentiveBridge: $action")
