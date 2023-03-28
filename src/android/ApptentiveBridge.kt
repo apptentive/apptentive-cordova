@@ -38,19 +38,36 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
       ACTION_DEVICE_READY -> {
         val currentActivity = cordova.getActivity()
         if (currentActivity != null && !Apptentive.registered) {
-          val configuration = resolveConfiguration(currentActivity.application)
 
-          Apptentive.register(currentActivity.application, configuration) {
-            if (it == RegisterResult.Success) {
-              Log.d(CORDOVA_TAG, "Register Apptentive: Success")
-              isApptentiveRegistered = true
+          // Parse log level
+          val logLevel = try {
+            args.getString(0)
+          } catch (e: JSONException) {
+            null
+          }
 
-              handlePostRegister()
-            } else Log.d(CORDOVA_TAG, "Register Apptentive: Fail")
+          val configuration = resolveConfiguration(currentActivity.application, logLevel)
+
+          configuration?.let {
+            Apptentive.register(currentActivity.application, configuration) {
+              if (it == RegisterResult.Success) {
+                Log.d(CORDOVA_TAG, "Register Apptentive: Success")
+                isApptentiveRegistered = true
+
+                handlePostRegister()
+                callbackContext.success()
+              } else {
+                android.util.Log.e("Apptentive", "[CORDOVA] Register Apptentive Fail: $it")
+                callbackContext.error("Register Apptentive Fail: $it")
+              }
+            }
+          } ?: run {
+            android.util.Log.e("Apptentive", "[CORDOVA] Register Apptentive: Fail")
+            callbackContext.error("Register Apptentive: Fail")
+            return false
           }
         }
-        callbackContext.success()
-        return true
+        return isApptentiveRegistered
       }
       ACTION_CAN_SHOW_MESSAGE_CENTER -> {
         Apptentive.canShowMessageCenter { canShowMessageCenter ->
@@ -221,25 +238,38 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     }
   }
 
-  private fun resolveConfiguration(context: Context): ApptentiveConfiguration {
+  private fun resolveConfiguration(context: Context, logLevel: String?): ApptentiveConfiguration? {
     val apptentiveKey = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_KEY)
-      ?: throw IllegalStateException("Unable to initialize Apptentive SDK: '$MANIFEST_KEY_APPTENTIVE_KEY' manifest key is missing")
+      ?: run {
+        android.util.Log.e("Apptentive", "[CORDOVA] Unable to initialize Apptentive SDK: '$MANIFEST_KEY_APPTENTIVE_KEY' manifest key is missing")
+        return null
+      }
 
     val apptentiveSignature = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_SIGNATURE)
-      ?: throw IllegalStateException("Unable to initialize Apptentive SDK: '$MANIFEST_KEY_APPTENTIVE_SIGNATURE' manifest key is missing")
-
-    val shouldEncryptStorageString = Util.getManifestMetadataString(context, "apptentive_uses_encryption")
-    val shouldEncryptStorage = shouldEncryptStorageString?.lowercase(Locale.getDefault()) == "true" ||
-        shouldEncryptStorageString?.lowercase(Locale.getDefault()) == "yes" ||
-        shouldEncryptStorageString?.lowercase(Locale.getDefault()) == "1"
+      ?: run {
+        android.util.Log.e("Apptentive", "[CORDOVA] Unable to initialize Apptentive SDK: '$MANIFEST_KEY_APPTENTIVE_SIGNATURE' manifest signature is missing")
+        return null
+      }
 
     val configuration = ApptentiveConfiguration(apptentiveKey, apptentiveSignature).apply {
-      this.shouldEncryptStorage = shouldEncryptStorage
+      this.distributionName = "Cordova"
+      this.distributionVersion = "6.1.1"
     }
 
-    Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_LOG_LEVEL)?.let {
-      configuration.logLevel = parseLogLevel(it)
-    }
+    configuration.shouldEncryptStorage = Util.getManifestMetadataBoolean(context, "apptentive_uses_encryption", configuration.shouldEncryptStorage)
+
+    configuration.shouldInheritAppTheme = Util.getManifestMetadataBoolean(context, "apptentive_inherit_app_theme", configuration.shouldInheritAppTheme)
+
+    configuration.shouldSanitizeLogMessages = Util.getManifestMetadataBoolean(context, "apptentive_sanitize_log_messages", configuration.shouldSanitizeLogMessages)
+
+    val ratingInteractionThrottleLength = Util.getManifestMetadataString(context, "apptentive_rating_interaction_throttle_length")?.toLongOrNull()
+    if (ratingInteractionThrottleLength != null) configuration.ratingInteractionThrottleLength = ratingInteractionThrottleLength
+
+    val customAppStoreURL = Util.getManifestMetadataString(context, "apptentive_custom_app_store_url")
+    if (!customAppStoreURL.isNullOrBlank()) configuration.customAppStoreURL = customAppStoreURL
+
+    val logLevelString = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_LOG_LEVEL)
+    if (logLevelString != null) configuration.logLevel = parseLogLevel(logLevel ?: logLevelString)
 
     return configuration
   }
@@ -260,8 +290,6 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     //   avoid some race conditions that we've encountered before.
     Log.d(CORDOVA_TAG, "Registering ApptentiveInfoCallback")
     Apptentive.registerApptentiveActivityInfoCallback(this)
-
-
   }
 
   private companion object {

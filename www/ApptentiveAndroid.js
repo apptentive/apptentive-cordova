@@ -91,7 +91,11 @@ var Apptentive = {
 
     logout: function (successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "logout");
-    }
+    },
+
+    sendAttachmentText: function (successCallback, errorCallback, text) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "sendAttachmentText", [text]);
+    },
 };
 
 module.exports = Apptentive;
