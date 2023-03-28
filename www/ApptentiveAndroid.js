@@ -86,11 +86,11 @@ var Apptentive = {
     },
 
     login: function (successCallback, errorCallback, token) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "login", [token]);
+        successCallback(); // Does nothing on Android
     },
 
     logout: function (successCallback, errorCallback) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "logout");
+      successCallback(); // Does nothing on Android
     },
 
     sendAttachmentText: function (successCallback, errorCallback, text) {
