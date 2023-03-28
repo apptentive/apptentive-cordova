@@ -17,6 +17,7 @@
 
         <!-- Apptentive Configuration Items -->
         <preference name="ANDROID_INHERIT_APP_THEME" default="true"/>
+        <preference name="ANDROID_LOG_LEVEL" default="info"/>
         <preference name="ANDROID_USES_DEVICE_ENCRYPTION" default="false"/>
         <preference name="ANDROID_SANITIZE_LOG_MESSAGES" default="true"/>
         <preference name="ANDROID_CUSTOM_APP_STORE_URL" default=" "/>
@@ -45,6 +46,7 @@
         <config-file target="AndroidManifest.xml" parent="application">
             <meta-data android:name="apptentive_key" android:value="$ANDROID_APP_KEY"/>
             <meta-data android:name="apptentive_signature" android:value="$ANDROID_APP_SIGNATURE"/>
+            <meta-data android:name="apptentive_log_level" android:value="$ANDROID_LOG_LEVEL"/>
             <meta-data android:name="apptentive_inherit_app_theme" android:value="$ANDROID_INHERIT_APP_THEME"/>
             <meta-data android:name="apptentive_uses_encryption" android:value="$ANDROID_USES_DEVICE_ENCRYPTION"/>            
             <meta-data android:name="apptentive_custom_app_store_url" android:value="$ANDROID_CUSTOM_APP_STORE_URL"/>

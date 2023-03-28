@@ -2,7 +2,6 @@ package com.apptentive.cordova
 
 import android.app.Activity
 import android.content.Context
-import android.os.Bundle
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.ApptentiveConfiguration
@@ -16,7 +15,7 @@ import org.apache.cordova.CallbackContext
 import org.apache.cordova.CordovaPlugin
 import org.apache.cordova.PluginResult
 import org.json.JSONArray
-import java.util.Locale
+import org.json.JSONException
 
 @OptIn(InternalUseOnly::class)
 class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
@@ -256,20 +255,26 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
       this.distributionVersion = "6.1.1"
     }
 
-    configuration.shouldEncryptStorage = Util.getManifestMetadataBoolean(context, "apptentive_uses_encryption", configuration.shouldEncryptStorage)
-
-    configuration.shouldInheritAppTheme = Util.getManifestMetadataBoolean(context, "apptentive_inherit_app_theme", configuration.shouldInheritAppTheme)
-
-    configuration.shouldSanitizeLogMessages = Util.getManifestMetadataBoolean(context, "apptentive_sanitize_log_messages", configuration.shouldSanitizeLogMessages)
-
-    val ratingInteractionThrottleLength = Util.getManifestMetadataString(context, "apptentive_rating_interaction_throttle_length")?.toLongOrNull()
-    if (ratingInteractionThrottleLength != null) configuration.ratingInteractionThrottleLength = ratingInteractionThrottleLength
-
-    val customAppStoreURL = Util.getManifestMetadataString(context, "apptentive_custom_app_store_url")
-    if (!customAppStoreURL.isNullOrBlank()) configuration.customAppStoreURL = customAppStoreURL
-
     val logLevelString = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_LOG_LEVEL)
+    android.util.Log.d("Apptentive", "[CORDOVA] Log Level: $logLevelString")
     if (logLevelString != null) configuration.logLevel = parseLogLevel(logLevel ?: logLevelString)
+
+    configuration.shouldEncryptStorage = Util.getManifestMetadataBoolean(context, MANIFEST_KEY_APPTENTIVE_SHOULD_ENCRYPT_STORAGE, configuration.shouldEncryptStorage)
+    android.util.Log.d("Apptentive", "[CORDOVA] Encryption: ${configuration.shouldEncryptStorage}")
+
+    configuration.shouldInheritAppTheme = Util.getManifestMetadataBoolean(context, MANIFEST_KEY_APPTENTIVE_SHOULD_INHERIT_APP_THEME, configuration.shouldInheritAppTheme)
+    android.util.Log.d("Apptentive", "[CORDOVA] Inherit App Theme: ${configuration.shouldInheritAppTheme}")
+
+    configuration.shouldSanitizeLogMessages = Util.getManifestMetadataBoolean(context, MANIFEST_KEY_APPTENTIVE_SHOULD_SANITIZE_LOG_MESSAGES, configuration.shouldSanitizeLogMessages)
+    android.util.Log.d("Apptentive", "[CORDOVA] Sanitize Log Messages: ${configuration.shouldSanitizeLogMessages}")
+
+    val ratingInteractionThrottleLength = Util.getManifestMetadataInt(context, MANIFEST_KEY_APPTENTIVE_RATING_INTERACTION_THROTTLE_LENGTH)
+    android.util.Log.d("Apptentive", "[CORDOVA] Rating Interaction Throttle Length: $ratingInteractionThrottleLength")
+    if (ratingInteractionThrottleLength != null && ratingInteractionThrottleLength != 0) configuration.ratingInteractionThrottleLength = ratingInteractionThrottleLength.toLong()
+
+    val customAppStoreURL = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_CUSTOM_APP_STORE_URL)
+    android.util.Log.d("Apptentive", "[CORDOVA] Custom App Store URL: $customAppStoreURL")
+    if (!customAppStoreURL.isNullOrBlank()) configuration.customAppStoreURL = customAppStoreURL
 
     return configuration
   }
@@ -295,9 +300,15 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
   private companion object {
     val CORDOVA_TAG = LogTag("CORDOVA")
 
-    const val MANIFEST_KEY_APPTENTIVE_LOG_LEVEL = "apptentive_log_level"
     const val MANIFEST_KEY_APPTENTIVE_KEY = "apptentive_key"
     const val MANIFEST_KEY_APPTENTIVE_SIGNATURE = "apptentive_signature"
+
+    const val MANIFEST_KEY_APPTENTIVE_LOG_LEVEL = "apptentive_log_level"
+    const val MANIFEST_KEY_APPTENTIVE_SHOULD_ENCRYPT_STORAGE = "apptentive_uses_encryption"
+    const val MANIFEST_KEY_APPTENTIVE_SHOULD_INHERIT_APP_THEME = "apptentive_inherit_app_theme"
+    const val MANIFEST_KEY_APPTENTIVE_SHOULD_SANITIZE_LOG_MESSAGES = "apptentive_sanitize_log_messages"
+    const val MANIFEST_KEY_APPTENTIVE_RATING_INTERACTION_THROTTLE_LENGTH = "apptentive_rating_interaction_throttle_length"
+    const val MANIFEST_KEY_APPTENTIVE_CUSTOM_APP_STORE_URL = "apptentive_custom_app_store_url"
 
     const val ACTION_DEVICE_READY = "deviceReady"
     const val ACTION_ADD_CUSTOM_DEVICE_DATA = "addCustomDeviceData"
