@@ -92,7 +92,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
       ACTION_ADD_CUSTOM_DEVICE_DATA -> {
         val key = args.getString(0)
 
-        when (val value: Any = args.get(1)) {
+        when (val value = args.get(1)) {
           is String -> Apptentive.addCustomDeviceData(key, value)
           is Number -> Apptentive.addCustomDeviceData(key, value)
           is Boolean -> Apptentive.addCustomDeviceData(key, value)
@@ -105,7 +105,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
       }
       ACTION_ADD_CUSTOM_PERSON_DATA -> {
         val key = args.getString(0)
-        when (val value: Any = args.get(1)) {
+        when (val value = args.get(1)) {
           is String -> Apptentive.addCustomPersonData(key, value)
           is Number -> Apptentive.addCustomPersonData(key, value)
           is Boolean -> Apptentive.addCustomPersonData(key, value)
