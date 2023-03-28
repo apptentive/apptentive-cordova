@@ -11,6 +11,7 @@ npm-debug.log
 
 # Idea
 /.idea
+/src/android/.idea
 
 # res
 resources/signing
