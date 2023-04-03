@@ -112,7 +112,7 @@ var Apptentive = {
     },
     
     sendAttachmentText: function (successCallback, errorCallback, text) {
-      successCallback(); // Does nothing on iOS.
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["sendAttachmentText", text]);
     },
 };
 
