@@ -67,6 +67,9 @@
         <preference name="IOS_APP_KEY"/>
         <preference name="IOS_APP_SIGNATURE"/>
 
+        <!-- Apptentive Configuration Items -->
+        <preference name="IOS_SANITIZE_LOG_MESSAGES" default="true"/>
+
         <js-module src="www/ApptentiveIos.js" name="Apptentive">
             <clobbers target="Apptentive"/>
         </js-module>
@@ -85,16 +88,17 @@
             <string>$IOS_APP_SIGNATURE</string>
         </config-file>
 
+        <config-file target="*-Info.plist" parent="ApptentiveSanitizeLogMessages">
+            <string>$IOS_SANITIZE_LOG_MESSAGES</string>
+        </config-file>
+
         <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
             <string>6.1.0</string>
         </config-file>
 
         <!-- ApptentiveBridge -->
-        <header-file src="src/ios/ApptentiveBridge.h" target-dir="Apptentive"/>
-        <source-file src="src/ios/ApptentiveBridge.m" target-dir="Apptentive"/>
-
-        <!-- Apptentive SDK -->
-        <resource-file src="src/ios/ApptentiveStyles.plist"/>
+        <header-file src="src/ios/ApptentiveBridge-Bridging-Header.h" type="BridgingHeader"/>
+        <source-file src="src/ios/ApptentiveBridge.swift" target-dir="Apptentive"/>
 
         <!-- required system frameworks -->
         <framework src="Accelerate.framework" weak="true"/>
@@ -106,7 +110,15 @@
         <framework src="Storekit.framework" weak="true"/>
         <framework src="SystemConfiguration.framework" weak="true"/>
         <framework src="UIKit.framework" weak="true"/>
-        <framework src="src/ios/ApptentiveKit.xcframework" embed="true" custom="true"/>
+
+        <podspec>
+            <config>
+                <source url="https://github.com/CocoaPods/Specs.git"/>
+            </config>
+            <pods use-frameworks="true">
+                <pod name="ApptentiveKit" spec="~> 6.1.0" />
+            </pods>
+        </podspec>
     </platform>
 
 </plugin>

@@ -34,8 +34,9 @@ class ApptentiveBridge: CDVPlugin {
 
             switch functionCall {
             case "deviceReady", "registerWithLogs":
-                let (credentials, logLevel, distributionVersion) = try Self.resolveConfiguration(from: command.arguments)
+                let (credentials, logLevel, distributionVersion, sanitizeLogMessages) = try Self.resolveConfiguration(from: command.arguments)
                 ApptentiveLogger.logLevel = logLevel
+                ApptentiveLogger.shouldHideSensitiveLogs = sanitizeLogMessages
                 Apptentive.shared.distributionVersion = distributionVersion
                 Apptentive.shared.register(with: credentials) { result in
                     switch result {
@@ -163,7 +164,7 @@ class ApptentiveBridge: CDVPlugin {
         return Array(arguments.suffix(from: 1))
     }
 
-    static func resolveConfiguration(from arguments: [Any]) throws -> (Apptentive.AppCredentials, LogLevel, String) {
+    static func resolveConfiguration(from arguments: [Any]) throws -> (Apptentive.AppCredentials, LogLevel, String, Bool) {
         let functionArguments = try self.checkArgumentCount(arguments, 0...1)
 
         guard let apptentiveKey = Bundle.main.object(forInfoDictionaryKey: "ApptentiveKey") as? String,
@@ -172,6 +173,8 @@ class ApptentiveBridge: CDVPlugin {
         else {
             throw PluginError.missingVariablesInInfoDictionary
         }
+
+        let sanitizeLogMessages = (Bundle.main.object(forInfoDictionaryKey: "ApptentiveSanitizeLogMessages") as? Bool) ?? true
 
         var logLevel: LogLevel
         if let logLevelArgument = functionArguments.first {
@@ -183,7 +186,7 @@ class ApptentiveBridge: CDVPlugin {
             logLevel = .info
         }
 
-        return (.init(key: apptentiveKey, signature: apptentiveSignature), logLevel, pluginVersion)
+        return (.init(key: apptentiveKey, signature: apptentiveSignature), logLevel, pluginVersion, sanitizeLogMessages)
     }
 
     static func parseLogLevel(_ logLevelString: String) throws -> LogLevel {
@@ -249,9 +252,7 @@ class ApptentiveBridge: CDVPlugin {
             throw PluginError.invalidCustomDataKeyType
         }
 
-        guard let value = functionArguments[1] as? CustomDataCompatible else {
-            throw PluginError.invalidCustomDataValueType
-        }
+        let value = try self.convertCustomDataValue(functionArguments[1])
 
         return (key, value)
     }
@@ -259,18 +260,12 @@ class ApptentiveBridge: CDVPlugin {
     static func maybeCustomData(from arguments: [Any]) throws -> CustomData? {
         let functionArguments = try self.checkArgumentCount(arguments, 0...1)
 
-        guard arguments.count == 1 else {
+        guard functionArguments.count == 1 else {
             return nil
         }
 
-        if let customDataDictionary = functionArguments[0] as? [String: CustomDataCompatible] {
-            var result = CustomData()
-
-            for (key, value) in customDataDictionary {
-                result[key] = value
-            }
-
-            return result
+        if let customDataDictionary = functionArguments[0] as? [AnyHashable: Any] {
+            return try self.convertCustomData(customDataDictionary)
         } else if let jsonString = functionArguments[0] as? String {
             guard let data = jsonString.data(using: .utf8) else {
                 throw PluginError.invalidJSONData
@@ -280,6 +275,42 @@ class ApptentiveBridge: CDVPlugin {
         } else {
             throw PluginError.invalidJSONData
         }
+    }
+
+    static func convertCustomData(_ customData: [AnyHashable: Any]?) throws -> CustomData? {
+        var result = CustomData()
+
+        if let customData = customData {
+            for (key, value) in customData {
+                guard let key = key as? String else {
+                    throw PluginError.invalidCustomDataKeyType
+                }
+
+                result[key] = try self.convertCustomDataValue(value)
+            }
+        }
+
+        return result.keys.count > 0 ? result : nil
+    }
+
+    static func convertCustomDataValue(_ value: Any) throws -> CustomDataCompatible {
+        switch value {
+        case let bool as Bool:
+            return bool
+
+        case let int as Int:
+            return int
+
+        case let double as Double:
+            return double
+
+        case let string as String:
+            return string
+
+        default:
+            throw PluginError.invalidCustomDataValueType
+        }
+
     }
 
     enum PluginError: Swift.Error, LocalizedError {
