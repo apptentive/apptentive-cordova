@@ -65,6 +65,10 @@ var Apptentive = {
         cordova.exec(unreadMessagesCallback, errorCallback, "ApptentiveBridge", "addUnreadMessagesListener", []);
     },
 
+    addSurveyFinishedListener: function (surveyFinishedCallback, errorCallback) {
+        cordova.exec(surveyFinishedCallback, errorCallback, "ApptentiveBridge", "setOnSurveyFinishedListener", []);
+    },
+
     showMessageCenter: function (successCallback, errorCallback, customData) {
         if (customData) {
             cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "showMessageCenter", [customData]);

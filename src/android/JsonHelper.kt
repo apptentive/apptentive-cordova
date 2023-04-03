@@ -10,7 +10,7 @@ object JsonHelper {
     if (!keys.hasNext()) return null
     else while (keys.hasNext()) {
       val key = keys.next() as String
-      map[key] = fromJson(obj.get(key))
+      map[key] = obj.get(key)
     }
     return map
   }

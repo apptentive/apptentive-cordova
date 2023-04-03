@@ -75,6 +75,10 @@ var Apptentive = {
         cordova.exec(unreadMessagesCallback, errorCallback, "ApptentiveBridge", "execute", ["registerForMessageNotifications"]);
     },
 
+    addSurveyFinishedListener: function (surveyFinishedCallback, errorCallback) {
+        errorCallback(); // Does nothing on iOS.
+    },
+
     showMessageCenter: function (successCallback, errorCallback, customData) {
         if (customData) {
             cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["showMessageCenter", customData]);
