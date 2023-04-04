@@ -226,7 +226,7 @@ class ApptentiveBridge: CDVPlugin {
             throw PluginError.invalidPropertyKeyType
         }
 
-        guard let value = functionArguments[1] as? String else {
+        guard let value = functionArguments[1] as? String? else {
             throw PluginError.invalidPropertyValueType
         }
 
