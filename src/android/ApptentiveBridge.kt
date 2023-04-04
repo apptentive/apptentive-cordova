@@ -133,7 +133,6 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
           callbackContext.sendPluginResult(result)
         }
 
-        callbackContext.success()
         return true
       }
       ACTION_GET_UNREAD_MESSAGE_COUNT -> {
