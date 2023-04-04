@@ -47,6 +47,7 @@ class ApptentiveBridge: CDVPlugin {
                         self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: callbackID)
                     }
                 }
+                return
 
             case "engage":
                 Apptentive.shared.engage(event: Event(name: try Self.string(from: command.arguments))) { result in
