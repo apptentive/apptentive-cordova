@@ -70,7 +70,7 @@ var Apptentive = {
     },
 
     addSurveyFinishedListener: function (surveyFinishedCallback, errorCallback) {
-        errorCallback(); // Does nothing on iOS.
+        cordova.exec(surveyFinishedCallback, errorCallback, "ApptentiveBridge", "execute", ["addSurveyFinishedListener"]);
     },
 
     showMessageCenter: function (successCallback, errorCallback, customData) {

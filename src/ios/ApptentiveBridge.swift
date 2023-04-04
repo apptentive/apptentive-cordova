@@ -121,8 +121,20 @@ class ApptentiveBridge: CDVPlugin {
                 }
                 return
 
+            case "addSurveyFinishedListener":
+                let _ = try Self.checkArgumentCount(command.arguments, 0...0)
+                NotificationCenter.default.addObserver(forName: .apptentiveEventEngaged, object: nil, queue: nil) { [weak self] (notification) in
+                    if notification.userInfo?["eventType"] as? String == "submit" && notification.userInfo?["interactionType"] as? String == "Survey" {
+                        let result = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: Apptentive.shared.unreadMessageCount)
+                        result?.setKeepCallbackAs(true)
+                        self?.commandDelegate.send(result, callbackId: callbackID)
+                    }
+                }
+                return
+
             case "unregisterForNotifications":
                 self.observation?.invalidate()
+                NotificationCenter.default.removeObserver(self)
 
             case "canShowInteraction":
                 Apptentive.shared.canShowInteraction(event: Event(name: try Self.string(from: command.arguments))) { result in
