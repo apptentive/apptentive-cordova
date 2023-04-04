@@ -66,7 +66,7 @@ var Apptentive = {
     },
 
     addUnreadMessagesListener: function (unreadMessagesCallback, errorCallback) {
-        cordova.exec(unreadMessagesCallback, errorCallback, "ApptentiveBridge", "execute", ["registerForMessageNotifications"]);
+        cordova.exec(unreadMessagesCallback, errorCallback, "ApptentiveBridge", "execute", ["addUnreadMessagesListener"]);
     },
 
     addSurveyFinishedListener: function (surveyFinishedCallback, errorCallback) {

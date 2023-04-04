@@ -111,7 +111,7 @@ class ApptentiveBridge: CDVPlugin {
                 let result = Apptentive.shared.unreadMessageCount
                 return self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: result), callbackId: callbackID)
 
-            case "registerForMessageNotifications":
+            case "addUnreadMessagesListener":
                 let _ = try Self.checkArgumentCount(command.arguments, 0...0)
                 self.observation = Apptentive.shared.observe(\.unreadMessageCount, options: [.new]) { [weak self] _, _ in
                     guard let self = self else { return }
@@ -311,7 +311,6 @@ class ApptentiveBridge: CDVPlugin {
         default:
             throw PluginError.invalidCustomDataValueType
         }
-
     }
 
     enum PluginError: Swift.Error, LocalizedError {
