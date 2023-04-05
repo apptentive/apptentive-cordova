@@ -333,8 +333,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     const val ACTION_CAN_SHOW_INTERACTION = "canShowInteraction"
   }
 
-  override fun getApptentiveActivityInfo(): Activity {
+  override fun getApptentiveActivityInfo(): Activity? {
     return cordova.getActivity()
-      ?: throw IllegalStateException("Activity could not be retrieved from Cordova.")
   }
 }
