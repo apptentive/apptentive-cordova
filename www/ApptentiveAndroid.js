@@ -58,7 +58,7 @@ var Apptentive = {
     },
 
     setRatingProvider: function (successCallback, errorCallback, ratingProviderName) {
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "setRatingProvider", [ratingProviderName]);
+        successCallback(); // Deprecated. Use the ANDROID_CUSTOM_APP_STORE_URL variable instead.
     },
 
     addUnreadMessagesListener: function (unreadMessagesCallback, errorCallback) {
@@ -90,11 +90,11 @@ var Apptentive = {
     },
 
     login: function (successCallback, errorCallback, token) {
-        successCallback(); // Does nothing on Android
+        successCallback(); // Does nothing on Android. We are working on re-implementing this feature.
     },
 
     logout: function (successCallback, errorCallback) {
-      successCallback(); // Does nothing on Android
+        successCallback(); // Does nothing on Android. We are working on re-implementing this feature.
     },
 
     sendAttachmentText: function (successCallback, errorCallback, text) {
