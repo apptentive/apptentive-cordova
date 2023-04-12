@@ -187,7 +187,8 @@ class ApptentiveBridge: CDVPlugin {
             throw PluginError.missingVariablesInInfoDictionary
         }
 
-        let sanitizeLogMessages = (Bundle.main.object(forInfoDictionaryKey: "ApptentiveSanitizeLogMessages") as? Bool) ?? true
+        let sanitizeLogMessagesString = Bundle.main.object(forInfoDictionaryKey: "ApptentiveSanitizeLogMessages") as? String ?? "true"
+        let sanitizeLogMessages = sanitizeLogMessagesString.lowercased() != "false"
 
         var logLevel: LogLevel
         if let logLevelArgument = functionArguments.first {
