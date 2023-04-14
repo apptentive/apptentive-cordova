@@ -133,7 +133,6 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
           callbackContext.sendPluginResult(result)
         }
 
-        callbackContext.success()
         return true
       }
       ACTION_GET_UNREAD_MESSAGE_COUNT -> {
@@ -334,8 +333,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     const val ACTION_CAN_SHOW_INTERACTION = "canShowInteraction"
   }
 
-  override fun getApptentiveActivityInfo(): Activity {
+  override fun getApptentiveActivityInfo(): Activity? {
     return cordova.getActivity()
-      ?: throw IllegalStateException("Activity could not be retrieved from Cordova.")
   }
 }
