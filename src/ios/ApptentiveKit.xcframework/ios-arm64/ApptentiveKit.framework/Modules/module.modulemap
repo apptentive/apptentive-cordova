@@ -1,4 +1,0 @@
-framework module ApptentiveKit {
-  header "ApptentiveKit-Swift.h"
-  requires objc
-}
