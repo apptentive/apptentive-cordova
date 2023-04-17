@@ -21,12 +21,6 @@ var Apptentive = {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["deviceReady", loglevel]);
     },
 
-    registerWithLogs: function (successCallback, errorCallback, loglevel) {
-        console.log("Apptentive.registerWithLogs()");
-        Apptentive.initialized = true;
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["deviceReady", loglevel]);
-    },
-
     engage: function (successCallback, errorCallback, eventName, customData) {
         if (customData) {
             cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["engage", eventName, customData]);
@@ -72,7 +66,11 @@ var Apptentive = {
     },
 
     addUnreadMessagesListener: function (unreadMessagesCallback, errorCallback) {
-        cordova.exec(unreadMessagesCallback, errorCallback, "ApptentiveBridge", "execute", ["registerForMessageNotifications"]);
+        cordova.exec(unreadMessagesCallback, errorCallback, "ApptentiveBridge", "execute", ["addUnreadMessagesListener"]);
+    },
+
+    addSurveyFinishedListener: function (surveyFinishedCallback, errorCallback) {
+        cordova.exec(surveyFinishedCallback, errorCallback, "ApptentiveBridge", "execute", ["addSurveyFinishedListener"]);
     },
 
     showMessageCenter: function (successCallback, errorCallback, customData) {
@@ -98,12 +96,18 @@ var Apptentive = {
     getProperty: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["getProperty", key]);
     },
+
     login: function (successCallback, errorCallback, token) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["login", token]);
     },
+
     logout: function (successCallback, errorCallback) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["logout"]);
-    }
+    },
+    
+    sendAttachmentText: function (successCallback, errorCallback, text) {
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "execute", ["sendAttachmentText", text]);
+    },
 };
 
 module.exports = Apptentive;

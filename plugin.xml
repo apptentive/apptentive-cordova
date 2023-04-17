@@ -5,7 +5,8 @@
     <description>Apptentive Plugin For Cordova</description>
     <keywords>apptentive</keywords>
     <engines>
-        <engine name="cordova" version=">=3.6.0"/>
+      <engine name="cordova" version=">=10.0.1"/>
+      <engine name="cordova-android" version=">=9.0.0"/>
     </engines>
 
     <!-- android -->
@@ -13,23 +14,30 @@
         <!-- Require API key -->
         <preference name="ANDROID_APP_KEY"/>
         <preference name="ANDROID_APP_SIGNATURE"/>
+
+        <!-- Apptentive Configuration Items -->
+        <preference name="ANDROID_INHERIT_APP_THEME" default="true"/>
+        <preference name="ANDROID_LOG_LEVEL" default="info"/>
         <preference name="ANDROID_USES_DEVICE_ENCRYPTION" default="false"/>
+        <preference name="ANDROID_SANITIZE_LOG_MESSAGES" default="true"/>
+        <preference name="ANDROID_CUSTOM_APP_STORE_URL" default=" "/>
+        <preference name="ANDROID_RATING_INTERACTION_THROTTLE_LENGTH" default="604800000"/>
 
         <!-- Define namespace for javascript reference -->
         <js-module src="www/ApptentiveAndroid.js" name="Apptentive">
             <clobbers target="Apptentive"/>
         </js-module>
 
-        <!-- Add dependencies -->
-
         <!-- Setup Cordova config.xml file -->
         <config-file target="res/xml/config.xml" parent="/*">
-            <feature name="ApptentiveBridge">
-                <param name="android-package" value="com.apptentive.cordova.ApptentiveBridge"/>
-            </feature>
+          <preference name="GradlePluginKotlinEnabled" value="true" />
+          <preference name="GradlePluginKotlinVersion" value="1.7.20" />
+          
+          <feature name="ApptentiveBridge">
+              <param name="android-package" value="com.apptentive.cordova.ApptentiveBridge"/>
+          </feature>
         </config-file>
 
-        <!-- Setup Android Manifest file for plugin -->
         <config-file target="AndroidManifest.xml" parent="/*">
             <!-- Make sure to support high resolution screens so Apptentive's UI looks great. -->
             <supports-screens android:xlargeScreens="true" android:largeScreens="true" android:normalScreens="true" android:smallScreens="true" android:anyDensity="true"/>
@@ -38,15 +46,18 @@
         <config-file target="AndroidManifest.xml" parent="application">
             <meta-data android:name="apptentive_key" android:value="$ANDROID_APP_KEY"/>
             <meta-data android:name="apptentive_signature" android:value="$ANDROID_APP_SIGNATURE"/>
-            <meta-data android:name="apptentive_uses_encryption" android:value="$ANDROID_USES_DEVICE_ENCRYPTION"/>
+            <meta-data android:name="apptentive_log_level" android:value="$ANDROID_LOG_LEVEL"/>
+            <meta-data android:name="apptentive_inherit_app_theme" android:value="$ANDROID_INHERIT_APP_THEME"/>
+            <meta-data android:name="apptentive_uses_encryption" android:value="$ANDROID_USES_DEVICE_ENCRYPTION"/>            
+            <meta-data android:name="apptentive_custom_app_store_url" android:value="$ANDROID_CUSTOM_APP_STORE_URL"/>
+            <meta-data android:name="apptentive_sanitize_log_messages" android:value="$ANDROID_SANITIZE_LOG_MESSAGES"/>
+            <meta-data android:name="apptentive_rating_interaction_throttle_length" android:value="$ANDROID_RATING_INTERACTION_THROTTLE_LENGTH"/>
         </config-file>
-        <config-file target="./res/values/strings.xml" parent="/resources">
-            <string name="apptentive_distribution">Cordova</string>
-            <string name="apptentive_distribution_version">6.1.0</string>
-        </config-file>
-        <framework src="com.apptentive:apptentive-android:5.8.4"/>
-        <source-file src="src/android/ApptentiveBridge.java" target-dir="src/com/apptentive/cordova"/>
-        <source-file src="src/android/JsonHelper.java" target-dir="src/com/apptentive/cordova"/>
+
+        <framework src="com.apptentive:apptentive-kit-android:6.0.4"/>
+        <source-file src="src/android/ApptentiveBridge.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
+        <source-file src="src/android/JsonHelper.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
+        <source-file src="src/android/Util.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
     </platform>
 
 
@@ -55,6 +66,9 @@
         <!-- Require API key -->
         <preference name="IOS_APP_KEY"/>
         <preference name="IOS_APP_SIGNATURE"/>
+
+        <!-- Apptentive Configuration Items -->
+        <preference name="IOS_SANITIZE_LOG_MESSAGES" default="true"/>
 
         <js-module src="www/ApptentiveIos.js" name="Apptentive">
             <clobbers target="Apptentive"/>
@@ -74,16 +88,17 @@
             <string>$IOS_APP_SIGNATURE</string>
         </config-file>
 
+        <config-file target="*-Info.plist" parent="ApptentiveSanitizeLogMessages">
+            <string>$IOS_SANITIZE_LOG_MESSAGES</string>
+        </config-file>
+
         <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
-            <string>6.1.0</string>
+            <string>6.2.0</string>
         </config-file>
 
         <!-- ApptentiveBridge -->
-        <header-file src="src/ios/ApptentiveBridge.h" target-dir="Apptentive"/>
-        <source-file src="src/ios/ApptentiveBridge.m" target-dir="Apptentive"/>
-
-        <!-- Apptentive SDK -->
-        <resource-file src="src/ios/ApptentiveStyles.plist"/>
+        <header-file src="src/ios/ApptentiveBridge-Bridging-Header.h" type="BridgingHeader"/>
+        <source-file src="src/ios/ApptentiveBridge.swift" target-dir="Apptentive"/>
 
         <!-- required system frameworks -->
         <framework src="Accelerate.framework" weak="true"/>
@@ -95,7 +110,15 @@
         <framework src="Storekit.framework" weak="true"/>
         <framework src="SystemConfiguration.framework" weak="true"/>
         <framework src="UIKit.framework" weak="true"/>
-        <framework src="src/ios/ApptentiveKit.xcframework" embed="true" custom="true"/>
+
+        <podspec>
+            <config>
+                <source url="https://github.com/CocoaPods/Specs.git"/>
+            </config>
+            <pods use-frameworks="true">
+                <pod name="ApptentiveKit" spec="~> 6.1.0" swift-version="5" />
+            </pods>
+        </podspec>
     </platform>
 
 </plugin>

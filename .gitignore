@@ -5,12 +5,16 @@
 npm-debug.log
 /node_modules
 
+# NPM
+package-lock.json
+
 # Cordova
 /platforms
 /plugins
 
 # Idea
 /.idea
+/src/android/.idea
 
 # res
 resources/signing
