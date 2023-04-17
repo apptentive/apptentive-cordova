@@ -254,7 +254,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
 
     val configuration = ApptentiveConfiguration(apptentiveKey, apptentiveSignature).apply {
       this.distributionName = "Cordova"
-      this.distributionVersion = "6.1.1"
+      this.distributionVersion = "6.2.0"
     }
 
     val logLevelString = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_LOG_LEVEL)

@@ -93,7 +93,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
-            <string>6.1.0</string>
+            <string>6.2.0</string>
         </config-file>
 
         <!-- ApptentiveBridge -->
