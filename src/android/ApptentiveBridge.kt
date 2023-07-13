@@ -38,6 +38,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     super.onDestroy()
     Apptentive.messageCenterNotificationObservable.removeObserver(::observeUnreadMessageListener)
     Apptentive.eventNotificationObservable.removeObserver(::observeSurveyFinishedListener)
+    savedCallbackContext = null
   }
 
   override fun execute(action: String, args: JSONArray, callbackContext: CallbackContext): Boolean {
