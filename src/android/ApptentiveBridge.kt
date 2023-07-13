@@ -6,6 +6,8 @@ import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.ApptentiveConfiguration
 import apptentive.com.android.feedback.EngagementResult
+import apptentive.com.android.feedback.model.EventNotification
+import apptentive.com.android.feedback.model.MessageCenterNotification
 import apptentive.com.android.feedback.RegisterResult
 import apptentive.com.android.util.InternalUseOnly
 import apptentive.com.android.util.Log
@@ -16,11 +18,13 @@ import org.apache.cordova.CordovaPlugin
 import org.apache.cordova.PluginResult
 import org.json.JSONArray
 import org.json.JSONException
+import java.lang.ref.WeakReference
 
 @OptIn(InternalUseOnly::class)
 class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
 
   private var isApptentiveRegistered = false
+  private var savedCallbackContext: WeakReference<CallbackContext>? = null
 
   override fun onResume(multitasking: Boolean) {
     super.onResume(multitasking)
@@ -30,8 +34,16 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     }
   }
 
+  override fun onDestroy() {
+    super.onDestroy()
+    Apptentive.messageCenterNotificationObservable.removeObserver(::observeUnreadMessageListener)
+    Apptentive.eventNotificationObservable.removeObserver(::observeSurveyFinishedListener)
+    savedCallbackContext = null
+  }
+
   override fun execute(action: String, args: JSONArray, callbackContext: CallbackContext): Boolean {
     android.util.Log.d("Apptentive", "[CORDOVA] Executing action: $action")
+    savedCallbackContext = WeakReference(callbackContext)
 
     val currentActivity = cordova.getActivity()
     if (currentActivity == null) {
@@ -197,12 +209,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
       ACTION_ADD_UNREAD_MESSAGES_LISTENER -> {
         return if (isApptentiveRegistered) {
           Log.d(CORDOVA_TAG, "Observing Message Center Notification")
-          Apptentive.messageCenterNotificationObservable.observe { notification ->
-            Log.v(CORDOVA_TAG, "Message Center notification received: $notification")
-            val result = PluginResult(PluginResult.Status.OK, notification?.unreadMessageCount ?: 0)
-            result.setKeepCallback(true)
-            callbackContext.sendPluginResult(result)
-          }
+          Apptentive.messageCenterNotificationObservable.observe(::observeUnreadMessageListener)
           true
         } else {
           android.util.Log.e("Apptentive", "[CORDOVA] Could not observe Message Center " +
@@ -215,14 +222,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
       ACTION_SET_ON_SURVEY_FINISHED_LISTENER -> {
         if (isApptentiveRegistered) {
           Log.d(CORDOVA_TAG, "Observing Survey finished notification")
-          Apptentive.eventNotificationObservable.observe { notification ->
-            if (notification?.interaction == "Survey" && notification.name == "submit") {
-              Log.v(CORDOVA_TAG, "Survey finished notification received: $notification")
-              val result = PluginResult(PluginResult.Status.OK, true)
-              result.setKeepCallback(true)
-              callbackContext.sendPluginResult(result)
-            }
-          }
+          Apptentive.eventNotificationObservable.observe(::observeSurveyFinishedListener)
         } else {
           android.util.Log.e("Apptentive", "[CORDOVA] Could not observe Survey finish " +
               "notification because Apptentive is not registered. Please register Apptentive with " +
@@ -297,6 +297,24 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     //   avoid some race conditions that we've encountered before.
     Log.d(CORDOVA_TAG, "Registering ApptentiveInfoCallback")
     Apptentive.registerApptentiveActivityInfoCallback(this)
+  }
+
+    // Handle new message center notification
+  private fun observeUnreadMessageListener(notification: MessageCenterNotification?) {
+    Log.v(CORDOVA_TAG, "Message Center notification received: $notification")
+    val result = PluginResult(PluginResult.Status.OK, notification?.unreadMessageCount ?: 0)
+    result.setKeepCallback(true)
+    savedCallbackContext?.get()?.sendPluginResult(result)
+  }
+
+  // Handle survey listener notification
+  private fun observeSurveyFinishedListener(notification: EventNotification?) {
+    if (notification?.interaction == "Survey" && notification.name == "submit") {
+      Log.v(CORDOVA_TAG, "Survey finished notification received: $notification")
+      val result = PluginResult(PluginResult.Status.OK, true)
+      result.setKeepCallback(true)
+      savedCallbackContext?.get()?.sendPluginResult(result)
+    }
   }
 
   private companion object {
