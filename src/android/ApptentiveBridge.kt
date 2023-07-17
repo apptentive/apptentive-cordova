@@ -23,7 +23,7 @@ import org.json.JSONException
 class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
 
   private var isApptentiveRegistered = false
-  
+
   private var unreadCallbackContext: CallbackContext? = null
   private var surveyCallbackContext: CallbackContext? = null
 
