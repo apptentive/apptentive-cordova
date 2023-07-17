@@ -18,13 +18,14 @@ import org.apache.cordova.CordovaPlugin
 import org.apache.cordova.PluginResult
 import org.json.JSONArray
 import org.json.JSONException
-import java.lang.ref.WeakReference
 
 @OptIn(InternalUseOnly::class)
 class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
 
   private var isApptentiveRegistered = false
-  private var savedCallbackContext: WeakReference<CallbackContext>? = null
+  
+  private var unreadCallbackContext: CallbackContext? = null
+  private var surveyCallbackContext: CallbackContext? = null
 
   override fun onResume(multitasking: Boolean) {
     super.onResume(multitasking)
@@ -36,14 +37,15 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
 
   override fun onDestroy() {
     super.onDestroy()
+    android.util.Log.d("Apptentive", "[CORDOVA] Unregistering observers")
     Apptentive.messageCenterNotificationObservable.removeObserver(::observeUnreadMessageListener)
     Apptentive.eventNotificationObservable.removeObserver(::observeSurveyFinishedListener)
-    savedCallbackContext = null
+    unreadCallbackContext = null
+    surveyCallbackContext = null
   }
 
   override fun execute(action: String, args: JSONArray, callbackContext: CallbackContext): Boolean {
     android.util.Log.d("Apptentive", "[CORDOVA] Executing action: $action")
-    savedCallbackContext = WeakReference(callbackContext)
 
     val currentActivity = cordova.getActivity()
     if (currentActivity == null) {
@@ -209,6 +211,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
       ACTION_ADD_UNREAD_MESSAGES_LISTENER -> {
         return if (isApptentiveRegistered) {
           Log.d(CORDOVA_TAG, "Observing Message Center Notification")
+          unreadCallbackContext = callbackContext
           Apptentive.messageCenterNotificationObservable.observe(::observeUnreadMessageListener)
           true
         } else {
@@ -222,6 +225,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
       ACTION_SET_ON_SURVEY_FINISHED_LISTENER -> {
         if (isApptentiveRegistered) {
           Log.d(CORDOVA_TAG, "Observing Survey finished notification")
+          surveyCallbackContext = callbackContext
           Apptentive.eventNotificationObservable.observe(::observeSurveyFinishedListener)
         } else {
           android.util.Log.e("Apptentive", "[CORDOVA] Could not observe Survey finish " +
@@ -304,7 +308,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     Log.v(CORDOVA_TAG, "Message Center notification received: $notification")
     val result = PluginResult(PluginResult.Status.OK, notification?.unreadMessageCount ?: 0)
     result.setKeepCallback(true)
-    savedCallbackContext?.get()?.sendPluginResult(result)
+    unreadCallbackContext?.sendPluginResult(result)
   }
 
   // Handle survey listener notification
@@ -313,7 +317,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
       Log.v(CORDOVA_TAG, "Survey finished notification received: $notification")
       val result = PluginResult(PluginResult.Status.OK, true)
       result.setKeepCallback(true)
-      savedCallbackContext?.get()?.sendPluginResult(result)
+      surveyCallbackContext?.sendPluginResult(result)
     }
   }
 
