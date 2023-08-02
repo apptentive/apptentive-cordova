@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="apptentive-cordova" version="6.1.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="apptentive-cordova" version="6.2.1">
 
     <name>Apptentive</name>
     <description>Apptentive Plugin For Cordova</description>
@@ -16,7 +16,7 @@
         <preference name="ANDROID_APP_SIGNATURE"/>
 
         <!-- Apptentive Configuration Items -->
-        <preference name="ANDROID_INHERIT_APP_THEME" default="true"/>
+        <preference name="ANDROID_INHERIT_APP_THEME" default="false"/>
         <preference name="ANDROID_LOG_LEVEL" default="info"/>
         <preference name="ANDROID_USES_DEVICE_ENCRYPTION" default="false"/>
         <preference name="ANDROID_SANITIZE_LOG_MESSAGES" default="true"/>
@@ -30,8 +30,8 @@
 
         <!-- Setup Cordova config.xml file -->
         <config-file target="res/xml/config.xml" parent="/*">
-          <preference name="GradlePluginKotlinEnabled" value="true" />
-          <preference name="GradlePluginKotlinVersion" value="1.7.20" />
+          <preference name="GradlePluginKotlinEnabled" value="true"/>
+          <preference name="GradlePluginKotlinVersion" value="1.7.20"/>
           
           <feature name="ApptentiveBridge">
               <param name="android-package" value="com.apptentive.cordova.ApptentiveBridge"/>
@@ -54,7 +54,7 @@
             <meta-data android:name="apptentive_rating_interaction_throttle_length" android:value="$ANDROID_RATING_INTERACTION_THROTTLE_LENGTH"/>
         </config-file>
 
-        <framework src="com.apptentive:apptentive-kit-android:6.0.4"/>
+        <framework src="com.apptentive:apptentive-kit-android:6.1.0"/>
         <source-file src="src/android/ApptentiveBridge.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
         <source-file src="src/android/JsonHelper.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
         <source-file src="src/android/Util.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
@@ -93,7 +93,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
-            <string>6.2.0</string>
+            <string>6.2.1</string>
         </config-file>
 
         <!-- ApptentiveBridge -->
@@ -116,7 +116,7 @@
                 <source url="https://github.com/CocoaPods/Specs.git"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="ApptentiveKit" spec="~> 6.1.0" swift-version="5" />
+                <pod name="ApptentiveKit" spec="~&gt; 6.2.2" swift-version="5"/>
             </pods>
         </podspec>
     </platform>

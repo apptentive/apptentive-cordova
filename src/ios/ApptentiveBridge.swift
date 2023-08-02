@@ -37,7 +37,7 @@ class ApptentiveBridge: CDVPlugin {
                 let (credentials, logLevel, distributionVersion, sanitizeLogMessages) = try Self.resolveConfiguration(from: command.arguments)
                 ApptentiveLogger.logLevel = logLevel
                 ApptentiveLogger.shouldHideSensitiveLogs = sanitizeLogMessages
-                Apptentive.shared.distributionVersion = distributionVersion
+                Apptentive.shared.distributionVersion = "6.2.1"
                 Apptentive.shared.register(with: credentials) { result in
                     switch result {
                     case .success:
