@@ -61,12 +61,18 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
 
           // Parse log level
           val logLevel = try {
-            args.getString(0)
+            args.getString(1)
           } catch (e: JSONException) {
             null
           }
 
-          val configuration = resolveConfiguration(currentActivity.application, logLevel)
+          val distributionVersion = try {
+            args.getString(2)
+          } catch (e: JSONException) {
+            null
+          }
+
+          val configuration = resolveConfiguration(currentActivity.application, logLevel, distributionVersion)
 
           configuration?.let {
             Apptentive.register(currentActivity.application, configuration) {
@@ -243,7 +249,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     }
   }
 
-  private fun resolveConfiguration(context: Context, logLevel: String?): ApptentiveConfiguration? {
+  private fun resolveConfiguration(context: Context, logLevel: String?, distributionVersion: String?): ApptentiveConfiguration? {
     val apptentiveKey = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_KEY)
       ?: run {
         android.util.Log.e("Apptentive", "[CORDOVA] Unable to initialize Apptentive SDK: '$MANIFEST_KEY_APPTENTIVE_KEY' manifest key is missing")
@@ -258,7 +264,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
 
     val configuration = ApptentiveConfiguration(apptentiveKey, apptentiveSignature).apply {
       this.distributionName = "Cordova"
-      this.distributionVersion = "6.2.1"
+      this.distributionVersion = distributionVersion
     }
 
     val logLevelString = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_LOG_LEVEL)
