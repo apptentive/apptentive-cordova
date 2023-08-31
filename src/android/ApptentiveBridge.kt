@@ -67,9 +67,10 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
           }
 
           val distributionVersion = try {
-            args.getString(2)
+            args.getString(0)
           } catch (e: JSONException) {
-            null
+            callbackContext.error("Internal Error: Missing or invalid distribution_version")
+            "0.0.0"
           }
 
           val configuration = resolveConfiguration(currentActivity.application, logLevel, distributionVersion)
@@ -249,7 +250,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     }
   }
 
-  private fun resolveConfiguration(context: Context, logLevel: String?, distributionVersion: String?): ApptentiveConfiguration? {
+  private fun resolveConfiguration(context: Context, logLevel: String?, distributionVersion: String): ApptentiveConfiguration? {
     val apptentiveKey = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_KEY)
       ?: run {
         android.util.Log.e("Apptentive", "[CORDOVA] Unable to initialize Apptentive SDK: '$MANIFEST_KEY_APPTENTIVE_KEY' manifest key is missing")
