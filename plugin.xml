@@ -24,7 +24,7 @@
         <preference name="ANDROID_RATING_INTERACTION_THROTTLE_LENGTH" default="604800000"/>
 
         <!-- Define namespace for javascript reference -->
-        <js-module src="www/ApptentiveAndroid.js" name="Apptentive">
+        <js-module src="www/Apptentive.js" name="Apptentive">
             <clobbers target="Apptentive"/>
         </js-module>
 
@@ -70,7 +70,7 @@
         <!-- Apptentive Configuration Items -->
         <preference name="IOS_SANITIZE_LOG_MESSAGES" default="true"/>
 
-        <js-module src="www/ApptentiveIos.js" name="Apptentive">
+        <js-module src="www/Apptentive.js" name="Apptentive">
             <clobbers target="Apptentive"/>
         </js-module>
 
@@ -90,10 +90,6 @@
 
         <config-file target="*-Info.plist" parent="ApptentiveSanitizeLogMessages">
             <string>$IOS_SANITIZE_LOG_MESSAGES</string>
-        </config-file>
-
-        <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
-            <string>6.2.1</string>
         </config-file>
 
         <!-- ApptentiveBridge -->

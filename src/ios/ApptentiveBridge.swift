@@ -17,172 +17,238 @@ class ApptentiveBridge: CDVPlugin {
 
     var observation: NSKeyValueObservation?
 
-    override func pluginInitialize() {
-        super.pluginInitialize()
+    override func dispose() {
+        self.observation?.invalidate()
+        NotificationCenter.default.removeObserver(self)
+
+        super.dispose()
     }
 
-    @objc func execute(_ command: CDVInvokedUrlCommand) {
-        guard let callbackID = command.callbackId else {
-            assertionFailure("Missing callback ID in Apptentive Plugin")
-            return
-        }
-
+    @objc func addCustomDeviceData(_ command: CDVInvokedUrlCommand) {
         do {
-            guard let functionCall = command.arguments.first as? String else {
-                throw PluginError.invalidCommandArgument(command.arguments.first)
+            let (key, value) = try Self.customDataPair(from: command)
+            Apptentive.shared.deviceCustomData[key] = value
+            self.commandDelegate.send(.init(status: CDVCommandStatus_OK), callbackId: command.callbackId)
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
+
+    @objc func addCustomPersonData(_ command: CDVInvokedUrlCommand) {
+        do {
+            let (key, value) = try Self.customDataPair(from: command)
+            Apptentive.shared.personCustomData[key] = value
+            self.commandDelegate.send(.init(status: CDVCommandStatus_OK), callbackId: command.callbackId)
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
+
+    @objc func deviceReady(_ command: CDVInvokedUrlCommand) {
+        do {
+            let (credentials, logLevel, distributionVersion, sanitizeLogMessages) = try Self.resolveConfiguration(from: command)
+            ApptentiveLogger.logLevel = logLevel
+            ApptentiveLogger.shouldHideSensitiveLogs = sanitizeLogMessages
+            Apptentive.shared.distributionVersion = distributionVersion
+            Apptentive.shared.register(with: credentials) { result in
+                switch result {
+                case .success:
+                    self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: "Apptentive SDK registered successfully."), callbackId: command.callbackId)
+
+                case .failure(let error):
+                    self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+                }
+            }
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
+
+    @objc func engage(_ command: CDVInvokedUrlCommand) {
+        do {
+            var event = Event(name: try Self.string(from: command, range: 1...2))
+
+            if let customData = try Self.maybeCustomData(from: command, precedingArgumentCount: 1) {
+                event.customData = customData
             }
 
-            switch functionCall {
-            case "deviceReady", "registerWithLogs":
-                let (credentials, logLevel, distributionVersion, sanitizeLogMessages) = try Self.resolveConfiguration(from: command.arguments)
-                ApptentiveLogger.logLevel = logLevel
-                ApptentiveLogger.shouldHideSensitiveLogs = sanitizeLogMessages
-                Apptentive.shared.distributionVersion = "6.2.1"
-                Apptentive.shared.register(with: credentials) { result in
-                    switch result {
-                    case .success:
-                        self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: "Apptentive SDK registered successfully."), callbackId: callbackID)
+            Apptentive.shared.engage(event: event) { result in
+                switch result {
+                case .success(let didShowInteraction):
+                    self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: didShowInteraction), callbackId: command.callbackId)
 
-                    case .failure(let error):
-                        self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: callbackID)
-                    }
+                case .failure(let error):
+                    self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
                 }
-                return
+            }
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
 
-            case "engage":
-                Apptentive.shared.engage(event: Event(name: try Self.string(from: command.arguments))) { result in
-                    switch result {
-                    case .success(let didShowInteraction):
-                        self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: didShowInteraction), callbackId: callbackID)
+    @objc func getUnreadMessageCount(_ command: CDVInvokedUrlCommand) {
+        let result = Apptentive.shared.unreadMessageCount
+        return self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: result), callbackId: command.callbackId)
+    }
 
-                    case .failure(let error):
-                        self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: callbackID)
-                    }
-                }
-                return
+    @objc func putRatingProviderArg(_ command: CDVInvokedUrlCommand) {
+        self.sendUnimplementedError(command)
+    }
 
-            case "addCustomDeviceData":
-                let (key, value) = try Self.customDataPair(from: command.arguments)
-                Apptentive.shared.deviceCustomData[key] = value
+    @objc func removeCustomDeviceData(_ command: CDVInvokedUrlCommand) {
+        do {
+            Apptentive.shared.deviceCustomData[try Self.string(from: command)] = nil
+            self.commandDelegate.send(.init(status: CDVCommandStatus_OK), callbackId: command.callbackId)
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
 
-            case "addCustomPersonData":
-                let (key, value) = try Self.customDataPair(from: command.arguments)
-                Apptentive.shared.personCustomData[key] = value
+    @objc func removeCustomPersonData(_ command: CDVInvokedUrlCommand) {
+        do {
+            Apptentive.shared.personCustomData[try Self.string(from: command)] = nil
+            self.commandDelegate.send(.init(status: CDVCommandStatus_OK), callbackId: command.callbackId)
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
 
-            case "showMessageCenter":
-                let customData = try Self.maybeCustomData(from: command.arguments)
-                Apptentive.shared.presentMessageCenter(from: self.viewController, with: customData) { result in
-                    switch result {
-                    case .success(let didShow):
-                        self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: didShow), callbackId: callbackID)
+    @objc func getPersonEmail(_ command: CDVInvokedUrlCommand) {
+        let result = Apptentive.shared.personEmailAddress
+        return self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: result), callbackId: command.callbackId)
+    }
 
-                    case .failure(let error):
-                        self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: callbackID)
-                    }
-                }
-                return
+    @objc func setPersonEmail(_ command: CDVInvokedUrlCommand) {
+        do {
+            Apptentive.shared.personEmailAddress = try Self.string(from: command)
+            return self.commandDelegate.send(.init(status: CDVCommandStatus_OK), callbackId: command.callbackId)
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
 
-            case "removeCustomDeviceData":
-                Apptentive.shared.deviceCustomData[try Self.string(from: command.arguments)] = nil
+    @objc func getPersonName(_ command: CDVInvokedUrlCommand) {
+        let result = Apptentive.shared.personName
+        return self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: result), callbackId: command.callbackId)
+    }
 
-            case "removeCustomPersonData":
-                Apptentive.shared.personCustomData[try Self.string(from: command.arguments)] = nil
+    @objc func setPersonName(_ command: CDVInvokedUrlCommand) {
+        do {
+            Apptentive.shared.personName = try Self.string(from: command)
+            return self.commandDelegate.send(.init(status: CDVCommandStatus_OK), callbackId: command.callbackId)
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
 
-            case "sendAttachmentFileWithMimeType":
-                let _ = try Self.checkArgumentCount(command.arguments, 2...2)
-                throw PluginError.unimplementedCommand(functionCall)
+    @objc func addUnreadMessagesListener(_ command: CDVInvokedUrlCommand) {
+        do {
+            let _ = try Self.checkArgumentCount(command, 0...0)
+            self.observation = Apptentive.shared.observe(\.unreadMessageCount, options: [.new]) { [weak self] _, _ in
+                guard let self = self else { return }
+                let result = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: Apptentive.shared.unreadMessageCount)
+                result?.setKeepCallbackAs(true)
+                self.commandDelegate.send(result, callbackId: command.callbackId)
+            }
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
 
-            case "sendAttachmentImage":
-                let _ = try Self.checkArgumentCount(command.arguments, 2...2)
-                throw PluginError.unimplementedCommand(functionCall)
-
-            case "sendAttachmentText":
-                Apptentive.shared.sendAttachment(try Self.string(from: command.arguments))
-
-            case "setProperty":
-                let (key, value) = try Self.propertyPair(from: command.arguments)
-                Apptentive.shared[keyPath: try Self.property(from: key)] = value
-
-            case "getProperty":
-                let result = Apptentive.shared[keyPath: try Self.property(from: Self.string(from: command.arguments))]
-                return self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: result), callbackId: callbackID)
-
-            case "unreadMessageCount":
-                let result = Apptentive.shared.unreadMessageCount
-                return self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: result), callbackId: callbackID)
-
-            case "addUnreadMessagesListener":
-                let _ = try Self.checkArgumentCount(command.arguments, 0...0)
-                self.observation = Apptentive.shared.observe(\.unreadMessageCount, options: [.new]) { [weak self] _, _ in
-                    guard let self = self else { return }
+    @objc func setOnSurveyFinishedListener(_ command: CDVInvokedUrlCommand) {
+        do {
+            let _ = try Self.checkArgumentCount(command, 0...0)
+            NotificationCenter.default.addObserver(forName: .apptentiveEventEngaged, object: nil, queue: nil) { [weak self] (notification) in
+                if notification.userInfo?["eventType"] as? String == "submit" && notification.userInfo?["interactionType"] as? String == "Survey" {
                     let result = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: Apptentive.shared.unreadMessageCount)
                     result?.setKeepCallbackAs(true)
-                    self.commandDelegate.send(result, callbackId: callbackID)
+                    self?.commandDelegate.send(result, callbackId: command.callbackId)
                 }
-                return
-
-            case "addSurveyFinishedListener":
-                let _ = try Self.checkArgumentCount(command.arguments, 0...0)
-                NotificationCenter.default.addObserver(forName: .apptentiveEventEngaged, object: nil, queue: nil) { [weak self] (notification) in
-                    if notification.userInfo?["eventType"] as? String == "submit" && notification.userInfo?["interactionType"] as? String == "Survey" {
-                        let result = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: Apptentive.shared.unreadMessageCount)
-                        result?.setKeepCallbackAs(true)
-                        self?.commandDelegate.send(result, callbackId: callbackID)
-                    }
-                }
-                return
-
-            case "unregisterForNotifications":
-                self.observation?.invalidate()
-                NotificationCenter.default.removeObserver(self)
-
-            case "canShowInteraction":
-                Apptentive.shared.canShowInteraction(event: Event(name: try Self.string(from: command.arguments))) { result in
-                    switch result {
-                    case .success(let canShow):
-                        self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: canShow), callbackId: callbackID)
-
-                    case .failure(let error):
-                        self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: callbackID)
-                    }
-                }
-                return
-
-            case "canShowMessageCenter":
-                let _ = try Self.checkArgumentCount(command.arguments, 0...0)
-                throw PluginError.unimplementedCommand(functionCall)
-
-            case "openAppStore":
-                let _ = try Self.checkArgumentCount(command.arguments, 0...0)
-                throw PluginError.unimplementedCommand(functionCall)
-
-            default:
-                throw PluginError.unrecognizedCommand(functionCall)
             }
-
-            self.commandDelegate.send(.init(status: CDVCommandStatus_OK), callbackId: callbackID)
         } catch let error {
-            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: callbackID)
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
+
+    @objc func showMessageCenter(_ command: CDVInvokedUrlCommand) {
+        do {
+            let customData = try Self.maybeCustomData(from: command)
+            Apptentive.shared.presentMessageCenter(from: self.viewController, with: customData) { result in
+                switch result {
+                case .success(let didShow):
+                    self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: didShow), callbackId: command.callbackId)
+
+                case .failure(let error):
+                    self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+                }
+            }
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
+
+    @objc func canShowMessageCenter(_ command: CDVInvokedUrlCommand) {
+        do {
+            let _ = try Self.checkArgumentCount(command, 0...0)
+            Apptentive.shared.canShowMessageCenter { result in
+                switch result {
+                case .success(let canShow):
+                    self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: canShow), callbackId: command.callbackId)
+
+                case .failure(let error):
+                    self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+                }
+            }
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
+
+    @objc func canShowInteraction(_ command: CDVInvokedUrlCommand) {
+        do {
+            Apptentive.shared.canShowInteraction(event: Event(name: try Self.string(from: command))) { result in
+                switch result {
+                case .success(let canShow):
+                    self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: canShow), callbackId: command.callbackId)
+
+                case .failure(let error):
+                    self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+                }
+            }
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
+
+    @objc func sendAttachmentText(_ command: CDVInvokedUrlCommand) {
+        do {
+            let _ = try Self.checkArgumentCount(command, 1...1)
+            Apptentive.shared.sendAttachment(try Self.string(from: command))
+            self.commandDelegate.send(.init(status: CDVCommandStatus_OK), callbackId: command.callbackId)
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
         }
     }
 
     // MARK: - Helper functions
 
-    static func checkArgumentCount(_ arguments: [Any], _ range: ClosedRange<Int>) throws -> [Any] {
-        let nonFunctionArgumentCount = arguments.count - 1
-        guard range.contains(nonFunctionArgumentCount) else {
-            throw PluginError.incorrectArgumentCount(function: (arguments.first as? String) ?? "<unknown>", expecting: range, received: nonFunctionArgumentCount)
-        }
-
-        return Array(arguments.suffix(from: 1))
+    func sendUnimplementedError(_ command: CDVInvokedUrlCommand) {
+        self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: PluginError.unimplementedCommand(command.methodName).localizedDescription), callbackId: command.callbackId)
     }
 
-    static func resolveConfiguration(from arguments: [Any]) throws -> (Apptentive.AppCredentials, LogLevel, String, Bool) {
-        let functionArguments = try self.checkArgumentCount(arguments, 0...1)
+    static func checkArgumentCount(_ command: CDVInvokedUrlCommand, _ range: ClosedRange<Int>) throws -> [Any] {
+        guard range.contains(command.arguments.count) else {
+            throw PluginError.incorrectArgumentCount(function: command.methodName, expecting: range, received: command.arguments.count)
+        }
+
+        return command.arguments
+    }
+
+    static func resolveConfiguration(from command: CDVInvokedUrlCommand) throws -> (Apptentive.AppCredentials, LogLevel, String, Bool) {
+        let functionArguments = try self.checkArgumentCount(command, 2...2)
 
         guard let apptentiveKey = Bundle.main.object(forInfoDictionaryKey: "ApptentiveKey") as? String,
-              let apptentiveSignature = Bundle.main.object(forInfoDictionaryKey: "ApptentiveSignature") as? String,
-              let pluginVersion = Bundle.main.object(forInfoDictionaryKey: "ApptentivePluginVersion") as? String
+              let apptentiveSignature = Bundle.main.object(forInfoDictionaryKey: "ApptentiveSignature") as? String
         else {
             throw PluginError.missingVariablesInInfoDictionary
         }
@@ -190,21 +256,16 @@ class ApptentiveBridge: CDVPlugin {
         let sanitizeLogMessagesString = Bundle.main.object(forInfoDictionaryKey: "ApptentiveSanitizeLogMessages") as? String ?? "true"
         let sanitizeLogMessages = sanitizeLogMessagesString.lowercased() != "false"
 
-        var logLevel: LogLevel
-        if let logLevelArgument = functionArguments.first {
-            guard let logLevelString = logLevelArgument as? String else {
-                throw PluginError.invalidArgumentType(atIndex: 0, expecting: "String")
-            }
-            logLevel = try self.parseLogLevel(logLevelString)
-        } else {
-            logLevel = .info
+        let logLevel = try self.parseLogLevel(functionArguments[1])
+        guard let distributionVersion = functionArguments.first as? String else {
+            throw PluginError.invalidArgumentType(atIndex: 0, expecting: "String")
         }
 
-        return (.init(key: apptentiveKey, signature: apptentiveSignature), logLevel, pluginVersion, sanitizeLogMessages)
+        return (.init(key: apptentiveKey, signature: apptentiveSignature), logLevel, distributionVersion, sanitizeLogMessages)
     }
 
-    static func parseLogLevel(_ logLevelString: String) throws -> LogLevel {
-        switch logLevelString.lowercased() {
+    static func parseLogLevel(_ logLevel: Any) throws -> LogLevel {
+        switch (logLevel as? String)?.lowercased() {
         case "verbose":
             return .debug
         case "debug":
@@ -217,13 +278,15 @@ class ApptentiveBridge: CDVPlugin {
             return .error
         case "critical":
             return .critical
-        default:
+        case .some(let logLevelString):
             throw PluginError.unrecognizedLogLevel(logLevelString)
+        default:
+            throw PluginError.invalidArgumentType(atIndex: 1, expecting: "String")
         }
     }
 
-    static func string(from arguments: [Any]) throws -> String {
-        let functionArguments = try checkArgumentCount(arguments, 1...1)
+    static func string(from command: CDVInvokedUrlCommand, range: ClosedRange<Int> = 1...1) throws -> String {
+        let functionArguments = try checkArgumentCount(command, range)
 
         guard let string = functionArguments[0] as? String else {
             throw PluginError.invalidArgumentType(atIndex: 0, expecting: "String")
@@ -232,35 +295,8 @@ class ApptentiveBridge: CDVPlugin {
         return string
     }
 
-    static func propertyPair(from arguments: [Any]) throws -> (String, String?) {
-        let functionArguments = try checkArgumentCount(arguments, 2...2)
-
-        guard let key = functionArguments[0] as? String else {
-            throw PluginError.invalidPropertyKeyType
-        }
-
-        guard let value = functionArguments[1] as? String? else {
-            throw PluginError.invalidPropertyValueType
-        }
-
-        return (key, value)
-    }
-
-    static func property(from key: String) throws -> ReferenceWritableKeyPath<Apptentive, String?> {
-        switch key {
-        case "personName":
-            return \Apptentive.personName
-
-        case "personEmailAddress":
-            return \Apptentive.personEmailAddress
-
-        default:
-            throw PluginError.invalidPropertyKeyType
-        }
-    }
-
-    static func customDataPair(from arguments: [Any]) throws -> (String, CustomDataCompatible) {
-        let functionArguments = try checkArgumentCount(arguments, 2...2)
+    static func customDataPair(from command: CDVInvokedUrlCommand) throws -> (String, CustomDataCompatible) {
+        let functionArguments = try checkArgumentCount(command, 2...2)
 
         guard let key = functionArguments[0] as? String else {
             throw PluginError.invalidCustomDataKeyType
@@ -271,16 +307,16 @@ class ApptentiveBridge: CDVPlugin {
         return (key, value)
     }
 
-    static func maybeCustomData(from arguments: [Any]) throws -> CustomData? {
-        let functionArguments = try self.checkArgumentCount(arguments, 0...1)
+    static func maybeCustomData(from command: CDVInvokedUrlCommand, precedingArgumentCount: Int = 0) throws -> CustomData? {
+        let functionArguments = try self.checkArgumentCount(command, precedingArgumentCount...(precedingArgumentCount + 1))
 
-        guard functionArguments.count == 1 else {
+        guard functionArguments.count == precedingArgumentCount + 1 else {
             return nil
         }
 
-        if let customDataDictionary = functionArguments[0] as? [AnyHashable: Any] {
+        if let customDataDictionary = functionArguments[precedingArgumentCount] as? [AnyHashable: Any] {
             return try self.convertCustomData(customDataDictionary)
-        } else if let jsonString = functionArguments[0] as? String {
+        } else if let jsonString = functionArguments[precedingArgumentCount] as? String {
             guard let data = jsonString.data(using: .utf8) else {
                 throw PluginError.invalidJSONData
             }
