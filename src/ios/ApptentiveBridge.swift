@@ -50,6 +50,7 @@ class ApptentiveBridge: CDVPlugin {
             ApptentiveLogger.logLevel = logLevel
             ApptentiveLogger.shouldHideSensitiveLogs = sanitizeLogMessages
             Apptentive.shared.distributionVersion = distributionVersion
+            Apptentive.shared.distributionName = "Cordova"
             Apptentive.shared.register(with: credentials) { result in
                 switch result {
                 case .success:
