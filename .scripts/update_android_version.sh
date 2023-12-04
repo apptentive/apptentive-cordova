@@ -4,22 +4,22 @@
 set -e
 
 # Check for correct number of arguments.
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 <build.gradle_filename> <new.apptentive-kit-android.version>"
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <new.apptentive-kit-android.version>"
     exit 1
 fi
 
-dependency_name="com.apptentive:apptentive-kit-android"
-new_version="$2"
-build_gradle_file="$1"
+plugin_xml="plugin.xml"
+new_version="$1"
 
-# Check if the build.gradle file exists
-if [ ! -f "$build_gradle_file" ]; then
-    echo "Error: $build_gradle_file does not exist."
+# Check if the plugin.xml exists
+if [ ! -f "$plugin_xml" ]; then
+    echo "Error: $plugin_xml does not exist."
     exit 1
 fi
 
-# Use sed to update the version in the podspec file
-sed -i "s/implementation '$dependency_name:[^']*'/implementation '$dependency_name:$new_version'/" "$build_gradle_file"
+# Use sed to update the version in the plugin xml file
+sed -i "s/<framework src=\"com.apptentive:apptentive-kit-android:[^\"]*\"/<framework src=\"com.apptentive:apptentive-kit-android:$new_version\"/" "$plugin_xml"
 
-echo "Updated $dependency_name to version $new_version in $build_gradle_file."
+echo "Updated Android apptentive kit version to $new_version in $plugin_xml."
+

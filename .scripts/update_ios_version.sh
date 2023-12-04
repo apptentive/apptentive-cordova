@@ -9,17 +9,16 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-dependency_name="ApptentiveKit"
-new_version="$2"
-podspec_file="$1"
+plugin_xml="plugin.xml"
+new_version="$1"
 
-# Check if the podspec file exists
-if [ ! -f "$podspec_file" ]; then
-    echo "Error: $podspec_file does not exist."
+# Check if the plugin.xml exists
+if [ ! -f "$plugin_xml" ]; then
+    echo "Error: $plugin_xml does not exist."
     exit 1
 fi
 
-# Use sed to update the version in the podspec file
-sed -i "s/s.dependency '$dependency_name', '[^']*'/s.dependency '$dependency_name', '~> $new_version'/" "$podspec_file"
+# Use sed to update the version in the plugin xml file
+sed -i "s/<pod name=\"ApptentiveKit\" spec=\"[^\"]*\"/<pod name=\"ApptentiveKit\" spec=\"~\&gt\; $new_version\"/" "$plugin_xml"
 
-echo "Updated $dependency_name to version $new_version in $podspec_file."
+echo "Updated iOS ApptentiveKit version to $new_version in $plugin_xml."

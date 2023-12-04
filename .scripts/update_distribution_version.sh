@@ -29,14 +29,14 @@ echo "Updated version to $new_version in $package_json."
 
 plugin_xml="plugin.xml"
 
-# Check if the podspec file exists
+# Check if the plugin.xml exists
 if [ ! -f "$plugin_xml" ]; then
     echo "Error: $plugin_xml does not exist."
     exit 1
 fi
 
 # Use sed to update the version in the plugin xml file
-sed -i "s/<pod name=\"ApptentiveKit\" spec=\"[^\"]*\"/<pod name=\"ApptentiveKit\" spec=\"&gt; $new_version\"/" "$plugin_xml"
+sed -i "s/<plugin xmlns=\"http:\/\/apache.org\/cordova\/ns\/plugins\/1.0\" xmlns:android=\"http:\/\/schemas.android.com\/apk\/res\/android\" id=\"apptentive-cordova\" version=\"[^\"]*\"/<plugin xmlns=\"http:\/\/apache.org\/cordova\/ns\/plugins\/1.0\" xmlns:android=\"http:\/\/schemas.android.com\/apk\/res\/android\" id=\"apptentive-cordova\" version=\"$new_version\"/" "$plugin_xml"
 
 echo "Updated version to $new_version in $plugin_xml."
 
