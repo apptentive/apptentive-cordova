@@ -112,7 +112,7 @@
                 <source url="https://github.com/CocoaPods/Specs.git"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="ApptentiveKit" spec="~&gt; 6.2.2" swift-version="5"/>
+                <pod name="ApptentiveKit" spec="~&gt; 6.7.0" swift-version="5"/>
             </pods>
         </podspec>
     </platform>
