@@ -54,7 +54,7 @@
             <meta-data android:name="apptentive_rating_interaction_throttle_length" android:value="$ANDROID_RATING_INTERACTION_THROTTLE_LENGTH"/>
         </config-file>
 
-        <framework src="com.apptentive:apptentive-kit-android:6.1.0"/>
+        <framework src="com.apptentive:apptentive-kit-android:6.7.0"/>
         <source-file src="src/android/ApptentiveBridge.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
         <source-file src="src/android/JsonHelper.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
         <source-file src="src/android/Util.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
@@ -112,7 +112,7 @@
                 <source url="https://github.com/CocoaPods/Specs.git"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="ApptentiveKit" spec="~&gt; 6.2.2" swift-version="5"/>
+                <pod name="ApptentiveKit" spec="~&gt; 6.7.0" swift-version="5"/>
             </pods>
         </podspec>
     </platform>
