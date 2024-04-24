@@ -24,7 +24,7 @@
         <preference name="ANDROID_RATING_INTERACTION_THROTTLE_LENGTH" default="604800000"/>
 
         <!-- Define namespace for javascript reference -->
-        <js-module src="www/ApptentiveAndroid.js" name="Apptentive">
+        <js-module src="www/Apptentive.js" name="Apptentive">
             <clobbers target="Apptentive"/>
         </js-module>
 
@@ -54,7 +54,7 @@
             <meta-data android:name="apptentive_rating_interaction_throttle_length" android:value="$ANDROID_RATING_INTERACTION_THROTTLE_LENGTH"/>
         </config-file>
 
-        <framework src="com.apptentive:apptentive-kit-android:6.1.0"/>
+        <framework src="com.apptentive:apptentive-kit-android:6.7.0"/>
         <source-file src="src/android/ApptentiveBridge.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
         <source-file src="src/android/JsonHelper.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
         <source-file src="src/android/Util.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
@@ -70,7 +70,7 @@
         <!-- Apptentive Configuration Items -->
         <preference name="IOS_SANITIZE_LOG_MESSAGES" default="true"/>
 
-        <js-module src="www/ApptentiveIos.js" name="Apptentive">
+        <js-module src="www/Apptentive.js" name="Apptentive">
             <clobbers target="Apptentive"/>
         </js-module>
 
@@ -90,10 +90,6 @@
 
         <config-file target="*-Info.plist" parent="ApptentiveSanitizeLogMessages">
             <string>$IOS_SANITIZE_LOG_MESSAGES</string>
-        </config-file>
-
-        <config-file target="*-Info.plist" parent="ApptentivePluginVersion">
-            <string>6.2.1</string>
         </config-file>
 
         <!-- ApptentiveBridge -->
@@ -116,7 +112,7 @@
                 <source url="https://github.com/CocoaPods/Specs.git"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="ApptentiveKit" spec="~&gt; 6.2.2" swift-version="5"/>
+                <pod name="ApptentiveKit" spec="~&gt; 6.7.0" swift-version="5"/>
             </pods>
         </podspec>
     </platform>

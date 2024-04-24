@@ -1,4 +1,6 @@
 var Apptentive = {
+    distributionVersion: "6.2.2",
+
     addCustomDeviceData: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addCustomDeviceData", [key, value]);
     },
@@ -9,12 +11,12 @@ var Apptentive = {
 
     deviceReady: function (successCallback, errorCallback) {
         console.log("Apptentive.deviceReady()");
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "deviceReady", []);
+        this.registerWithLogs(successCallback, errorCallback, "Info");
     },
 
     registerWithLogs: function (successCallback, errorCallback, loglevel) {
         console.log("Apptentive.registerWithLogs()");
-        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "deviceReady", [loglevel]);
+        cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "deviceReady", [this.distributionVersion, loglevel]);
     },
 
     engage: function (successCallback, errorCallback, eventName, customData) {
