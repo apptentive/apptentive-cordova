@@ -1,5 +1,5 @@
 var Apptentive = {
-    distributionVersion: "6.2.2",
+    distributionVersion: "6.7.0",
 
     addCustomDeviceData: function (successCallback, errorCallback, key, value) {
         cordova.exec(successCallback, errorCallback, "ApptentiveBridge", "addCustomDeviceData", [key, value]);
