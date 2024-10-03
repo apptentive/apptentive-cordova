@@ -236,7 +236,7 @@ class ApptentiveBridge: CDVPlugin {
             let _ = try Self.checkArgumentCount(command, 1...1)
             let tokenString = try Self.string(from: command)
             guard let tokenData = Data(hexString: tokenString) else {
-                throw PluginError.invalidJSONData
+                throw PluginError.invalidTokenString(tokenString)
             }
             Apptentive.shared.setRemoteNotificationDeviceToken(tokenData)
             self.commandDelegate.send(.init(status: CDVCommandStatus_OK), callbackId: command.callbackId)
