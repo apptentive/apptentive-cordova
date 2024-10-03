@@ -447,7 +447,6 @@ extension Data {
     /// Returns nil if the string contains non-hexadecimal characters or has an odd number of characters.
     /// - Parameter hexString: A string of hexadecimal characters.
     init?(hexString: String) {
-        // TODO: Use `Scanner` when we drop iOS <13 support.
         var result = Data()
         var index = hexString.startIndex
 
