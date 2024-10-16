@@ -242,6 +242,16 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
         }
         return true
       }
+      ACTION_SET_PUSH_NOTIFICATION_INTEGRATION -> {
+        if (isApptentiveRegistered) {
+          val provider = parsePushProvider("apptentive")
+          android.util.Log.d("Apptentive", "[CORDOVA] Provider is set to $provider")
+          val token = args.getString(0)
+          Apptentive.setPushNotificationIntegration(currentActivity.application, provider, token)
+        } else 
+            android.util.Log.d("Apptentive", "[CORDOVA] Apptentive is not registered, push notification is not integerated")
+        return true
+      }
       else -> {
         android.util.Log.e("Apptentive", "[CORDOVA] Unhandled action in ApptentiveBridge: $action")
         callbackContext.error("Unhandled action in ApptentiveBridge: $action")
@@ -328,6 +338,16 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     }
   }
 
+  private fun parsePushProvider(pushProvider: String): Int {
+    when {
+        pushProvider.contains("apptentive") -> { return Apptentive.PUSH_PROVIDER_APPTENTIVE }
+        pushProvider.contains("amazon") -> { return Apptentive.PUSH_PROVIDER_AMAZON_AWS_SNS }
+        pushProvider.contains("parse") -> { return Apptentive.PUSH_PROVIDER_PARSE }
+        pushProvider.contains("urban_airship") -> { return Apptentive.PUSH_PROVIDER_URBAN_AIRSHIP }
+        else -> throw IllegalArgumentException("Unknown push provider: $pushProvider")
+    }
+  }
+
   private companion object {
     val CORDOVA_TAG = LogTag("CORDOVA")
 
@@ -360,6 +380,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     const val ACTION_SHOW_MESSAGE_CENTER = "showMessageCenter"
     const val ACTION_CAN_SHOW_MESSAGE_CENTER = "canShowMessageCenter"
     const val ACTION_CAN_SHOW_INTERACTION = "canShowInteraction"
+    const val ACTION_SET_PUSH_NOTIFICATION_INTEGRATION = "setPushNotificationIntegration"
   }
 
   override fun getApptentiveActivityInfo(): Activity? {

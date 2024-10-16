@@ -231,6 +231,20 @@ class ApptentiveBridge: CDVPlugin {
         }
     }
 
+    @objc func setPushNotificationIntegration(_ command: CDVInvokedUrlCommand) {
+        do {
+            let _ = try Self.checkArgumentCount(command, 1...1)
+            let tokenString = try Self.string(from: command)
+            guard let tokenData = Data(hexString: tokenString) else {
+                throw PluginError.invalidTokenString(tokenString)
+            }
+            Apptentive.shared.setRemoteNotificationDeviceToken(tokenData)
+            self.commandDelegate.send(.init(status: CDVCommandStatus_OK), callbackId: command.callbackId)
+        } catch let error {
+            self.commandDelegate.send(.init(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription), callbackId: command.callbackId)
+        }
+    }
+
     // MARK: - Helper functions
 
     func sendUnimplementedError(_ command: CDVInvokedUrlCommand) {
@@ -376,6 +390,7 @@ class ApptentiveBridge: CDVPlugin {
         case invalidArgumentType(atIndex: Int, expecting: String)
         case unimplementedCommand(String)
         case invalidJSONData
+        case invalidTokenString(String)
         case unrecognizedLogLevel(String)
 
         var errorDescription: String? {
@@ -416,9 +431,39 @@ class ApptentiveBridge: CDVPlugin {
             case .invalidJSONData:
                 return "The string passed for the custom data argument is not valid JSON."
 
+            case .invalidTokenString(let string):
+                return "The device token (\(string)) was not recognized as valid hex-encoded data."
+
             case .unrecognizedLogLevel(let logLevel):
                 return "The log level (\"\(logLevel)\") is not a valid log level (valid values are \"verbose\", \"debug\", \"info\", \"warn\", \"error\", and \"critical\")."
             }
         }
+    }
+}
+
+extension Data {
+    /// Creates a new Data object by converting hexadecimal characters in the input string.
+    ///
+    /// Returns nil if the string contains non-hexadecimal characters or has an odd number of characters.
+    /// - Parameter hexString: A string of hexadecimal characters.
+    init?(hexString: String) {
+        var result = Data()
+        var index = hexString.startIndex
+
+        while index < hexString.endIndex {
+            guard let endIndex = hexString.index(index, offsetBy: 2, limitedBy: hexString.endIndex) else {
+                return nil
+            }
+
+            guard let byte = UInt8(String(hexString[index..<endIndex]), radix: 16) else {
+                return nil
+            }
+
+            result.append(byte)
+
+            index = endIndex
+        }
+
+        self = result
     }
 }
