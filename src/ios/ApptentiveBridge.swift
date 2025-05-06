@@ -46,12 +46,12 @@ class ApptentiveBridge: CDVPlugin {
 
     @objc func deviceReady(_ command: CDVInvokedUrlCommand) {
         do {
-            let (credentials, logLevel, distributionVersion, sanitizeLogMessages) = try Self.resolveConfiguration(from: command)
+            let (credentials, region, logLevel, distributionVersion, sanitizeLogMessages) = try Self.resolveConfiguration(from: command)
             ApptentiveLogger.logLevel = logLevel
             ApptentiveLogger.shouldHideSensitiveLogs = sanitizeLogMessages
             Apptentive.shared.distributionVersion = distributionVersion
             Apptentive.shared.distributionName = "Cordova"
-            Apptentive.shared.register(with: credentials) { result in
+            Apptentive.shared.register(with: credentials, region: region) { result in
                 switch result {
                 case .success:
                     self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: "Apptentive SDK registered successfully."), callbackId: command.callbackId)
@@ -245,8 +245,8 @@ class ApptentiveBridge: CDVPlugin {
         return command.arguments
     }
 
-    static func resolveConfiguration(from command: CDVInvokedUrlCommand) throws -> (Apptentive.AppCredentials, LogLevel, String, Bool) {
-        let functionArguments = try self.checkArgumentCount(command, 2...2)
+    static func resolveConfiguration(from command: CDVInvokedUrlCommand) throws -> (Apptentive.AppCredentials, Apptentive.Region, LogLevel, String, Bool) {
+        let functionArguments = try self.checkArgumentCount(command, 2...3)
 
         guard let apptentiveKey = Bundle.main.object(forInfoDictionaryKey: "ApptentiveKey") as? String,
               let apptentiveSignature = Bundle.main.object(forInfoDictionaryKey: "ApptentiveSignature") as? String
@@ -262,7 +262,15 @@ class ApptentiveBridge: CDVPlugin {
             throw PluginError.invalidArgumentType(atIndex: 0, expecting: "String")
         }
 
-        return (.init(key: apptentiveKey, signature: apptentiveSignature), logLevel, distributionVersion, sanitizeLogMessages)
+        var region: Apptentive.Region = .us
+
+        if functionArguments.count == 3,
+            let apiBaseURLString = functionArguments[2] as? String,
+            let apiBaseURL = URL(string: apiBaseURLString) {
+            region = Apptentive.Region(apiBaseURL: apiBaseURL)
+        }
+
+        return (.init(key: apptentiveKey, signature: apptentiveSignature), region, logLevel, distributionVersion, sanitizeLogMessages)
     }
 
     static func parseLogLevel(_ logLevel: Any) throws -> LogLevel {
