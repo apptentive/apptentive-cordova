@@ -15,7 +15,7 @@ object Util {
         appPackageName,
         PackageManager.GET_META_DATA or PackageManager.GET_RECEIVERS
       )
-      val metaData = packageInfo.applicationInfo.metaData
+      val metaData = packageInfo?.applicationInfo?.metaData
       return metaData?.getString(key)?.trim()
     } catch (e: Exception) {
       android.util.Log.e("Apptentive", "[CORDOVA] Unexpected error while reading application or package info.")
@@ -34,7 +34,7 @@ object Util {
         appPackageName,
         PackageManager.GET_META_DATA or PackageManager.GET_RECEIVERS
       )
-      val metaData = packageInfo.applicationInfo.metaData
+      val metaData = packageInfo?.applicationInfo?.metaData
       return metaData?.getBoolean(key) == true
     } catch (e: Exception) {
       android.util.Log.e("Apptentive", "[CORDOVA] Unexpected error while reading application or package info.", e)
@@ -53,7 +53,7 @@ object Util {
         appPackageName,
         PackageManager.GET_META_DATA or PackageManager.GET_RECEIVERS
       )
-      val metaData = packageInfo.applicationInfo.metaData
+      val metaData = packageInfo?.applicationInfo?.metaData
       return metaData?.getInt(key)
     } catch (e: Exception) {
       android.util.Log.e("Apptentive", "[CORDOVA] Unexpected error while reading application or package info.", e)
