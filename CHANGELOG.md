@@ -9,6 +9,7 @@ This document lets you know what has changed in the Cordova plugin. For changes 
 
 - Apptentive Android SDK: 6.9.3
 - Apptentive iOS SDK: 6.9.1
+- Upgraded the plugin to support targeting Android 35
 
 # 2024-10-03 - v6.9.0
 
