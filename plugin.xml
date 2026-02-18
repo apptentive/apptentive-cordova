@@ -70,8 +70,8 @@
         <!-- Require API key -->
         <preference name="IOS_APP_KEY"/>
         <preference name="IOS_APP_SIGNATURE"/>
-        <preference name="ANDROID_REGION" default="us"/>
-        <preference name="ANDROID_OVERRIDE_BASE_URL" default=""/>
+        <preference name="IOS_REGION" default="us"/>
+        <preference name="IOS_OVERRIDE_BASE_URL" default=""/>
 
         <!-- Apptentive Configuration Items -->
         <preference name="IOS_SANITIZE_LOG_MESSAGES" default="true"/>
