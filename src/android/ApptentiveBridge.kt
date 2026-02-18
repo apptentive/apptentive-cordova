@@ -5,6 +5,7 @@ import android.content.Context
 import apptentive.com.android.feedback.Apptentive
 import apptentive.com.android.feedback.ApptentiveActivityInfo
 import apptentive.com.android.feedback.ApptentiveConfiguration
+import apptentive.com.android.feedback.ApptentiveRegion
 import apptentive.com.android.feedback.EngagementResult
 import apptentive.com.android.feedback.model.EventNotification
 import apptentive.com.android.feedback.model.MessageCenterNotification
@@ -59,13 +60,6 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
         
         if (currentActivity != null && !Apptentive.registered) {
 
-          // Parse log level
-          val logLevel = try {
-            args.getString(1)
-          } catch (e: JSONException) {
-            null
-          }
-
           val distributionVersion = try {
             args.getString(0)
           } catch (e: JSONException) {
@@ -73,7 +67,26 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
             "0.0.0"
           }
 
-          val configuration = resolveConfiguration(currentActivity.application, logLevel, distributionVersion)
+          // Parse log level
+          val logLevel = try {
+            args.getString(1)
+          } catch (e: JSONException) {
+            null
+          }
+
+          val region = try {
+            args.getString(1)
+          } catch (e: JSONException) {
+            null
+          }
+
+          val apiBaseURL = try {
+            args.getString(2)
+          } catch (e: JSONException) {
+            null
+          }
+
+          val configuration = resolveConfiguration(currentActivity.application, logLevel, distributionVersion, region, apiBaseURL)
 
           configuration?.let {
             Apptentive.register(currentActivity.application, configuration) {
@@ -260,7 +273,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     }
   }
 
-  private fun resolveConfiguration(context: Context, logLevel: String?, distributionVersion: String): ApptentiveConfiguration? {
+  private fun resolveConfiguration(context: Context, logLevel: String?, distributionVersion: String, region: String?, overrideBaseURL: String?): ApptentiveConfiguration? {
     val apptentiveKey = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_KEY)
       ?: run {
         android.util.Log.e("Apptentive", "[CORDOVA] Unable to initialize Apptentive SDK: '$MANIFEST_KEY_APPTENTIVE_KEY' manifest key is missing")
@@ -281,6 +294,20 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     val logLevelString = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_LOG_LEVEL)
     android.util.Log.d("Apptentive", "[CORDOVA] Log Level: $logLevelString")
     if (logLevelString != null) configuration.logLevel = parseLogLevel(logLevel ?: logLevelString)
+
+    val regionString = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_REGION)
+    android.util.Log.d("Apptentive", "[CORDOVA] Region: $regionString")
+
+    val overrideBaseURLString = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_OVERRIDE_BASE_URL)
+    android.util.Log.d("Apptentive", "[CORDOVA] BaseURL: $overrideBaseURLString")
+
+    if (!overrideBaseURLString.isNullOrBlank()) {
+      configuration.region =  parseRegion(overrideBaseURLString) 
+    } else if(regionString != null) {
+      configuration.region = parseRegion(regionString)
+    } else {
+      android.util.Log.d("Apptentive", "[CORDOVA] region is not set, using default US region")
+    }
 
     configuration.shouldEncryptStorage = Util.getManifestMetadataBoolean(context, MANIFEST_KEY_APPTENTIVE_SHOULD_ENCRYPT_STORAGE, configuration.shouldEncryptStorage)
     android.util.Log.d("Apptentive", "[CORDOVA] Encryption: ${configuration.shouldEncryptStorage}")
@@ -310,6 +337,16 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
       "warn" -> LogLevel.Warning
       "error" -> LogLevel.Error
       else -> LogLevel.Info
+    }
+  }
+
+  private fun parseRegion(region: String): ApptentiveRegion {
+    return when (region) {
+      "us" -> ApptentiveRegion.US
+      "eu" -> ApptentiveRegion.EU
+      "au" -> ApptentiveRegion.AU
+      "cn" -> ApptentiveRegion.CN
+      else -> ApptentiveRegion.Custom(region)
     }
   }
 
@@ -360,6 +397,8 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     const val MANIFEST_KEY_APPTENTIVE_SHOULD_SANITIZE_LOG_MESSAGES = "apptentive_sanitize_log_messages"
     const val MANIFEST_KEY_APPTENTIVE_RATING_INTERACTION_THROTTLE_LENGTH = "apptentive_rating_interaction_throttle_length"
     const val MANIFEST_KEY_APPTENTIVE_CUSTOM_APP_STORE_URL = "apptentive_custom_app_store_url"
+    const val MANIFEST_KEY_APPTENTIVE_REGION = "apptentive_region"
+    const val MANIFEST_KEY_APPTENTIVE_OVERRIDE_BASE_URL = "apptentive_override_base_url"
 
     const val ACTION_DEVICE_READY = "deviceReady"
     const val ACTION_ADD_CUSTOM_DEVICE_DATA = "addCustomDeviceData"

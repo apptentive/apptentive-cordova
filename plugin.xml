@@ -6,7 +6,7 @@
     <keywords>apptentive</keywords>
     <engines>
       <engine name="cordova" version=">=10.0.1"/>
-      <engine name="cordova-android" version=">=9.0.0"/>
+      <engine name="cordova-android" version=">=12.0.0"/>
     </engines>
 
     <!-- android -->
@@ -22,6 +22,8 @@
         <preference name="ANDROID_SANITIZE_LOG_MESSAGES" default="true"/>
         <preference name="ANDROID_CUSTOM_APP_STORE_URL" default=" "/>
         <preference name="ANDROID_RATING_INTERACTION_THROTTLE_LENGTH" default="604800000"/>
+        <preference name="ANDROID_REGION" default="us"/>
+        <preference name="ANDROID_OVERRIDE_BASE_URL" default=""/>
 
         <!-- Define namespace for javascript reference -->
         <js-module src="www/Apptentive.js" name="Apptentive">
@@ -52,9 +54,11 @@
             <meta-data android:name="apptentive_custom_app_store_url" android:value="$ANDROID_CUSTOM_APP_STORE_URL"/>
             <meta-data android:name="apptentive_sanitize_log_messages" android:value="$ANDROID_SANITIZE_LOG_MESSAGES"/>
             <meta-data android:name="apptentive_rating_interaction_throttle_length" android:value="$ANDROID_RATING_INTERACTION_THROTTLE_LENGTH"/>
+            <meta-data android:name="apptentive_region" android:value="$ANDROID_REGION"/>
+            <meta-data android:name="apptentive_override_base_url" android:value="$ANDROID_OVERRIDE_BASE_URL"/>
         </config-file>
 
-        <framework src="com.apptentive:apptentive-kit-android:7.0.0"/>
+        <framework src="com.apptentive:apptentive-kit-android:7.0.0" />
         <source-file src="src/android/ApptentiveBridge.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
         <source-file src="src/android/JsonHelper.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
         <source-file src="src/android/Util.kt" target-dir="app/src/main/kotlin/com/apptentive/cordova"/>
@@ -66,6 +70,8 @@
         <!-- Require API key -->
         <preference name="IOS_APP_KEY"/>
         <preference name="IOS_APP_SIGNATURE"/>
+        <preference name="ANDROID_REGION" default="us"/>
+        <preference name="ANDROID_OVERRIDE_BASE_URL" default=""/>
 
         <!-- Apptentive Configuration Items -->
         <preference name="IOS_SANITIZE_LOG_MESSAGES" default="true"/>

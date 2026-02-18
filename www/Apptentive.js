@@ -7,7 +7,7 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "addCustomDeviceData",
-      [key, value]
+      [key, value],
     );
   },
 
@@ -17,23 +17,29 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "addCustomPersonData",
-      [key, value]
+      [key, value],
     );
   },
 
   deviceReady: function (successCallback, errorCallback) {
     console.log("Apptentive.deviceReady()");
-    this.registerWithLogs(successCallback, errorCallback, "Info", null);
+    this.registerWithLogs(successCallback, errorCallback, "Info", "us", null);
   },
 
-  registerWithLogs: function (successCallback, errorCallback, loglevel, apiBaseURL = null) {
+  registerWithLogs: function (
+    successCallback,
+    errorCallback,
+    loglevel,
+    region,
+    overrideBaseURL = null,
+  ) {
     console.log("Apptentive.registerWithLogs()");
     cordova.exec(
       successCallback,
       errorCallback,
       "ApptentiveBridge",
       "deviceReady",
-      [this.distributionVersion, loglevel, apiBaseURL]
+      [this.distributionVersion, loglevel, region, overrideBaseURL],
     );
   },
 
@@ -44,7 +50,7 @@ var Apptentive = {
         errorCallback,
         "ApptentiveBridge",
         "engage",
-        [eventName, customData]
+        [eventName, customData],
       );
     } else {
       cordova.exec(
@@ -52,7 +58,7 @@ var Apptentive = {
         errorCallback,
         "ApptentiveBridge",
         "engage",
-        [eventName]
+        [eventName],
       );
     }
   },
@@ -63,7 +69,7 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "getUnreadMessageCount",
-      []
+      [],
     );
   },
 
@@ -73,7 +79,7 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "putRatingProviderArg",
-      [key, value]
+      [key, value],
     );
   },
 
@@ -83,7 +89,7 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "removeCustomDeviceData",
-      [key]
+      [key],
     );
   },
 
@@ -93,7 +99,7 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "removeCustomPersonData",
-      [key]
+      [key],
     );
   },
 
@@ -103,7 +109,7 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "getPersonEmail",
-      []
+      [],
     );
   },
 
@@ -113,7 +119,7 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "setPersonEmail",
-      [email]
+      [email],
     );
   },
 
@@ -123,7 +129,7 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "getPersonName",
-      []
+      [],
     );
   },
 
@@ -133,14 +139,14 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "setPersonName",
-      [name]
+      [name],
     );
   },
 
   setRatingProvider: function (
     successCallback,
     errorCallback,
-    ratingProviderName
+    ratingProviderName,
   ) {
     successCallback(); // Deprecated. Use the ANDROID_CUSTOM_APP_STORE_URL variable instead.
   },
@@ -151,7 +157,7 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "addUnreadMessagesListener",
-      []
+      [],
     );
   },
 
@@ -161,7 +167,7 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "setOnSurveyFinishedListener",
-      []
+      [],
     );
   },
 
@@ -172,7 +178,7 @@ var Apptentive = {
         errorCallback,
         "ApptentiveBridge",
         "showMessageCenter",
-        [customData]
+        [customData],
       );
     } else {
       cordova.exec(
@@ -180,7 +186,7 @@ var Apptentive = {
         errorCallback,
         "ApptentiveBridge",
         "showMessageCenter",
-        []
+        [],
       );
     }
   },
@@ -191,7 +197,7 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "canShowMessageCenter",
-      []
+      [],
     );
   },
 
@@ -201,7 +207,7 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "canShowInteraction",
-      [eventName]
+      [eventName],
     );
   },
 
@@ -223,21 +229,21 @@ var Apptentive = {
       errorCallback,
       "ApptentiveBridge",
       "sendAttachmentText",
-      [text]
+      [text],
     );
   },
 
   setPushNotificationIntegration: function (
     successCallback,
     errorCallback,
-    token
+    token,
   ) {
     cordova.exec(
       successCallback,
       errorCallback,
       "ApptentiveBridge",
       "setPushNotificationIntegration",
-      [token]
+      [token],
     );
   },
 };
