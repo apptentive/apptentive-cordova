@@ -115,6 +115,7 @@
 
         <podspec>
             <config>
+		<source url="https://github.com/apptentive/cocoapods-specs.git"/>
                 <source url="https://github.com/CocoaPods/Specs.git"/>
             </config>
             <pods use-frameworks="true">
