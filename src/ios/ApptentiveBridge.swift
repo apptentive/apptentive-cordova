@@ -9,8 +9,10 @@ import Foundation
 import ApptentiveKit
 import UIKit
 
+
+@MainActor
 @objc(ApptentiveBridge)
-class ApptentiveBridge: CDVPlugin {
+class ApptentiveBridge: CDVPlugin, Sendable {
 
     var apptentiveInitialized = false
     var registeredForMessageNotifications = false
@@ -47,6 +49,7 @@ class ApptentiveBridge: CDVPlugin {
 
     @objc func deviceReady(_ command: CDVInvokedUrlCommand) {
         do {
+<<<<<<< HEAD
             let (credentials, region, logLevel, distributionVersion, sanitizeLogMessages, fontName) = try Self.resolveConfiguration(from: command)
 
             DispatchQueue.main.async {
@@ -60,6 +63,23 @@ class ApptentiveBridge: CDVPlugin {
                 Apptentive.shared.distributionVersion = distributionVersion
                 Apptentive.shared.distributionName = "Cordova"
                 Apptentive.shared.register(with: credentials, region: region) { result in
+=======
+            let functionArguments = try Self.checkArgumentCount(command, 1...4)
+
+            guard let distributionVersion = functionArguments[0] as? String else {
+                throw PluginError.invalidArgumentType(atIndex: 0, expecting: "String")
+            }
+
+            let credentials = try Self.resolveAppCredentials()
+            let (region, environment) = try Self.resolveEnvironmentAndRegion()
+            let fontName = Self.resolveFontName()
+
+            DispatchQueue.main.async {
+                Apptentive.shared.distributionVersion = distributionVersion
+                Apptentive.shared.distributionName = "Cordova"
+                Apptentive.fontName = fontName
+                Apptentive.shared.register(with: credentials, region: region, environment: environment) { result in
+>>>>>>> f603c3d (Make region, baseURL, and fontName setup-time parameters only)
                     switch result {
                     case .success:
                         self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: "Apptentive SDK registered successfully."), callbackId: command.callbackId)
@@ -268,18 +288,23 @@ class ApptentiveBridge: CDVPlugin {
         return command.arguments
     }
 
+<<<<<<< HEAD
     static func resolveConfiguration(from command: CDVInvokedUrlCommand) throws -> (Apptentive.AppCredentials, Apptentive.Region, LogLevel, String, Bool, String?) {
         // Backwards compatible:
         // Old JS: [distributionVersion, logLevel, apiBaseURL?]
         // New JS (registerWithLogs): [distributionVersion, logLevel, region, overrideBaseURL, configuration]
         let functionArguments = try self.checkArgumentCount(command, 2...5)
 
+=======
+    static func resolveAppCredentials() throws -> Apptentive.AppCredentials {
+>>>>>>> f603c3d (Make region, baseURL, and fontName setup-time parameters only)
         guard let apptentiveKey = Bundle.main.object(forInfoDictionaryKey: "ApptentiveKey") as? String,
               let apptentiveSignature = Bundle.main.object(forInfoDictionaryKey: "ApptentiveSignature") as? String
         else {
             throw PluginError.missingVariablesInInfoDictionary
         }
 
+<<<<<<< HEAD
         let sanitizeLogMessagesString = Bundle.main.object(forInfoDictionaryKey: "ApptentiveSanitizeLogMessages") as? String ?? "true"
         let sanitizeLogMessages = sanitizeLogMessagesString.lowercased() != "false"
 
@@ -348,27 +373,42 @@ class ApptentiveBridge: CDVPlugin {
         }
 
         return (.init(key: apptentiveKey, signature: apptentiveSignature), region, logLevel, distributionVersion, sanitizeLogMessages, fontName)
+=======
+        return .init(key: apptentiveKey, signature: apptentiveSignature)
+>>>>>>> f603c3d (Make region, baseURL, and fontName setup-time parameters only)
     }
 
-    static func parseLogLevel(_ logLevel: Any) throws -> LogLevel {
-        switch (logLevel as? String)?.lowercased() {
-        case "verbose":
-            return .debug
-        case "debug":
-            return .debug
-        case "info":
-            return .info
-        case "warn":
-            return .warning
-        case "error":
-            return .error
-        case "critical":
-            return .critical
-        case .some(let logLevelString):
-            throw PluginError.unrecognizedLogLevel(logLevelString)
-        default:
-            throw PluginError.invalidArgumentType(atIndex: 1, expecting: "String")
+    static func resolveEnvironmentAndRegion() throws -> (Apptentive.Region, Apptentive.Environment) {
+        guard let regionString = Bundle.main.object(forInfoDictionaryKey: "ApptentiveRegion") as? String,
+              let overrideBaseURLString = Bundle.main.object(forInfoDictionaryKey: "ApptentiveOverrideBaseURL") as? String
+        else {
+            return (.us, .production)
         }
+
+        var environment: Apptentive.Environment = .production
+        if overrideBaseURLString != "none" {
+            guard let overrideBaseURL = URL(string: overrideBaseURLString) else {
+                throw PluginError.invalidOverrideBaseURL(overrideBaseURLString)
+            }
+
+            environment = .custom(overrideBaseURL)
+        }
+
+        guard let region = Apptentive.Region(rawValue: regionString) else {
+            throw PluginError.unrecognizedRegionCode(regionString)
+        }
+
+        return (region, environment)
+    }
+
+    static func resolveFontName() -> String? {
+        guard let fontName = Bundle.main.object(forInfoDictionaryKey: "ApptentiveFontName") as? String
+              fontName.lowercased() != "system"
+        else {
+            return nil
+        }
+
+        return fontName
     }
 
     private static func apptentiveFont(named name: String, textStyle: UIFont.TextStyle) -> UIFont {
@@ -489,7 +529,8 @@ class ApptentiveBridge: CDVPlugin {
         case unimplementedCommand(String)
         case invalidJSONData
         case invalidTokenString(String)
-        case unrecognizedLogLevel(String)
+        case invalidOverrideBaseURL(String)
+        case unrecognizedRegionCode(String)
 
         var errorDescription: String? {
             switch self {
@@ -532,8 +573,11 @@ class ApptentiveBridge: CDVPlugin {
             case .invalidTokenString(let string):
                 return "The device token (\(string)) was not recognized as valid hex-encoded data."
 
-            case .unrecognizedLogLevel(let logLevel):
-                return "The log level (\"\(logLevel)\") is not a valid log level (valid values are \"verbose\", \"debug\", \"info\", \"warn\", \"error\", and \"critical\")."
+            case .invalidOverrideBaseURL(let urlString):
+                return "The string \(urlString) could not be parsed as a URL."
+
+            case .unrecognizedRegionCode(let regionString):
+                return "The region code \(regionString) is not supported."
             }
         }
     }

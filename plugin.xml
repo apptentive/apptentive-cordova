@@ -9,6 +9,9 @@
       <engine name="cordova-android" version=">=12.0.0"/>
     </engines>
 
+    <preference name="REGION" default="us"/>
+    <preference name="OVERRIDE_BASE_URL" default="none"/>
+
     <!-- android -->
     <platform name="android">
         <!-- Require API key -->
@@ -22,8 +25,6 @@
         <preference name="ANDROID_SANITIZE_LOG_MESSAGES" default="true"/>
         <preference name="ANDROID_CUSTOM_APP_STORE_URL" default=" "/>
         <preference name="ANDROID_RATING_INTERACTION_THROTTLE_LENGTH" default="604800000"/>
-        <preference name="ANDROID_REGION" default="us"/>
-        <preference name="ANDROID_OVERRIDE_BASE_URL" default=""/>
 
         <!-- Define namespace for javascript reference -->
         <js-module src="www/Apptentive.js" name="Apptentive">
@@ -54,8 +55,8 @@
             <meta-data android:name="apptentive_custom_app_store_url" android:value="$ANDROID_CUSTOM_APP_STORE_URL"/>
             <meta-data android:name="apptentive_sanitize_log_messages" android:value="$ANDROID_SANITIZE_LOG_MESSAGES"/>
             <meta-data android:name="apptentive_rating_interaction_throttle_length" android:value="$ANDROID_RATING_INTERACTION_THROTTLE_LENGTH"/>
-            <meta-data android:name="apptentive_region" android:value="$ANDROID_REGION"/>
-            <meta-data android:name="apptentive_override_base_url" android:value="$ANDROID_OVERRIDE_BASE_URL"/>
+            <meta-data android:name="apptentive_region" android:value="$REGION"/>
+            <meta-data android:name="apptentive_override_base_url" android:value="$OVERRIDE_BASE_URL"/>
         </config-file>
 
         <framework src="com.apptentive:apptentive-kit-android:7.0.0" />
@@ -70,11 +71,7 @@
         <!-- Require API key -->
         <preference name="IOS_APP_KEY"/>
         <preference name="IOS_APP_SIGNATURE"/>
-        <preference name="IOS_REGION" default="us"/>
-        <preference name="IOS_OVERRIDE_BASE_URL" default=""/>
-
-        <!-- Apptentive Configuration Items -->
-        <preference name="IOS_SANITIZE_LOG_MESSAGES" default="true"/>
+        <preference name="IOS_FONT_NAME" default="system"/>
 
         <js-module src="www/Apptentive.js" name="Apptentive">
             <clobbers target="Apptentive"/>
@@ -94,8 +91,16 @@
             <string>$IOS_APP_SIGNATURE</string>
         </config-file>
 
-        <config-file target="*-Info.plist" parent="ApptentiveSanitizeLogMessages">
-            <string>$IOS_SANITIZE_LOG_MESSAGES</string>
+        <config-file target="*-Info.plist" parent="ApptentiveRegion">
+            <string>$REGION</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="ApptentiveOverrideBaseURL">
+            <string>$OVERRIDE_BASE_URL</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="ApptentiveFontName">
+            <string>$IOS_FONT_NAME</string>
         </config-file>
 
         <!-- ApptentiveBridge -->
@@ -108,6 +113,7 @@
         <framework src="CoreTelephony.framework" weak="true"/>
         <framework src="CoreText.framework" weak="true"/>
         <framework src="Foundation.framework" weak="true"/>
+        <framework src="OSLog.framework" weak="true"/>
         <framework src="QuartzCore.framework" weak="true"/>
         <framework src="Storekit.framework" weak="true"/>
         <framework src="SystemConfiguration.framework" weak="true"/>
