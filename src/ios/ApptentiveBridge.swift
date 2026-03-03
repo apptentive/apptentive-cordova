@@ -49,21 +49,6 @@ class ApptentiveBridge: CDVPlugin, Sendable {
 
     @objc func deviceReady(_ command: CDVInvokedUrlCommand) {
         do {
-<<<<<<< HEAD
-            let (credentials, region, logLevel, distributionVersion, sanitizeLogMessages, fontName) = try Self.resolveConfiguration(from: command)
-
-            DispatchQueue.main.async {
-                ApptentiveLogger.logLevel = logLevel
-                ApptentiveLogger.shouldHideSensitiveLogs = sanitizeLogMessages
-
-                if let fontName = fontName {
-                    Self.applyGlobalFontName(fontName)
-                }
-
-                Apptentive.shared.distributionVersion = distributionVersion
-                Apptentive.shared.distributionName = "Cordova"
-                Apptentive.shared.register(with: credentials, region: region) { result in
-=======
             let functionArguments = try Self.checkArgumentCount(command, 1...4)
 
             guard let distributionVersion = functionArguments[0] as? String else {
@@ -79,7 +64,7 @@ class ApptentiveBridge: CDVPlugin, Sendable {
                 Apptentive.shared.distributionName = "Cordova"
                 Apptentive.fontName = fontName
                 Apptentive.shared.register(with: credentials, region: region, environment: environment) { result in
->>>>>>> f603c3d (Make region, baseURL, and fontName setup-time parameters only)
+
                     switch result {
                     case .success:
                         self.commandDelegate.send(.init(status: CDVCommandStatus_OK, messageAs: "Apptentive SDK registered successfully."), callbackId: command.callbackId)
@@ -288,94 +273,14 @@ class ApptentiveBridge: CDVPlugin, Sendable {
         return command.arguments
     }
 
-<<<<<<< HEAD
-    static func resolveConfiguration(from command: CDVInvokedUrlCommand) throws -> (Apptentive.AppCredentials, Apptentive.Region, LogLevel, String, Bool, String?) {
-        // Backwards compatible:
-        // Old JS: [distributionVersion, logLevel, apiBaseURL?]
-        // New JS (registerWithLogs): [distributionVersion, logLevel, region, overrideBaseURL, configuration]
-        let functionArguments = try self.checkArgumentCount(command, 2...5)
-
-=======
     static func resolveAppCredentials() throws -> Apptentive.AppCredentials {
->>>>>>> f603c3d (Make region, baseURL, and fontName setup-time parameters only)
         guard let apptentiveKey = Bundle.main.object(forInfoDictionaryKey: "ApptentiveKey") as? String,
               let apptentiveSignature = Bundle.main.object(forInfoDictionaryKey: "ApptentiveSignature") as? String
         else {
             throw PluginError.missingVariablesInInfoDictionary
         }
 
-<<<<<<< HEAD
-        let sanitizeLogMessagesString = Bundle.main.object(forInfoDictionaryKey: "ApptentiveSanitizeLogMessages") as? String ?? "true"
-        let sanitizeLogMessages = sanitizeLogMessagesString.lowercased() != "false"
-
-        let logLevel = try self.parseLogLevel(functionArguments[1])
-
-        guard let distributionVersion = functionArguments[0] as? String else {
-            throw PluginError.invalidArgumentType(atIndex: 0, expecting: "String")
-        }
-
-        // Defaults
-        var region: Apptentive.Region = .us
-        var regionString: String? = nil
-        var overrideBaseURLString: String? = nil
-        var fontName: String? = nil
-
-        // Arg #2 can be:
-        // - Old: apiBaseURL (URL string)
-        // - New: region string ("us" / "eu")
-        if functionArguments.count >= 3, let s = functionArguments[2] as? String {
-            let trimmed = s.trimmingCharacters(in: .whitespacesAndNewlines)
-            let lower = trimmed.lowercased()
-            if lower.hasPrefix("http://") || lower.hasPrefix("https://"), let url = URL(string: trimmed) {
-                region = Apptentive.Region(apiBaseURL: url)
-            } else if !trimmed.isEmpty {
-                regionString = trimmed
-            }
-        }
-
-        // Arg #3 (new): overrideBaseURL
-        if functionArguments.count >= 4, let s = functionArguments[3] as? String {
-            let trimmed = s.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !trimmed.isEmpty {
-                overrideBaseURLString = trimmed
-            }
-        }
-
-        // Arg #4 (new): configuration object { region, overrideBaseURL, fontName }
-        if functionArguments.count >= 5, let dict = functionArguments[4] as? [String: Any] {
-            if let r = dict["region"] as? String {
-                let trimmed = r.trimmingCharacters(in: .whitespacesAndNewlines)
-                if !trimmed.isEmpty {
-                    regionString = trimmed
-                }
-            }
-            if let u = dict["overrideBaseURL"] as? String {
-                let trimmed = u.trimmingCharacters(in: .whitespacesAndNewlines)
-                if !trimmed.isEmpty {
-                    overrideBaseURLString = trimmed
-                }
-            }
-            if let f = dict["fontName"] as? String {
-                let trimmed = f.trimmingCharacters(in: .whitespacesAndNewlines)
-                if !trimmed.isEmpty {
-                    fontName = trimmed
-                }
-            }
-        }
-
-        // Precedence:
-        // 1) overrideBaseURL => map to Region(apiBaseURL:)
-        // 2) region string => "eu" / "us"
-        if let overrideString = overrideBaseURLString, let url = URL(string: overrideString) {
-            region = Apptentive.Region(apiBaseURL: url)
-        } else if let r = regionString?.lowercased() {
-            region = (r == "eu") ? .eu : .us
-        }
-
-        return (.init(key: apptentiveKey, signature: apptentiveSignature), region, logLevel, distributionVersion, sanitizeLogMessages, fontName)
-=======
         return .init(key: apptentiveKey, signature: apptentiveSignature)
->>>>>>> f603c3d (Make region, baseURL, and fontName setup-time parameters only)
     }
 
     static func resolveEnvironmentAndRegion() throws -> (Apptentive.Region, Apptentive.Environment) {
@@ -402,40 +307,13 @@ class ApptentiveBridge: CDVPlugin, Sendable {
     }
 
     static func resolveFontName() -> String? {
-        guard let fontName = Bundle.main.object(forInfoDictionaryKey: "ApptentiveFontName") as? String
+        guard let fontName = Bundle.main.object(forInfoDictionaryKey: "ApptentiveFontName") as? String,
               fontName.lowercased() != "system"
         else {
             return nil
         }
 
         return fontName
-    }
-
-    private static func apptentiveFont(named name: String, textStyle: UIFont.TextStyle) -> UIFont {
-        let base = UIFont.preferredFont(forTextStyle: textStyle)
-        return UIFont(name: name, size: base.pointSize) ?? base
-    }
-
-    private static func applyGlobalFontName(_ name: String) {
-        // If the font isn't available in the host app bundle, do nothing but keep SDK functional.
-        guard UIFont(name: name, size: 12) != nil else {
-            ApptentiveLogger.warning("Font '\(name)' not found. Ensure it is included in the host app bundle and registered (UIAppFonts).")
-            return
-        }
-
-        UIFont.apptentiveMessageCenterGreetingTitle = apptentiveFont(named: name, textStyle: .headline)
-        UIFont.apptentiveMessageCenterGreetingBody = apptentiveFont(named: name, textStyle: .body)
-        UIFont.apptentiveMessageCenterAttachmentLabel = apptentiveFont(named: name, textStyle: .caption1)
-
-        UIFont.apptentiveQuestionLabel = apptentiveFont(named: name, textStyle: .body)
-        UIFont.apptentiveChoiceLabel = apptentiveFont(named: name, textStyle: .body)
-        UIFont.apptentiveMessageLabel = apptentiveFont(named: name, textStyle: .body)
-
-        UIFont.apptentiveInstructionsLabel = apptentiveFont(named: name, textStyle: .caption1)
-        UIFont.apptentiveSurveyIntroductionLabel = apptentiveFont(named: name, textStyle: .subheadline)
-
-        UIFont.apptentiveSubmitButtonTitle = apptentiveFont(named: name, textStyle: .headline)
-        UIFont.apptentiveTextInput = apptentiveFont(named: name, textStyle: .body)
     }
 
     static func string(from command: CDVInvokedUrlCommand, range: ClosedRange<Int> = 1...1) throws -> String {
