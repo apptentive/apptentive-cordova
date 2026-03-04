@@ -33,10 +33,6 @@ var Apptentive = {
   ) {
     console.log("Apptentive.registerWithLogs()");
 
-    var regionValue = "us";
-    var overrideBaseURLValue = null;
-    var fontNameValue = null;
-
     cordova.exec(
       successCallback,
       errorCallback,
