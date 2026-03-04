@@ -46,55 +46,44 @@ class ApptentiveBridge: CDVPlugin, Sendable {
     }
 
     @objc func deviceReady(_ command: CDVInvokedUrlCommand) {
-        do {
-            let functionArguments = try Self.checkArgumentCount(command, 1...2)
+        Task {
+            do {
+                // Arguments are distributionVersion and (now unused) logLevel
+                let functionArguments = try Self.checkArgumentCount(command, 1...2)
 
-            guard let distributionVersion = functionArguments[0] as? String else {
-                throw PluginError.invalidArgumentType(atIndex: 0, expecting: "String")
-            }
+                guard let distributionVersion = functionArguments[0] as? String else {
+                    throw PluginError.invalidArgumentType(atIndex: 0, expecting: "String")
+                }
 
-            let credentials = try Self.resolveAppCredentials()
-            let (region, environment) = try Self.resolveEnvironmentAndRegion()
-            let fontName = Self.resolveFontName()
+                let credentials = try Self.resolveAppCredentials()
+                let (region, environment) = try Self.resolveEnvironmentAndRegion()
+                let fontName = Self.resolveFontName()
 
-            DispatchQueue.main.async {
                 Apptentive.shared.distributionVersion = distributionVersion
                 Apptentive.shared.distributionName = "Cordova"
                 Apptentive.fontName = fontName
-                Apptentive.shared.register(with: credentials, region: region, environment: environment) { result in
-                    switch result {
-                    case .success:
-                        self.commandDelegate.send(.init(status: CDVCommandStatus.ok, messageAs: "Apptentive SDK registered successfully."), callbackId: command.callbackId)
-
-                    case .failure(let error):
-                        self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
-                    }
-                }
+                try await Apptentive.shared.register(with: credentials, region: region, environment: environment)
+                self.commandDelegate.send(.init(status: CDVCommandStatus.ok, messageAs: "Apptentive SDK registered successfully."), callbackId: command.callbackId)
+            } catch let error {
+                self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
             }
-        } catch let error {
-            self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
         }
     }
 
     @objc func engage(_ command: CDVInvokedUrlCommand) {
-        do {
-            var event = Event(name: try Self.string(from: command, range: 1...2))
+        Task {
+            do {
+                var event = Event(name: try Self.string(from: command, range: 1...2))
 
-            if let customData = try Self.maybeCustomData(from: command, precedingArgumentCount: 1) {
-                event.customData = customData
-            }
-
-            Apptentive.shared.engage(event: event) { result in
-                switch result {
-                case .success(let didShowInteraction):
-                    self.commandDelegate.send(.init(status: CDVCommandStatus.ok, messageAs: didShowInteraction), callbackId: command.callbackId)
-
-                case .failure(let error):
-                    self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
+                if let customData = try Self.maybeCustomData(from: command, precedingArgumentCount: 1) {
+                    event.customData = customData
                 }
+
+                let didShowInteraction = try await Apptentive.shared.engage(event: event)
+                self.commandDelegate.send(.init(status: CDVCommandStatus.ok, messageAs: didShowInteraction), callbackId: command.callbackId)
+            } catch let error {
+                self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
             }
-        } catch let error {
-            self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
         }
     }
 
@@ -168,10 +157,10 @@ class ApptentiveBridge: CDVPlugin, Sendable {
 
             self.observation = Apptentive.shared.observe(\.unreadMessageCount, options: [.new]) { [weak self] _, _ in
                 guard let self = self else { return }
-                Task { @MainActor in
-                    let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: Apptentive.shared.unreadMessageCount)
-                    result.setKeepCallbackAs(true)
-                    self.commandDelegate.send(result, callbackId: callbackID)
+                Task {
+                    async let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: Apptentive.shared.unreadMessageCount)
+                    await result.setKeepCallbackAs(true)
+                    await self.commandDelegate.send(result, callbackId: callbackID)
                 }
             }
         } catch let error {
@@ -188,10 +177,10 @@ class ApptentiveBridge: CDVPlugin, Sendable {
 
             NotificationCenter.default.addObserver(forName: .apptentiveEventEngaged, object: nil, queue: nil) { [weak self] (notification) in
                 if notification.userInfo?["eventType"] as? String == "submit" && notification.userInfo?["interactionType"] as? String == "Survey" {
-                    Task { @MainActor in
-                        let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: Apptentive.shared.unreadMessageCount)
-                        result.setKeepCallbackAs(true)
-                        self?.commandDelegate.send(result, callbackId: callbackID)
+                    Task {
+                        async let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: Apptentive.shared.unreadMessageCount)
+                        await result.setKeepCallbackAs(true)
+                        await self?.commandDelegate.send(result, callbackId: callbackID)
                     }
                 }
             }
@@ -201,52 +190,38 @@ class ApptentiveBridge: CDVPlugin, Sendable {
     }
 
     @objc func showMessageCenter(_ command: CDVInvokedUrlCommand) {
-        do {
-            let customData = try Self.maybeCustomData(from: command)
-            Apptentive.shared.presentMessageCenter(from: self.viewController, with: customData) { result in
-                switch result {
-                case .success(let didShow):
-                    self.commandDelegate.send(.init(status: CDVCommandStatus.ok, messageAs: didShow), callbackId: command.callbackId)
-
-                case .failure(let error):
-                    self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
-                }
+        Task {
+            do {
+                let customData = try Self.maybeCustomData(from: command)
+                let didShow = try await Apptentive.shared.presentMessageCenter(from: self.viewController, with: customData)
+                self.commandDelegate.send(.init(status: CDVCommandStatus.ok, messageAs: didShow), callbackId: command.callbackId)
+            } catch let error {
+                self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
             }
-        } catch let error {
-            self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
         }
     }
 
     @objc func canShowMessageCenter(_ command: CDVInvokedUrlCommand) {
-        do {
-            let _ = try Self.checkArgumentCount(command, 0...0)
-            Apptentive.shared.canShowMessageCenter { result in
-                switch result {
-                case .success(let canShow):
-                    self.commandDelegate.send(.init(status: CDVCommandStatus.ok, messageAs: canShow), callbackId: command.callbackId)
-
-                case .failure(let error):
-                    self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
-                }
+        Task {
+            do {
+                let _ = try Self.checkArgumentCount(command, 0...0)
+                let canShow = try await Apptentive.shared.canShowMessageCenter()
+                self.commandDelegate.send(.init(status: CDVCommandStatus.ok, messageAs: canShow), callbackId: command.callbackId)
+            } catch let error {
+                self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
             }
-        } catch let error {
-            self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
         }
     }
 
     @objc func canShowInteraction(_ command: CDVInvokedUrlCommand) {
-        do {
-            Apptentive.shared.canShowInteraction(event: Event(name: try Self.string(from: command))) { result in
-                switch result {
-                case .success(let canShow):
-                    self.commandDelegate.send(.init(status: CDVCommandStatus.ok, messageAs: canShow), callbackId: command.callbackId)
-
-                case .failure(let error):
-                    self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
-                }
+        Task {
+            do {
+                let _ = try Self.checkArgumentCount(command, 0...0)
+                let canShow = try await Apptentive.shared.canShowInteraction(event: Event(name: try Self.string(from: command)))
+                self.commandDelegate.send(.init(status: CDVCommandStatus.ok, messageAs: canShow), callbackId: command.callbackId)
+            } catch let error {
+                self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
             }
-        } catch let error {
-            self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
         }
     }
 
