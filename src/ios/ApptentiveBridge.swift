@@ -162,11 +162,17 @@ class ApptentiveBridge: CDVPlugin, Sendable {
     @objc func addUnreadMessagesListener(_ command: CDVInvokedUrlCommand) {
         do {
             let _ = try Self.checkArgumentCount(command, 0...0)
+            guard let callbackID = command.callbackId else {
+                throw PluginError.missingCallbackID
+            }
+
             self.observation = Apptentive.shared.observe(\.unreadMessageCount, options: [.new]) { [weak self] _, _ in
                 guard let self = self else { return }
-                let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: Apptentive.shared.unreadMessageCount)
-                result.setKeepCallbackAs(true)
-                self.commandDelegate.send(result, callbackId: command.callbackId)
+                Task { @MainActor in
+                    let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: Apptentive.shared.unreadMessageCount)
+                    result.setKeepCallbackAs(true)
+                    self.commandDelegate.send(result, callbackId: callbackID)
+                }
             }
         } catch let error {
             self.commandDelegate.send(.init(status: CDVCommandStatus.error, messageAs: error.localizedDescription), callbackId: command.callbackId)
@@ -176,11 +182,17 @@ class ApptentiveBridge: CDVPlugin, Sendable {
     @objc func setOnSurveyFinishedListener(_ command: CDVInvokedUrlCommand) {
         do {
             let _ = try Self.checkArgumentCount(command, 0...0)
+            guard let callbackID = command.callbackId else {
+                throw PluginError.missingCallbackID
+            }
+
             NotificationCenter.default.addObserver(forName: .apptentiveEventEngaged, object: nil, queue: nil) { [weak self] (notification) in
                 if notification.userInfo?["eventType"] as? String == "submit" && notification.userInfo?["interactionType"] as? String == "Survey" {
-                    let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: Apptentive.shared.unreadMessageCount)
-                    result.setKeepCallbackAs(true)
-                    self?.commandDelegate.send(result, callbackId: command.callbackId)
+                    Task { @MainActor in
+                        let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: Apptentive.shared.unreadMessageCount)
+                        result.setKeepCallbackAs(true)
+                        self?.commandDelegate.send(result, callbackId: callbackID)
+                    }
                 }
             }
         } catch let error {
@@ -412,6 +424,7 @@ class ApptentiveBridge: CDVPlugin, Sendable {
         case invalidTokenString(String)
         case invalidOverrideBaseURL(String)
         case unrecognizedRegionCode(String)
+        case missingCallbackID
 
         var errorDescription: String? {
             switch self {
@@ -459,6 +472,9 @@ class ApptentiveBridge: CDVPlugin, Sendable {
 
             case .unrecognizedRegionCode(let regionString):
                 return "The region code \(regionString) is not supported."
+
+            case .missingCallbackID:
+                return "The command's callbackId is missing"
             }
         }
     }
