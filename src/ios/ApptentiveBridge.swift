@@ -7,8 +7,6 @@
 
 import Foundation
 import ApptentiveKit
-import UIKit
-
 
 @MainActor
 @objc(ApptentiveBridge)
@@ -49,7 +47,7 @@ class ApptentiveBridge: CDVPlugin, Sendable {
 
     @objc func deviceReady(_ command: CDVInvokedUrlCommand) {
         do {
-            let functionArguments = try Self.checkArgumentCount(command, 1...4)
+            let functionArguments = try Self.checkArgumentCount(command, 1...2)
 
             guard let distributionVersion = functionArguments[0] as? String else {
                 throw PluginError.invalidArgumentType(atIndex: 0, expecting: "String")

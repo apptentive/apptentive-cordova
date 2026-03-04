@@ -23,15 +23,13 @@ var Apptentive = {
 
   deviceReady: function (successCallback, errorCallback) {
     console.log("Apptentive.deviceReady()");
-    this.registerWithLogs(successCallback, errorCallback, "Info", "us", null);
+    this.registerWithLogs(successCallback, errorCallback, "Info");
   },
 
   registerWithLogs: function (
     successCallback,
     errorCallback,
-    loglevel,
-    regionOrConfig,
-    overrideBaseURL = null
+    loglevel
   ) {
     console.log("Apptentive.registerWithLogs()");
 
@@ -39,49 +37,12 @@ var Apptentive = {
     var overrideBaseURLValue = null;
     var fontNameValue = null;
 
-    if (regionOrConfig && typeof regionOrConfig === "object") {
-      if (typeof regionOrConfig.region === "string") {
-        regionValue = regionOrConfig.region;
-      }
-      if (typeof regionOrConfig.overrideBaseURL === "string") {
-        overrideBaseURLValue = regionOrConfig.overrideBaseURL;
-      }
-      if (typeof regionOrConfig.fontName === "string") {
-        fontNameValue = regionOrConfig.fontName;
-      }
-    } else {
-      if (typeof regionOrConfig === "string") {
-        regionValue = regionOrConfig;
-      }
-      if (typeof overrideBaseURL === "string") {
-        overrideBaseURLValue = overrideBaseURL;
-      }
-    }
-
-    regionValue = String(regionValue).toLowerCase();
-    if (regionValue !== "eu" && regionValue !== "us") {
-      regionValue = "us";
-    }
-
-    if (typeof overrideBaseURLValue === "string" && overrideBaseURLValue.trim() === "") {
-      overrideBaseURLValue = null;
-    }
-    if (typeof fontNameValue === "string" && fontNameValue.trim() === "") {
-      fontNameValue = null;
-    }
-
-    var configuration = {
-      fontName: fontNameValue,
-      region: regionValue,
-      overrideBaseURL: overrideBaseURLValue,
-    };
-
     cordova.exec(
       successCallback,
       errorCallback,
       "ApptentiveBridge",
       "deviceReady",
-      [this.distributionVersion, loglevel, regionValue, overrideBaseURLValue, configuration]
+      [this.distributionVersion, loglevel],
     );
   },
 
