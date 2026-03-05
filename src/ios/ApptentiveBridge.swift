@@ -158,9 +158,11 @@ class ApptentiveBridge: CDVPlugin, Sendable {
             self.observation = Apptentive.shared.observe(\.unreadMessageCount, options: [.new]) { [weak self] _, _ in
                 guard let self = self else { return }
                 Task {
-                    async let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: Apptentive.shared.unreadMessageCount)
-                    await result.setKeepCallbackAs(true)
-                    await self.commandDelegate.send(result, callbackId: callbackID)
+                    let count = await MainActor.run { Apptentive.shared.unreadMessageCount }
+
+                    let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: count)
+                    result.setKeepCallbackAs(true)
+                    self.commandDelegate.send(result, callbackId: callbackID)
                 }
             }
         } catch let error {
@@ -178,9 +180,11 @@ class ApptentiveBridge: CDVPlugin, Sendable {
             NotificationCenter.default.addObserver(forName: .apptentiveEventEngaged, object: nil, queue: nil) { [weak self] (notification) in
                 if notification.userInfo?["eventType"] as? String == "submit" && notification.userInfo?["interactionType"] as? String == "Survey" {
                     Task {
-                        async let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: Apptentive.shared.unreadMessageCount)
-                        await result.setKeepCallbackAs(true)
-                        await self?.commandDelegate.send(result, callbackId: callbackID)
+                        let count = await MainActor.run { Apptentive.shared.unreadMessageCount }
+
+                        let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: count)
+                        result.setKeepCallbackAs(true)
+                        self.commandDelegate.send(result, callbackId: callbackID)
                     }
                 }
             }
