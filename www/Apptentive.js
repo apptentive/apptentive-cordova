@@ -23,23 +23,22 @@ var Apptentive = {
 
   deviceReady: function (successCallback, errorCallback) {
     console.log("Apptentive.deviceReady()");
-    this.registerWithLogs(successCallback, errorCallback, "Info", "us", null);
+    this.registerWithLogs(successCallback, errorCallback, "Info");
   },
 
   registerWithLogs: function (
     successCallback,
     errorCallback,
-    loglevel,
-    region,
-    overrideBaseURL = null,
+    loglevel
   ) {
     console.log("Apptentive.registerWithLogs()");
+
     cordova.exec(
       successCallback,
       errorCallback,
       "ApptentiveBridge",
       "deviceReady",
-      [this.distributionVersion, loglevel, region, overrideBaseURL],
+      [this.distributionVersion, loglevel],
     );
   },
 
