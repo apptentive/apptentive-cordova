@@ -17,4 +17,8 @@ package-lock.json
 /src/android/.idea
 
 # res
-resources/signing
+resources/signingsrc/.idea/
+src/apptentive-cordova.iml
+www/.idea/
+yarn.lock
+src/.idea/

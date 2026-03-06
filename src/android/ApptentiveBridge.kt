@@ -74,19 +74,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
             null
           }
 
-          val region = try {
-            args.getString(1)
-          } catch (e: JSONException) {
-            null
-          }
-
-          val apiBaseURL = try {
-            args.getString(2)
-          } catch (e: JSONException) {
-            null
-          }
-
-          val configuration = resolveConfiguration(currentActivity.application, logLevel, distributionVersion, region, apiBaseURL)
+          val configuration = resolveConfiguration(currentActivity.application, logLevel, distributionVersion)
 
           configuration?.let {
             Apptentive.register(currentActivity.application, configuration) {
@@ -273,7 +261,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     }
   }
 
-  private fun resolveConfiguration(context: Context, logLevel: String?, distributionVersion: String, region: String?, overrideBaseURL: String?): ApptentiveConfiguration? {
+  private fun resolveConfiguration(context: Context, logLevel: String?, distributionVersion: String): ApptentiveConfiguration? {
     val apptentiveKey = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_KEY)
       ?: run {
         android.util.Log.e("Apptentive", "[CORDOVA] Unable to initialize Apptentive SDK: '$MANIFEST_KEY_APPTENTIVE_KEY' manifest key is missing")
@@ -295,13 +283,13 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
     android.util.Log.d("Apptentive", "[CORDOVA] Log Level: $logLevelString")
     if (logLevelString != null) configuration.logLevel = parseLogLevel(logLevel ?: logLevelString)
 
-    val regionString = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_REGION)
+    val regionString = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_REGION) ?: null
     android.util.Log.d("Apptentive", "[CORDOVA] Region: $regionString")
 
     val overrideBaseURLString = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_OVERRIDE_BASE_URL)
     android.util.Log.d("Apptentive", "[CORDOVA] BaseURL: $overrideBaseURLString")
 
-    if (!overrideBaseURLString.isNullOrBlank()) {
+    if (overrideBaseURLString != null && overrideBaseURLString != "none") {
       configuration.region =  parseRegion(overrideBaseURLString) 
     } else if(regionString != null) {
       configuration.region = parseRegion(regionString)
@@ -324,7 +312,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
 
     val customAppStoreURL = Util.getManifestMetadataString(context, MANIFEST_KEY_APPTENTIVE_CUSTOM_APP_STORE_URL)
     android.util.Log.d("Apptentive", "[CORDOVA] Custom App Store URL: $customAppStoreURL")
-    if (!customAppStoreURL.isNullOrBlank()) configuration.customAppStoreURL = customAppStoreURL
+    if (customAppStoreURL != null && customAppStoreURL != "none") configuration.customAppStoreURL = customAppStoreURL
 
     return configuration
   }
@@ -341,7 +329,8 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
   }
 
   private fun parseRegion(region: String): ApptentiveRegion {
-    return when (region) {
+    val normalized = region.lowercase()
+    return when (normalized) {
       "us" -> ApptentiveRegion.US
       "eu" -> ApptentiveRegion.EU
       "au" -> ApptentiveRegion.AU
