@@ -1,5 +1,5 @@
 var Apptentive = {
-  distributionVersion: "7.1",
+  distributionVersion: "7.1.0",
 
   addCustomDeviceData: function (successCallback, errorCallback, key, value) {
     cordova.exec(

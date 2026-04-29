@@ -1,2 +1,2 @@
 - Apptentive Android SDK: 7.1.1
-- Apptentive iOS SDK: 7.1
+- Apptentive iOS SDK: 7.1.0
