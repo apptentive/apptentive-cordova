@@ -184,7 +184,7 @@ class ApptentiveBridge: CDVPlugin, Sendable {
 
                         let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: count)
                         result.setKeepCallbackAs(true)
-                        self.commandDelegate.send(result, callbackId: callbackID)
+                        self?.commandDelegate.send(result, callbackId: callbackID)
                     }
                 }
             }
