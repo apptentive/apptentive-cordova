@@ -293,7 +293,7 @@ class ApptentiveBridge: CDVPlugin, Sendable {
             environment = .custom(overrideBaseURL)
         }
 
-        guard let region = Apptentive.Region(rawValue: regionString) else {
+        guard let region = Apptentive.Region(rawValue: regionString.lowercased()) else {
             throw PluginError.unrecognizedRegionCode(regionString)
         }
 
