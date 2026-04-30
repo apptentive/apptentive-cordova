@@ -184,7 +184,7 @@ class ApptentiveBridge: CDVPlugin, Sendable {
 
                         let result = CDVPluginResult(status: CDVCommandStatus.ok, messageAs: count)
                         result.setKeepCallbackAs(true)
-                        self.commandDelegate.send(result, callbackId: callbackID)
+                        self?.commandDelegate.send(result, callbackId: callbackID)
                     }
                 }
             }
@@ -293,7 +293,7 @@ class ApptentiveBridge: CDVPlugin, Sendable {
             environment = .custom(overrideBaseURL)
         }
 
-        guard let region = Apptentive.Region(rawValue: regionString) else {
+        guard let region = Apptentive.Region(rawValue: regionString.lowercased()) else {
             throw PluginError.unrecognizedRegionCode(regionString)
         }
 
