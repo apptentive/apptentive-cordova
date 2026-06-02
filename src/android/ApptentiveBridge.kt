@@ -334,7 +334,7 @@ class ApptentiveBridge : CordovaPlugin(), ApptentiveActivityInfo {
       "us" -> ApptentiveRegion.US
       "eu" -> ApptentiveRegion.EU
       "au" -> ApptentiveRegion.AU
-      "cn" -> ApptentiveRegion.CN
+      "ca" -> ApptentiveRegion.CA
       else -> ApptentiveRegion.Custom(region)
     }
   }
